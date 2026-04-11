@@ -159,7 +159,6 @@ model Product {
   sku             String            @unique
   brandId         String?
   price           Decimal           @db.Decimal(10, 2)
-  compareAtPrice  Decimal?          @db.Decimal(10, 2)
   costPrice       Decimal?          @db.Decimal(10, 2)
   currency        String            @default("INR")
   stockQuantity   Int               @default(0)
