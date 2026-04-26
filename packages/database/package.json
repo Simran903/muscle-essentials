@@ -3,15 +3,27 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "build": "prisma generate",
+    "check-types": "tsc --noEmit"
+  },
   "devDependencies": {
     "@types/bun": "latest",
-    "dotenv": "^17.4.1"
+    "@types/pg": "^8.15.5",
+    "dotenv": "^17.4.1",
+    "typescript": "^5"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.7.0",
     "@prisma/client": "^7.7.0",
+    "dotenv": "^17.4.1",
+    "pg": "^8.16.0",
     "prisma": "^7.7.0"
   }
 }
