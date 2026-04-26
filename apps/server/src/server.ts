@@ -1,10 +1,31 @@
-import app from "./app.js";
-import dotenv from "dotenv";
+import "dotenv/config";
+import { getEnv } from "./config/env.js";
 
-dotenv.config();
+getEnv();
 
-const PORT = process.env.PORT || 5000;
+const { createApp } = await import("./app.js");
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+const app = createApp();
+const env = getEnv();
+const PORT = env.PORT;
+
+const server = app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
 });
+
+function shutdown(signal: string): void {
+  console.info(`${signal} received, shutting down`);
+  server.close(async () => {
+    try {
+      const { prisma } = await import("database");
+      await prisma.$disconnect();
+    } catch (e) {
+      console.error(e);
+    }
+    process.exit(0);
+  });
+  setTimeout(() => process.exit(1), 10_000).unref();
+}
+
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));

@@ -1,0 +1,287 @@
+import type { Request, Response } from "express";
+import { z } from "zod";
+import { sendSuccess } from "../utils/response.js";
+import {
+  adminCreateBrand,
+  adminCreateCategory,
+  adminCreateProduct,
+  adminDeleteBrand,
+  adminDeleteCategory,
+  adminDeleteProduct,
+  adminGetOrder,
+  adminListBrands,
+  adminListCategories,
+  adminListOrders,
+  adminListProducts,
+  adminListReviews,
+  adminListUsers,
+  adminModerateReview,
+  adminUpdateBrand,
+  adminUpdateCategory,
+  adminUpdateOrder,
+  adminUpdateProduct,
+  adminUpdateUser,
+} from "../services/admin.service.js";
+
+const pagination = z.object({
+  page: z.coerce.number().optional(),
+  limit: z.coerce.number().optional(),
+});
+
+const orderStatus = z.enum([
+  "PENDING",
+  "CONFIRMED",
+  "PROCESSING",
+  "SHIPPED",
+  "DELIVERED",
+  "CANCELLED",
+]);
+
+const paymentStatus = z.enum([
+  "PENDING",
+  "REQUIRES_ACTION",
+  "PAID",
+  "FAILED",
+  "REFUNDED",
+]);
+
+const userRole = z.enum(["CUSTOMER", "ADMIN"]);
+const userStatus = z.enum(["ACTIVE", "SUSPENDED"]);
+const reviewStatus = z.enum(["PENDING", "APPROVED", "REJECTED"]);
+
+export async function adminGetBrands(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const q = pagination.parse(req.query);
+  const data = await adminListBrands(q.page, q.limit);
+  sendSuccess(res, data, "");
+}
+
+export async function adminGetProducts(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const q = pagination.parse(req.query);
+  const data = await adminListProducts(q.page, q.limit);
+  sendSuccess(res, data, "");
+}
+
+const createProductBody = z.object({
+  title: z.string().min(1),
+  slug: z.string().min(1),
+  sku: z.string().min(1),
+  price: z.string().min(1),
+  brandId: z.string().min(1),
+  categoryId: z.string().optional().nullable(),
+  shortDesc: z.string(),
+  description: z.string(),
+  flavour: z.string().max(200),
+  costPrice: z.string().min(1),
+  stockQuantity: z.coerce.number().int().min(0),
+  currency: z.string().min(1),
+  isActive: z.boolean(),
+  isFeatured: z.boolean(),
+});
+
+export async function adminPostProduct(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const body = createProductBody.parse(req.body);
+  const product = await adminCreateProduct(body);
+  sendSuccess(res, { product }, "Product created");
+}
+
+const patchProductBody = createProductBody.partial();
+
+export async function adminPatchProduct(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { id } = z.object({ id: z.string().min(1) }).parse(req.params);
+  const body = patchProductBody.parse(req.body);
+  const product = await adminUpdateProduct(id, body);
+  sendSuccess(res, { product }, "Product updated");
+}
+
+export async function adminRemoveProduct(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { id } = z.object({ id: z.string().min(1) }).parse(req.params);
+  await adminDeleteProduct(id);
+  sendSuccess(res, {}, "Product deactivated");
+}
+
+const createBrandBody = z.object({
+  name: z.string().min(1),
+  slug: z.string().min(1),
+  description: z.string().max(5000).optional().nullable(),
+  isActive: z.boolean().optional(),
+});
+
+export async function adminPostBrand(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const body = createBrandBody.parse(req.body);
+  const brand = await adminCreateBrand(body);
+  sendSuccess(res, { brand }, "Brand created");
+}
+
+const patchBrandBody = createBrandBody.partial();
+
+export async function adminPatchBrand(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { id } = z.object({ id: z.string().min(1) }).parse(req.params);
+  const body = patchBrandBody.parse(req.body);
+  const brand = await adminUpdateBrand(id, body);
+  sendSuccess(res, { brand }, "Brand updated");
+}
+
+export async function adminRemoveBrand(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { id } = z.object({ id: z.string().min(1) }).parse(req.params);
+  await adminDeleteBrand(id);
+  sendSuccess(res, {}, "Brand deactivated");
+}
+
+export async function adminGetCategories(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const q = pagination.parse(req.query);
+  const data = await adminListCategories(q.page, q.limit);
+  sendSuccess(res, data, "");
+}
+
+const createCategoryBody = z.object({
+  name: z.string().min(1),
+  slug: z.string().min(1),
+  isActive: z.boolean().optional(),
+});
+
+export async function adminPostCategory(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const body = createCategoryBody.parse(req.body);
+  const category = await adminCreateCategory(body);
+  sendSuccess(res, { category }, "Category created");
+}
+
+const patchCategoryBody = createCategoryBody.partial();
+
+export async function adminPatchCategory(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { id } = z.object({ id: z.string().min(1) }).parse(req.params);
+  const body = patchCategoryBody.parse(req.body);
+  const category = await adminUpdateCategory(id, body);
+  sendSuccess(res, { category }, "Category updated");
+}
+
+export async function adminRemoveCategory(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { id } = z.object({ id: z.string().min(1) }).parse(req.params);
+  await adminDeleteCategory(id);
+  sendSuccess(res, {}, "Category deactivated");
+}
+
+export async function adminGetOrders(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const q = pagination.parse(req.query);
+  const data = await adminListOrders(q.page, q.limit);
+  sendSuccess(res, data, "");
+}
+
+export async function adminGetOrderById(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { id } = z.object({ id: z.string().min(1) }).parse(req.params);
+  const order = await adminGetOrder(id);
+  sendSuccess(res, { order }, "");
+}
+
+const patchOrderBody = z.object({
+  status: orderStatus.optional(),
+  paymentStatus: paymentStatus.optional(),
+});
+
+export async function adminPatchOrder(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { id } = z.object({ id: z.string().min(1) }).parse(req.params);
+  const body = patchOrderBody.parse(req.body);
+  const order = await adminUpdateOrder(id, body);
+  sendSuccess(res, { order }, "Order updated");
+}
+
+export async function adminGetUsers(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const q = pagination.parse(req.query);
+  const data = await adminListUsers(q.page, q.limit);
+  sendSuccess(res, data, "");
+}
+
+const patchUserBody = z.object({
+  role: userRole.optional(),
+  status: userStatus.optional(),
+});
+
+export async function adminPatchUser(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { id } = z.object({ id: z.string().min(1) }).parse(req.params);
+  const body = patchUserBody.parse(req.body);
+  const user = await adminUpdateUser(id, body);
+  sendSuccess(res, { user }, "User updated");
+}
+
+export async function adminGetReviews(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const q = pagination
+    .extend({
+      status: reviewStatus.optional(),
+    })
+    .parse(req.query);
+  const data = await adminListReviews(q.page, q.limit, q.status);
+  sendSuccess(res, data, "");
+}
+
+const moderateBody = z.object({
+  status: reviewStatus,
+  note: z.string().max(2000).optional(),
+});
+
+export async function adminPatchReview(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { id } = z.object({ id: z.string().min(1) }).parse(req.params);
+  const body = moderateBody.parse(req.body);
+  const review = await adminModerateReview(
+    id,
+    req.user!.id,
+    body.status,
+    body.note,
+  );
+  sendSuccess(res, { review }, "Review updated");
+}
