@@ -9,6 +9,12 @@ import {
   setStoredToken,
   type ApiResult,
 } from "@/lib/api";
+import {
+  uploadProductImagesAndSave,
+  type ProductImageUploadItem,
+} from "@/lib/cloudinary";
+
+type ImageStagingRow = ProductImageUploadItem & { key: string };
 
 const LABEL_CLS =
   "mb-1 block text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400";
@@ -77,20 +83,24 @@ export default function Playground() {
     setTokenInput(getStoredToken());
   }, []);
 
+  const recordResult = useCallback((result: ApiResult) => {
+    setLast(result);
+    tryCaptureAccessToken(result.json);
+    setTokenInput(getStoredToken());
+  }, []);
+
   const run = useCallback(
     async (path: string, init: RequestInit & { skipAuth?: boolean } = {}) => {
       setBusy(true);
       setLast(null);
       try {
         const result = await apiRequest(path, init);
-        tryCaptureAccessToken(result.json);
-        setLast(result);
-        setTokenInput(getStoredToken());
+        recordResult(result);
       } finally {
         setBusy(false);
       }
     },
-    [],
+    [recordResult],
   );
 
   const saveOrigin = () => {
@@ -237,7 +247,7 @@ export default function Playground() {
           Admin (ADMIN role + Bearer)
         </summary>
         <div className="space-y-4 border-t border-zinc-100 px-4 py-3 dark:border-zinc-800">
-          <AdminForms busy={busy} run={run} />
+          <AdminForms busy={busy} run={run} recordResult={recordResult} />
         </div>
       </details>
     </div>
@@ -733,9 +743,11 @@ const defaultProductJson = `{
 function AdminForms({
   busy,
   run,
+  recordResult,
 }: {
   busy: boolean;
   run: (path: string, init?: RequestInit & { skipAuth?: boolean }) => Promise<void>;
+  recordResult: (r: ApiResult) => void;
 }) {
   const [brandId, setBrandId] = useState("");
   const [categoryId, setCategoryId] = useState("");
@@ -760,6 +772,12 @@ function AdminForms({
   const [reviewPatch, setReviewPatch] = useState(
     JSON.stringify({ status: "APPROVED", note: "ok" }, null, 2),
   );
+  const [imagePatchBody, setImagePatchBody] = useState(
+    JSON.stringify({ isPrimary: true, altText: "Primary image" }, null, 2),
+  );
+  const [imageImageId, setImageImageId] = useState("");
+  const [imageFilesBusy, setImageFilesBusy] = useState(false);
+  const [imageQueue, setImageQueue] = useState<ImageStagingRow[]>([]);
   const listQs = new URLSearchParams();
   if (page) listQs.set("page", page);
   if (limit) listQs.set("limit", limit);
@@ -920,6 +938,257 @@ function AdminForms({
           >
             DELETE (deactivate)
           </Btn>
+        </div>
+        <p className="mb-2 mt-4 text-xs text-zinc-600 dark:text-zinc-400">
+          <strong>Cloudinary:</strong> server <code className="rounded bg-zinc-200 px-1 dark:bg-zinc-800">CLOUDINARY_*</code>, client{" "}
+          <code className="rounded bg-zinc-200 px-1 dark:bg-zinc-800">NEXT_PUBLIC_CLOUDINARY_API_KEY</code> (same as server API key, not the
+          secret), and an <strong>admin</strong> token. Reuses the product id above. Set{" "}
+          <strong>order</strong>, <strong>alt text</strong>, and <strong>primary</strong> per row before uploading.
+        </p>
+        <div className="mb-2">
+          <label className={LABEL_CLS} htmlFor="img-files">
+            Select images (then edit rows below)
+          </label>
+          <input
+            id="img-files"
+            type="file"
+            accept="image/*"
+            multiple
+            className="block w-full text-xs file:mr-2 file:rounded file:border-0 file:bg-zinc-200 file:px-2 file:py-1 file:text-xs dark:file:bg-zinc-800"
+            onChange={(e) => {
+              const list = e.target.files;
+              if (!list?.length) {
+                setImageQueue([]);
+                return;
+              }
+              setImageQueue(
+                Array.from(list).map((file, i) => ({
+                  key: `${file.name}-${file.size}-${i}-${Date.now()}`,
+                  file,
+                  altText: file.name.replace(/\.[^.]+$/i, "").replace(/[-_]+/g, " "),
+                  displayOrder: i,
+                  isPrimary: i === 0,
+                })),
+              );
+            }}
+          />
+        </div>
+        {imageQueue.length > 0 && (
+          <div className="mb-3 overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-700">
+            <table className="w-full min-w-[640px] border-collapse text-left text-xs">
+              <thead>
+                <tr className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900/80">
+                  <th className="px-2 py-2 font-medium">File</th>
+                  <th className="px-2 py-2 font-medium">Alt text</th>
+                  <th className="w-24 px-2 py-2 font-medium">Order</th>
+                  <th className="w-28 px-2 py-2 font-medium">Primary</th>
+                  <th className="w-24 px-2 py-2 font-medium">Move</th>
+                </tr>
+              </thead>
+              <tbody>
+                {imageQueue.map((row) => (
+                  <tr
+                    key={row.key}
+                    className="border-b border-zinc-100 dark:border-zinc-800"
+                  >
+                    <td className="max-w-[180px] truncate px-2 py-1.5 font-mono text-[11px]" title={row.file.name}>
+                      {row.file.name}
+                    </td>
+                    <td className="px-2 py-1.5">
+                      <input
+                        className="w-full min-w-[120px] rounded border border-zinc-300 px-2 py-1 dark:border-zinc-600 dark:bg-zinc-900"
+                        value={row.altText}
+                        onChange={(e) =>
+                          setImageQueue((q) =>
+                            q.map((r) =>
+                              r.key === row.key ? { ...r, altText: e.target.value } : r,
+                            ),
+                          )
+                        }
+                      />
+                    </td>
+                    <td className="px-2 py-1.5">
+                      <input
+                        type="number"
+                        min={0}
+                        max={19}
+                        className="w-full rounded border border-zinc-300 px-2 py-1 dark:border-zinc-600 dark:bg-zinc-900"
+                        value={row.displayOrder}
+                        onChange={(e) => {
+                          const v = Math.max(0, Math.min(19, Number(e.target.value) || 0));
+                          setImageQueue((q) =>
+                            q.map((r) =>
+                              r.key === row.key ? { ...r, displayOrder: v } : r,
+                            ),
+                          );
+                        }}
+                      />
+                    </td>
+                    <td className="px-2 py-1.5">
+                      <label className="inline-flex cursor-pointer items-center gap-1.5">
+                        <input
+                          type="checkbox"
+                          checked={row.isPrimary}
+                          onChange={(e) => {
+                            const on = e.target.checked;
+                            setImageQueue((q) =>
+                              q.map((r) => {
+                                if (r.key === row.key) {
+                                  return { ...r, isPrimary: on };
+                                }
+                                return on ? { ...r, isPrimary: false } : r;
+                              }),
+                            );
+                          }}
+                          className="accent-emerald-600"
+                        />
+                        <span className="text-zinc-600 dark:text-zinc-400">Primary</span>
+                      </label>
+                    </td>
+                    <td className="px-2 py-1.5">
+                      <div className="flex gap-1">
+                        <Btn
+                          variant="secondary"
+                          onClick={() => {
+                            setImageQueue((q) => {
+                              const i = q.findIndex((r) => r.key === row.key);
+                              if (i <= 0) return q;
+                              const next = [...q];
+                              [next[i - 1], next[i]] = [next[i]!, next[i - 1]!];
+                              return next.map((r, idx) => ({ ...r, displayOrder: idx }));
+                            });
+                          }}
+                        >
+                          ↑
+                        </Btn>
+                        <Btn
+                          variant="secondary"
+                          onClick={() => {
+                            setImageQueue((q) => {
+                              const i = q.findIndex((r) => r.key === row.key);
+                              if (i < 0 || i >= q.length - 1) return q;
+                              const next = [...q];
+                              [next[i], next[i + 1]] = [next[i + 1]!, next[i]!];
+                              return next.map((r, idx) => ({ ...r, displayOrder: idx }));
+                            });
+                          }}
+                        >
+                          ↓
+                        </Btn>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        <div className="mb-2 flex flex-wrap gap-2">
+          <Btn
+            disabled={
+              busy ||
+              imageFilesBusy ||
+              !productId ||
+              imageQueue.length === 0
+            }
+            onClick={async () => {
+              if (!productId || imageQueue.length === 0) return;
+              setImageFilesBusy(true);
+              const started = performance.now();
+              try {
+                const items: ProductImageUploadItem[] = imageQueue.map((r) => ({
+                  file: r.file,
+                  altText: r.altText,
+                  displayOrder: r.displayOrder,
+                  isPrimary: r.isPrimary,
+                }));
+                const { save, images } = await uploadProductImagesAndSave(
+                  productId.trim(),
+                  items,
+                );
+                const ms = Math.round(performance.now() - started);
+                recordResult({
+                  ok: save.ok,
+                  status: save.status,
+                  ms,
+                  json: save.json,
+                  text: save.text,
+                });
+                if (save.ok && images[0]) {
+                  const primary =
+                    images.find((im) => im.isPrimary) ?? images[0];
+                  setImageImageId(primary.id);
+                }
+              } catch (err) {
+                const ms = Math.round(performance.now() - started);
+                const msg = err instanceof Error ? err.message : String(err);
+                recordResult({
+                  ok: false,
+                  status: 0,
+                  ms,
+                  json: { error: msg },
+                  text: msg,
+                });
+              } finally {
+                setImageFilesBusy(false);
+              }
+            }}
+          >
+            {imageFilesBusy ? "Uploading…" : "Upload & save to DB"}
+          </Btn>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Btn
+            disabled={busy || !productId}
+            onClick={() =>
+              run(`/api/admin/products/${encodeURIComponent(productId)}/images`, { method: "GET" })
+            }
+          >
+            GET /admin/products/:id/images
+          </Btn>
+        </div>
+        <div className="mt-3">
+          <label className={LABEL_CLS} htmlFor="image-id">Image id (from list or after upload)</label>
+          <div className="mt-1 flex flex-wrap gap-2">
+            <input
+              id="image-id"
+              className="min-w-[200px] flex-1 rounded border border-zinc-300 px-2 py-1 font-mono text-xs dark:border-zinc-700 dark:bg-zinc-900"
+              value={imageImageId}
+              onChange={(e) => setImageImageId(e.target.value)}
+              placeholder="ProductImage cuid"
+            />
+            <Btn
+              disabled={busy || !productId || !imageImageId}
+              variant="secondary"
+              onClick={() =>
+                run(
+                  `/api/admin/products/${encodeURIComponent(productId)}/images/${encodeURIComponent(imageImageId)}`,
+                  { method: "PATCH", body: imagePatchBody },
+                )
+              }
+            >
+              PATCH (uses JSON below)
+            </Btn>
+            <Btn
+              disabled={busy || !productId || !imageImageId}
+              variant="danger"
+              onClick={() =>
+                run(
+                  `/api/admin/products/${encodeURIComponent(productId)}/images/${encodeURIComponent(imageImageId)}`,
+                  { method: "DELETE" },
+                )
+              }
+            >
+              DELETE image
+            </Btn>
+          </div>
+          <label className={`${LABEL_CLS} mt-2`}>PATCH body</label>
+          <textarea
+            className="mt-1 w-full rounded border border-zinc-300 p-2 font-mono text-xs dark:border-zinc-700 dark:bg-zinc-900"
+            rows={3}
+            value={imagePatchBody}
+            onChange={(e) => setImagePatchBody(e.target.value)}
+          />
         </div>
       </AdminBlock>
 
