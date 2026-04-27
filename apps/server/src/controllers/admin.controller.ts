@@ -2,26 +2,32 @@ import type { Request, Response } from "express";
 import { z } from "zod";
 import { sendSuccess } from "../utils/response.js";
 import {
+  adminAddProductImages,
   adminCreateBrand,
   adminCreateCategory,
   adminCreateProduct,
   adminDeleteBrand,
   adminDeleteCategory,
   adminDeleteProduct,
+  adminDeleteProductImage,
   adminGetOrder,
   adminListBrands,
   adminListCategories,
   adminListOrders,
+  adminListProductImages,
   adminListProducts,
   adminListReviews,
   adminListUsers,
   adminModerateReview,
+  adminRequireProduct,
   adminUpdateBrand,
   adminUpdateCategory,
   adminUpdateOrder,
   adminUpdateProduct,
+  adminUpdateProductImage,
   adminUpdateUser,
 } from "../services/admin.service.js";
+import { signProductImageUpload } from "../services/upload.service.js";
 
 const pagination = z.object({
   page: z.coerce.number().optional(),
@@ -112,6 +118,84 @@ export async function adminRemoveProduct(
   const { id } = z.object({ id: z.string().min(1) }).parse(req.params);
   await adminDeleteProduct(id);
   sendSuccess(res, {}, "Product deactivated");
+}
+
+const signUploadBody = z.object({
+  productId: z.string().min(1),
+});
+
+export async function adminSignUpload(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { productId } = signUploadBody.parse(req.body);
+  await adminRequireProduct(productId);
+  const signed = signProductImageUpload(productId);
+  sendSuccess(res, { signed }, "");
+}
+
+export async function adminGetProductImages(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { id } = z.object({ id: z.string().min(1) }).parse(req.params);
+  const images = await adminListProductImages(id);
+  sendSuccess(res, { images }, "");
+}
+
+const assetMeta = z.object({
+  publicId: z.string().min(1),
+  url: z.string().url(),
+  width: z.number().int().positive().optional(),
+  height: z.number().int().positive().optional(),
+  bytes: z.number().int().positive().optional(),
+  format: z.string().optional(),
+  altText: z.string().max(200).optional(),
+  displayOrder: z.number().int().min(0).max(19).optional(),
+  isPrimary: z.boolean().optional(),
+});
+
+const addImagesBody = z.object({
+  images: z.array(assetMeta).min(1).max(20),
+});
+
+export async function adminPostProductImages(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { id } = z.object({ id: z.string().min(1) }).parse(req.params);
+  const body = addImagesBody.parse(req.body);
+  const images = await adminAddProductImages(id, body.images);
+  sendSuccess(res, { images }, "Images saved");
+}
+
+const patchProductImageBody = z.object({
+  altText: z.string().max(200).nullable().optional(),
+  sortOrder: z.coerce.number().int().min(0).optional(),
+  isPrimary: z.boolean().optional(),
+});
+
+export async function adminPatchProductImage(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { id, imageId } = z
+    .object({ id: z.string().min(1), imageId: z.string().min(1) })
+    .parse(req.params);
+  const body = patchProductImageBody.parse(req.body);
+  const image = await adminUpdateProductImage(id, imageId, body);
+  sendSuccess(res, { image }, "Image updated");
+}
+
+export async function adminRemoveProductImage(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { id, imageId } = z
+    .object({ id: z.string().min(1), imageId: z.string().min(1) })
+    .parse(req.params);
+  await adminDeleteProductImage(id, imageId);
+  sendSuccess(res, {}, "Image removed");
 }
 
 const createBrandBody = z.object({

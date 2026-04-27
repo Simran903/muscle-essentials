@@ -18,6 +18,10 @@ const envSchema = z.object({
     .transform((v) => v === "1" || v === "true"),
   MAGIC_SECRET_KEY: z.string().optional(),
   MAGIC_ENDPOINT: z.string().url().optional(),
+  CLOUDINARY_CLOUD_NAME: z.string().min(1),
+  CLOUDINARY_API_KEY: z.string().min(1),
+  CLOUDINARY_API_SECRET: z.string().min(1),
+  CLOUDINARY_UPLOAD_FOLDER: z.string().default("muscle-essentials/products"),
 });
 
 export type Env = z.infer<typeof envSchema>;

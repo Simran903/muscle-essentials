@@ -2,9 +2,33 @@ import { prisma, Prisma, type ReviewStatus } from "database";
 import { interactiveTransactionOptions } from "../config/transaction.js";
 import { AppError } from "../utils/appError.js";
 import { serializeDecimal } from "../utils/serialize.js";
+import { destroyAsset } from "./upload.service.js";
 
 const defaultTake = 20;
 const maxTake = 100;
+
+/** Max images per product (admin gallery). */
+const maxProductImages = 20;
+
+export type ProductImageAssetInput = {
+  publicId: string;
+  url: string;
+  width?: number;
+  height?: number;
+  bytes?: number;
+  format?: string;
+  altText?: string;
+  /** Order among images in this request (0 = first). Omitted = request order. */
+  displayOrder?: number;
+  isPrimary?: boolean;
+};
+
+export async function adminRequireProduct(productId: string): Promise<void> {
+  const p = await prisma.product.findUnique({ where: { id: productId } });
+  if (!p) {
+    throw new AppError("Product not found", 404);
+  }
+}
 
 type AdminProductRow = Prisma.ProductGetPayload<{
   include: { brand: true; category: true };
@@ -203,6 +227,171 @@ export async function adminDeleteProduct(id: string) {
   await prisma.product.update({
     where: { id },
     data: { isActive: false },
+  });
+}
+
+export async function adminListProductImages(productId: string) {
+  await adminRequireProduct(productId);
+  return prisma.productImage.findMany({
+    where: { productId },
+    orderBy: { sortOrder: "asc" },
+  });
+}
+
+export async function adminAddProductImages(
+  productId: string,
+  images: ProductImageAssetInput[],
+) {
+  await adminRequireProduct(productId);
+  const existingCount = await prisma.productImage.count({
+    where: { productId },
+  });
+  if (images.length === 0) {
+    throw new AppError("At least one image is required", 400);
+  }
+  if (images.length > maxProductImages) {
+    throw new AppError(`At most ${maxProductImages} images per request`, 400);
+  }
+  if (existingCount + images.length > maxProductImages) {
+    throw new AppError(
+      `Product cannot exceed ${maxProductImages} images total`,
+      400,
+    );
+  }
+
+  const hasPrimary = await prisma.productImage.findFirst({
+    where: { productId, isPrimary: true },
+  });
+
+  const primaryInRequest = images.filter((m) => m.isPrimary === true);
+  if (primaryInRequest.length > 1) {
+    throw new AppError("At most one image can be marked primary in a batch", 400);
+  }
+
+  const last = await prisma.productImage.findFirst({
+    where: { productId },
+    orderBy: { sortOrder: "desc" },
+    select: { sortOrder: true },
+  });
+  const baseOrder = (last?.sortOrder ?? -1) + 1;
+
+  const withIndex = images.map((img, requestIndex) => ({
+    img,
+    requestIndex,
+    sortKey: img.displayOrder ?? requestIndex,
+  }));
+  withIndex.sort((a, b) => {
+    if (a.sortKey !== b.sortKey) return a.sortKey - b.sortKey;
+    return a.requestIndex - b.requestIndex;
+  });
+
+  return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const created = [];
+    let nextOrder = baseOrder;
+    for (const { img } of withIndex) {
+      const row = await tx.productImage.create({
+        data: {
+          productId,
+          url: img.url,
+          publicId: img.publicId,
+          width: img.width ?? null,
+          height: img.height ?? null,
+          bytes: img.bytes ?? null,
+          format: img.format ?? null,
+          altText: img.altText?.trim() ? img.altText.trim() : null,
+          sortOrder: nextOrder++,
+          isPrimary: false,
+        },
+      });
+      created.push(row);
+    }
+
+    const explicitPrimary = primaryInRequest[0];
+    if (explicitPrimary) {
+      const target = created.find((c) => c.publicId === explicitPrimary.publicId);
+      if (target) {
+        await tx.productImage.updateMany({
+          where: { productId },
+          data: { isPrimary: false },
+        });
+        await tx.productImage.update({
+          where: { id: target.id },
+          data: { isPrimary: true },
+        });
+      }
+    } else if (!hasPrimary && created[0]) {
+      await tx.productImage.update({
+        where: { id: created[0]!.id },
+        data: { isPrimary: true },
+      });
+    }
+
+    return created;
+  });
+}
+
+export async function adminUpdateProductImage(
+  productId: string,
+  imageId: string,
+  data: Partial<{
+    altText: string | null;
+    sortOrder: number;
+    isPrimary: boolean;
+  }>,
+) {
+  const img = await prisma.productImage.findFirst({
+    where: { id: imageId, productId },
+  });
+  if (!img) {
+    throw new AppError("Image not found", 404);
+  }
+
+  return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    if (data.isPrimary === true) {
+      await tx.productImage.updateMany({
+        where: { productId, id: { not: imageId } },
+        data: { isPrimary: false },
+      });
+    }
+    return tx.productImage.update({
+      where: { id: imageId },
+      data: {
+        ...(data.altText !== undefined ? { altText: data.altText } : {}),
+        ...(data.sortOrder !== undefined ? { sortOrder: data.sortOrder } : {}),
+        ...(data.isPrimary !== undefined ? { isPrimary: data.isPrimary } : {}),
+      },
+    });
+  });
+}
+
+export async function adminDeleteProductImage(
+  productId: string,
+  imageId: string,
+): Promise<void> {
+  const img = await prisma.productImage.findFirst({
+    where: { id: imageId, productId },
+  });
+  if (!img) {
+    throw new AppError("Image not found", 404);
+  }
+
+  await destroyAsset(img.publicId);
+
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const wasPrimary = img.isPrimary;
+    await tx.productImage.delete({ where: { id: imageId } });
+    if (wasPrimary) {
+      const next = await tx.productImage.findFirst({
+        where: { productId },
+        orderBy: { sortOrder: "asc" },
+      });
+      if (next) {
+        await tx.productImage.update({
+          where: { id: next.id },
+          data: { isPrimary: true },
+        });
+      }
+    }
   });
 }
 

@@ -4,6 +4,7 @@ import {
   adminGetCategories,
   adminGetOrderById,
   adminGetOrders,
+  adminGetProductImages,
   adminGetProducts,
   adminGetReviews,
   adminGetUsers,
@@ -11,14 +12,18 @@ import {
   adminPatchCategory,
   adminPatchOrder,
   adminPatchProduct,
+  adminPatchProductImage,
   adminPatchReview,
   adminPatchUser,
   adminPostBrand,
   adminPostCategory,
   adminPostProduct,
+  adminPostProductImages,
   adminRemoveBrand,
   adminRemoveCategory,
   adminRemoveProduct,
+  adminRemoveProductImage,
+  adminSignUpload,
 } from "../controllers/admin.controller.js";
 import { requireAdmin } from "../middleware/admin.middleware.js";
 import { requireAuth } from "../middleware/auth.middleware.js";
@@ -41,6 +46,12 @@ r.get("/admin/products", ...admin, adminGetProducts);
 r.post("/admin/products", ...admin, adminPostProduct);
 r.patch("/admin/products/:id", ...admin, adminPatchProduct);
 r.delete("/admin/products/:id", ...admin, adminRemoveProduct);
+
+r.post("/admin/uploads/sign", ...admin, adminSignUpload);
+r.get("/admin/products/:id/images", ...admin, adminGetProductImages);
+r.post("/admin/products/:id/images", ...admin, adminPostProductImages);
+r.patch("/admin/products/:id/images/:imageId", ...admin, adminPatchProductImage);
+r.delete("/admin/products/:id/images/:imageId", ...admin, adminRemoveProductImage);
 
 r.get("/admin/orders", ...admin, adminGetOrders);
 r.get("/admin/orders/:id", ...admin, adminGetOrderById);
