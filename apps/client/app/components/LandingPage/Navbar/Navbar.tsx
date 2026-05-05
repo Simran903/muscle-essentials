@@ -1,10 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { House, Search, ShoppingCart, Store, User } from "lucide-react"
+import { House, ShoppingCart, Store, User } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 
+import { SearchBar } from "@/app/components/Common/SearchBar"
 import { Button } from "@/app/components/ui/button"
 import {
   NavigationMenu,
@@ -37,20 +38,7 @@ export function Navbar() {
             />
           </Link>
 
-          <div className="mx-4 hidden w-full max-w-md md:block">
-            <label htmlFor="navbar-search" className="sr-only">
-              Search
-            </label>
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-              <input
-                id="navbar-search"
-                type="search"
-                placeholder="Search products, brands, goals..."
-                className="h-10 w-full rounded-full border border-border bg-background pl-11 pr-4 text-sm text-foreground placeholder:text-muted-foreground shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
-              />
-            </div>
-          </div>
+          <SearchBar className="mx-4 hidden w-full max-w-md md:block" />
 
           <NavigationMenuList className="gap-2">
             {navItems.map((item) => (
