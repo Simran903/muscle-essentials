@@ -100,6 +100,7 @@ export async function adminListProducts(page?: number, limit?: number) {
       isActive: p.isActive,
       isFeatured: p.isFeatured,
       isBestseller: p.isBestseller,
+      isDealoftheDay: p.isDealoftheDay,
       categoryId: p.categoryId,
       brand: p.brand
         ? { id: p.brand.id, name: p.brand.name, slug: p.brand.slug }
@@ -128,6 +129,7 @@ export async function adminCreateProduct(data: {
   isActive: boolean;
   isFeatured: boolean;
   isBestseller: boolean;
+  isDealoftheDay: boolean;
 }) {
   const brandId = data.brandId.trim();
   if (!brandId) {
@@ -160,6 +162,7 @@ export async function adminCreateProduct(data: {
       isActive: data.isActive,
       isFeatured: data.isFeatured,
       isBestseller: data.isBestseller,
+      isDealoftheDay: data.isDealoftheDay,
     },
   });
 }
@@ -182,6 +185,7 @@ export async function adminUpdateProduct(
     isActive: boolean;
     isFeatured: boolean;
     isBestseller: boolean;
+    isDealoftheDay: boolean;
   }>,
 ) {
   const existing = await prisma.product.findUnique({ where: { id } });
@@ -226,6 +230,7 @@ export async function adminUpdateProduct(
   if (data.isActive !== undefined) update.isActive = data.isActive;
   if (data.isFeatured !== undefined) update.isFeatured = data.isFeatured;
   if (data.isBestseller !== undefined) update.isBestseller = data.isBestseller;
+  if (data.isDealoftheDay !== undefined) update.isDealoftheDay = data.isDealoftheDay;
   return prisma.product.update({ where: { id }, data: update });
 }
 

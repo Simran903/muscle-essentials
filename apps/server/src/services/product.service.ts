@@ -29,6 +29,7 @@ function mapProduct(p: ProductFull) {
     isActive: p.isActive,
     isFeatured: p.isFeatured,
     isBestseller: p.isBestseller,
+    isDealoftheDay: p.isDealoftheDay,
     brand: p.brand
       ? { id: p.brand.id, name: p.brand.name, slug: p.brand.slug }
       : null,
