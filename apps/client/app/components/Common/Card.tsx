@@ -19,6 +19,7 @@ type ProductCardProps = {
   countryCode?: string
   onAddToCart?: () => void
   onBuyNow?: () => void
+  onCardClick?: () => void
   className?: string
 }
 
@@ -39,14 +40,31 @@ export function Card({
   originalPrice,
   rating = 4.2,
   onAddToCart,
+  onCardClick,
   className,
 }: ProductCardProps) {
   const [imageLoaded, setImageLoaded] = React.useState(false)
 
   return (
     <article
+      role={onCardClick ? "button" : undefined}
+      tabIndex={onCardClick ? 0 : undefined}
+      onClick={(event) => {
+        if (!onCardClick) return
+        if ((event.target as HTMLElement).closest("button")) return
+        onCardClick()
+      }}
+      onKeyDown={(event) => {
+        if (!onCardClick) return
+        if (event.key !== "Enter" && event.key !== " ") return
+        event.preventDefault()
+        onCardClick()
+      }}
       className={cn(
-        "w-full max-w-[20rem] overflow-hidden rounded-3xl border border-border bg-card text-card-foreground shadow-sm",
+        "flex w-full max-w-[20rem] flex-col overflow-hidden rounded-3xl border border-border bg-card text-card-foreground shadow-sm",
+        onCardClick
+          ? "cursor-pointer transition hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+          : "",
         className
       )}
     >
@@ -66,18 +84,20 @@ export function Card({
           />
         </div>
 
-        {subtitle ? (
-          <p className="mt-3 text-sm text-zinc-300">{subtitle}</p>
-        ) : null}
+        
       </div>
 
-      <div className="space-y-5 p-5">
+      <div className="flex flex-1 flex-col space-y-3 p-5">
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center gap-1 rounded-md bg-cyan-500 px-2 py-1 text-xs font-semibold text-white">
             {rating.toFixed(1)}
             <Star className="size-3 fill-current" />
           </span>
         </div>
+
+        {subtitle ? (
+          <p className="text-sm text-zinc-500">{subtitle}</p>
+        ) : null}
 
         <h3 className="line-clamp-2 text-base font-medium leading-6 sm:text-lg">{title}</h3>
 
@@ -90,7 +110,17 @@ export function Card({
           ) : null}
         </div>
 
-        <div className="space-y-2">
+        <div className="mt-auto space-y-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            className="w-full cursor-pointer"
+            onClick={onCardClick}
+            disabled={!onCardClick}
+          >
+            View Product
+          </Button>
           <Button
             type="button"
             variant="outline"

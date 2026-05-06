@@ -17,6 +17,7 @@ function mapProduct(p: ProductFull) {
   return {
     id: p.id,
     title: p.title,
+    createdAt: p.createdAt.toISOString(),
     slug: p.slug,
     shortDesc: p.shortDesc,
     description: p.description,

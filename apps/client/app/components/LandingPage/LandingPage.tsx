@@ -3,7 +3,6 @@
 import React from "react"
 import { motion } from "motion/react"
 import { Skeleton } from "@/app/components/ui/skeleton"
-import { Navbar } from "./Navbar/Navbar"
 import { CarouselComponent } from "./Carousel/Carousel"
 import { FeaturedSection } from "./Sections/FeaturedSection"
 import { BestsellersSection } from "./Sections/BestsellersSection"
@@ -134,9 +133,12 @@ export function LandingMainSkeleton() {
 }
 
 const LandingPage = () => {
+  React.useEffect(() => {
+    window.dispatchEvent(new Event("auth:force-check"))
+  }, [])
+
   return (
     <div className="flex min-h-dvh flex-col bg-background">
-      <Navbar />
       <main className="flex w-full flex-1 flex-col pb-24 sm:pb-16">
         <motion.div
           className="py-4 pb-8"

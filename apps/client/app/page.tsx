@@ -6,7 +6,6 @@ import { Michroma } from "next/font/google"
 import LandingPage, {
   LandingMainSkeleton,
 } from "@/app/components/LandingPage/LandingPage"
-import { Navbar } from "@/app/components/LandingPage/Navbar/Navbar"
 
 const SPLASH_DURATION_MS = 1000
 const michroma = Michroma({ subsets: ["latin"], weight: "400" })
@@ -43,7 +42,6 @@ const HomePage = () => {
   if (showSplash === null) {
     return (
       <div className="min-h-screen bg-background">
-        <Navbar />
         <LandingMainSkeleton />
       </div>
     )
