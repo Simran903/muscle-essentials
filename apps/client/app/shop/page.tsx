@@ -15,6 +15,7 @@ import {
 import {
   BRAND_PICKER_DEFAULT,
   CATEGORY_PICKER_DEFAULT,
+  FLAVOUR_PICKER_DEFAULT,
   ShopSidebar,
   type ShopSortBy,
 } from "./ShopSidebar"
@@ -28,13 +29,18 @@ export default function ShopPage() {
   const [data, setData] = React.useState<ProductListResponse | null>(null)
   const [brandPickerValue, setBrandPickerValue] = React.useState(BRAND_PICKER_DEFAULT)
   const [categoryPickerValue, setCategoryPickerValue] = React.useState(CATEGORY_PICKER_DEFAULT)
+  const [flavourPickerValue, setFlavourPickerValue] = React.useState(FLAVOUR_PICKER_DEFAULT)
   const [selectedBrandSlugs, setSelectedBrandSlugs] = React.useState<string[]>([])
   const [selectedCategorySlugs, setSelectedCategorySlugs] = React.useState<string[]>([])
+  const [selectedFlavours, setSelectedFlavours] = React.useState<string[]>([])
   const [brandOptions, setBrandOptions] = React.useState<Array<{ value: string; label: string }>>([
     { value: BRAND_PICKER_DEFAULT, label: BRAND_PICKER_DEFAULT },
   ])
   const [categoryOptions, setCategoryOptions] = React.useState<Array<{ value: string; label: string }>>([
     { value: CATEGORY_PICKER_DEFAULT, label: CATEGORY_PICKER_DEFAULT },
+  ])
+  const [flavourOptions, setFlavourOptions] = React.useState<Array<{ value: string; label: string }>>([
+    { value: FLAVOUR_PICKER_DEFAULT, label: FLAVOUR_PICKER_DEFAULT },
   ])
   const [featuredOnly, setFeaturedOnly] = React.useState(false)
   const [bestsellerOnly, setBestsellerOnly] = React.useState(false)
@@ -45,8 +51,10 @@ export default function ShopPage() {
   const resetFilters = React.useCallback(() => {
     setBrandPickerValue(BRAND_PICKER_DEFAULT)
     setCategoryPickerValue(CATEGORY_PICKER_DEFAULT)
+    setFlavourPickerValue(FLAVOUR_PICKER_DEFAULT)
     setSelectedBrandSlugs([])
     setSelectedCategorySlugs([])
+    setSelectedFlavours([])
     setFeaturedOnly(false)
     setBestsellerOnly(false)
     setSortBy("default")
@@ -63,6 +71,7 @@ export default function ShopPage() {
 
         const brandMap = new Map<string, string>()
         const categoryMap = new Map<string, string>()
+        const flavourSet = new Set<string>()
 
         response.items.forEach((product) => {
           if (product.brand?.slug && product.brand?.name) {
@@ -71,6 +80,8 @@ export default function ShopPage() {
           if (product.category?.slug && product.category?.name) {
             categoryMap.set(product.category.slug, product.category.name)
           }
+          const flavour = product.flavour?.trim()
+          if (flavour) flavourSet.add(flavour)
         })
 
         setBrandOptions([
@@ -85,6 +96,13 @@ export default function ShopPage() {
           ...Array.from(categoryMap.entries())
             .sort((a, b) => a[1].localeCompare(b[1]))
             .map(([slug, name]) => ({ value: slug, label: name })),
+        ])
+
+        setFlavourOptions([
+          { value: FLAVOUR_PICKER_DEFAULT, label: FLAVOUR_PICKER_DEFAULT },
+          ...Array.from(flavourSet)
+            .sort((a, b) => a.localeCompare(b))
+            .map((flavour) => ({ value: flavour, label: flavour })),
         ])
       } catch {
         // Filter options are non-critical; avoid interrupting product list rendering.
@@ -140,9 +158,14 @@ export default function ShopPage() {
             (item) => item.category?.slug && selectedCategorySlugs.includes(item.category.slug)
           )
 
+    const flavourFiltered =
+      selectedFlavours.length === 0
+        ? categoryFiltered
+        : categoryFiltered.filter((item) => selectedFlavours.includes(item.flavour))
+
     const bestsellerFiltered = bestsellerOnly
-      ? categoryFiltered.filter((item) => item.isBestseller)
-      : categoryFiltered
+      ? flavourFiltered.filter((item) => item.isBestseller)
+      : flavourFiltered
 
     const featuredFiltered = featuredOnly
       ? bestsellerFiltered.filter((item) => item.isFeatured)
@@ -167,11 +190,20 @@ export default function ShopPage() {
     }
 
     return sorted
-  }, [data?.items, selectedBrandSlugs, selectedCategorySlugs, sortBy, bestsellerOnly, featuredOnly])
+  }, [
+    data?.items,
+    selectedBrandSlugs,
+    selectedCategorySlugs,
+    selectedFlavours,
+    sortBy,
+    bestsellerOnly,
+    featuredOnly,
+  ])
 
   const hasClientFilters =
     selectedBrandSlugs.length > 0 ||
     selectedCategorySlugs.length > 0 ||
+    selectedFlavours.length > 0 ||
     featuredOnly ||
     bestsellerOnly ||
     sortBy !== "default"
@@ -189,14 +221,19 @@ export default function ShopPage() {
         isLoading={isLoading}
         brandPickerValue={brandPickerValue}
         categoryPickerValue={categoryPickerValue}
+        flavourPickerValue={flavourPickerValue}
         onBrandPickerValueChange={setBrandPickerValue}
         onCategoryPickerValueChange={setCategoryPickerValue}
+        onFlavourPickerValueChange={setFlavourPickerValue}
         brandOptions={brandOptions}
         categoryOptions={categoryOptions}
+        flavourOptions={flavourOptions}
         selectedBrandSlugs={selectedBrandSlugs}
         selectedCategorySlugs={selectedCategorySlugs}
+        selectedFlavours={selectedFlavours}
         onSelectedBrandSlugsChange={setSelectedBrandSlugs}
         onSelectedCategorySlugsChange={setSelectedCategorySlugs}
+        onSelectedFlavoursChange={setSelectedFlavours}
         featuredOnly={featuredOnly}
         onFeaturedOnlyChange={setFeaturedOnly}
         bestsellerOnly={bestsellerOnly}

@@ -18,6 +18,7 @@ import {
 
 export const BRAND_PICKER_DEFAULT = "Select brand"
 export const CATEGORY_PICKER_DEFAULT = "Select category"
+export const FLAVOUR_PICKER_DEFAULT = "Select flavour"
 
 export type ShopSortBy =
   | "default"
@@ -34,14 +35,19 @@ export type ShopSidebarProps = {
   isLoading: boolean
   brandPickerValue: string
   categoryPickerValue: string
+  flavourPickerValue: string
   onBrandPickerValueChange: (value: string) => void
   onCategoryPickerValueChange: (value: string) => void
+  onFlavourPickerValueChange: (value: string) => void
   brandOptions: DropdownOption[]
   categoryOptions: DropdownOption[]
+  flavourOptions: DropdownOption[]
   selectedBrandSlugs: string[]
   selectedCategorySlugs: string[]
+  selectedFlavours: string[]
   onSelectedBrandSlugsChange: React.Dispatch<React.SetStateAction<string[]>>
   onSelectedCategorySlugsChange: React.Dispatch<React.SetStateAction<string[]>>
+  onSelectedFlavoursChange: React.Dispatch<React.SetStateAction<string[]>>
   featuredOnly: boolean
   onFeaturedOnlyChange: (value: boolean) => void
   bestsellerOnly: boolean
@@ -56,14 +62,19 @@ export function ShopSidebar({
   isLoading,
   brandPickerValue,
   categoryPickerValue,
+  flavourPickerValue,
   onBrandPickerValueChange,
   onCategoryPickerValueChange,
+  onFlavourPickerValueChange,
   brandOptions,
   categoryOptions,
+  flavourOptions,
   selectedBrandSlugs,
   selectedCategorySlugs,
+  selectedFlavours,
   onSelectedBrandSlugsChange,
   onSelectedCategorySlugsChange,
+  onSelectedFlavoursChange,
   featuredOnly,
   onFeaturedOnlyChange,
   bestsellerOnly,
@@ -100,6 +111,13 @@ export function ShopSidebar({
         "date-asc": "Date, old to new",
       })[sortBy] ?? sortBy,
     [sortBy]
+  )
+  const selectedFlavourLabels = React.useMemo(
+    () =>
+      selectedFlavours.map(
+        (value) => flavourOptions.find((option) => option.value === value)?.label ?? value
+      ),
+    [flavourOptions, selectedFlavours]
   )
 
   return (
@@ -187,6 +205,39 @@ export function ShopSidebar({
                           onRemove={() => {
                             onSelectedCategorySlugsChange((prev) =>
                               prev.filter((value) => value !== slug)
+                            )
+                            onResetPage()
+                          }}
+                        />
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs text-muted-foreground">Flavour</label>
+                  <Dropdown
+                    value={flavourPickerValue}
+                    onChange={(value) => {
+                      if (value !== FLAVOUR_PICKER_DEFAULT) {
+                        onSelectedFlavoursChange((prev) =>
+                          prev.includes(value) ? prev : [...prev, value]
+                        )
+                      }
+                      onFlavourPickerValueChange(FLAVOUR_PICKER_DEFAULT)
+                      onResetPage()
+                    }}
+                    options={flavourOptions}
+                  />
+                  {selectedFlavours.length ? (
+                    <div className="flex flex-wrap gap-2 pt-4">
+                      {selectedFlavours.map((value, index) => (
+                        <Pill
+                          key={value}
+                          label={selectedFlavourLabels[index] ?? value}
+                          onRemove={() => {
+                            onSelectedFlavoursChange((prev) =>
+                              prev.filter((flavour) => flavour !== value)
                             )
                             onResetPage()
                           }}

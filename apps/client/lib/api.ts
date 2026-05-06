@@ -30,6 +30,7 @@ export type ProductItem = {
   createdAt: string
   slug: string
   shortDesc: string | null
+  flavour: string
   price: number | string
   currency: string
   stockQuantity: number
