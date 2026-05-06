@@ -98,6 +98,8 @@ export async function adminListProducts(page?: number, limit?: number) {
       price: serializeDecimal(p.price),
       stockQuantity: p.stockQuantity,
       isActive: p.isActive,
+      isFeatured: p.isFeatured,
+      isBestseller: p.isBestseller,
       categoryId: p.categoryId,
       brand: p.brand
         ? { id: p.brand.id, name: p.brand.name, slug: p.brand.slug }
@@ -125,6 +127,7 @@ export async function adminCreateProduct(data: {
   currency: string;
   isActive: boolean;
   isFeatured: boolean;
+  isBestseller: boolean;
 }) {
   const brandId = data.brandId.trim();
   if (!brandId) {
@@ -156,6 +159,7 @@ export async function adminCreateProduct(data: {
       currency: data.currency,
       isActive: data.isActive,
       isFeatured: data.isFeatured,
+      isBestseller: data.isBestseller,
     },
   });
 }
@@ -177,6 +181,7 @@ export async function adminUpdateProduct(
     stockQuantity: number;
     isActive: boolean;
     isFeatured: boolean;
+    isBestseller: boolean;
   }>,
 ) {
   const existing = await prisma.product.findUnique({ where: { id } });
@@ -220,6 +225,7 @@ export async function adminUpdateProduct(
   if (data.stockQuantity !== undefined) update.stockQuantity = data.stockQuantity;
   if (data.isActive !== undefined) update.isActive = data.isActive;
   if (data.isFeatured !== undefined) update.isFeatured = data.isFeatured;
+  if (data.isBestseller !== undefined) update.isBestseller = data.isBestseller;
   return prisma.product.update({ where: { id }, data: update });
 }
 

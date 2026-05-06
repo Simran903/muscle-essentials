@@ -88,6 +88,7 @@ const createProductBody = z.object({
   currency: z.string().min(1),
   isActive: z.boolean(),
   isFeatured: z.boolean(),
+  isBestseller: z.boolean(),
 });
 
 export async function adminPostProduct(

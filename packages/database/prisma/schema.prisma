@@ -160,6 +160,7 @@ model Product {
   stockQuantity   Int               @default(0)
   isActive        Boolean           @default(true)
   isFeatured      Boolean           @default(false)
+  isBestseller    Boolean           @default(false)
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   brand           Brand             @relation(fields: [brandId], references: [id], onDelete: Restrict)
@@ -173,6 +174,7 @@ model Product {
   @@index([brandId, isActive])
   @@index([categoryId])
   @@index([isFeatured, isActive])
+  @@index([isBestseller, isActive])
 }
 
 model ProductImage {
