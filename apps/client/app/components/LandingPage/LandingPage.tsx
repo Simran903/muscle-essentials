@@ -15,6 +15,7 @@ import { TestimonialsSection } from "./Sections/Testimonials"
 import { ThemeFloatingToggle } from "./ThemeFloatingToggle"
 import { BrandCarousel } from "./Carousel/BrandCarousel"
 import { Footer } from "./Footer/Footer"
+import { getProducts, type ProductItem } from "@/lib/api"
 
 function SectionBlockSkeleton({
   withCtaRow,
@@ -133,9 +134,42 @@ export function LandingMainSkeleton() {
 }
 
 const LandingPage = () => {
+  const [landingProducts, setLandingProducts] = React.useState<ProductItem[]>([])
+
   React.useEffect(() => {
     window.dispatchEvent(new Event("auth:force-check"))
   }, [])
+
+  React.useEffect(() => {
+    let cancelled = false
+
+    const loadLandingProducts = async () => {
+      try {
+        const response = await getProducts({ page: 1, limit: 40 })
+        if (!cancelled) setLandingProducts(response.items)
+      } catch {
+        if (!cancelled) setLandingProducts([])
+      }
+    }
+
+    void loadLandingProducts()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const dealOfTheDayProducts = React.useMemo(
+    () => landingProducts.filter((item) => item.isDealoftheDay).slice(0, 8),
+    [landingProducts]
+  )
+  const bestSellerProducts = React.useMemo(
+    () => landingProducts.filter((item) => item.isBestseller).slice(0, 10),
+    [landingProducts]
+  )
+  const featuredProducts = React.useMemo(
+    () => landingProducts.filter((item) => item.isFeatured).slice(0, 8),
+    [landingProducts]
+  )
 
   return (
     <div className="flex min-h-dvh flex-col bg-background">
@@ -157,7 +191,7 @@ const LandingPage = () => {
           transition={{ duration: 0.55, delay: 0.06, ease: "easeOut" }}
           viewport={{ once: true, amount: 0.2 }}
         >
-          <DealoftheDaySection />
+          <DealoftheDaySection products={dealOfTheDayProducts} />
         </motion.div>
         <motion.div
           className="py-10"
@@ -166,7 +200,7 @@ const LandingPage = () => {
           transition={{ duration: 0.55, delay: 0.08, ease: "easeOut" }}
           viewport={{ once: true, amount: 0.2 }}
         >
-          <BestsellersSection />
+          <BestsellersSection products={bestSellerProducts} />
         </motion.div>
         <motion.div
           className="py-10"
@@ -175,7 +209,7 @@ const LandingPage = () => {
           transition={{ duration: 0.55, delay: 0.1, ease: "easeOut" }}
           viewport={{ once: true, amount: 0.2 }}
         >
-          <FeaturedSection />
+          <FeaturedSection products={featuredProducts} />
         </motion.div>
         <motion.div
           className="py-10"

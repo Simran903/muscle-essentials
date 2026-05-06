@@ -1,10 +1,12 @@
 "use client"
 
+import React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
 import { Card } from "@/app/components/Common/Card"
 import { SectionHeading } from "@/app/components/Common/SectionHeading"
+import { type ProductItem } from "@/lib/api"
 import { Button } from "@/app/components/ui/button"
 import {
   Carousel,
@@ -14,50 +16,11 @@ import {
   CarouselPrevious,
 } from "@/app/components/ui/carousel"
 
-const dealOfTheDayProducts = [
-  {
-    id: "1",
-    slug: "muscleblaze-biozyme-whey-protein-deal-of-the-day",
-    imageSrc: "https://img10.hkrtcdn.com/44105/bnr_4410499_o.jpg",
-    imageAlt: "Whey protein daily deal",
-    title: "MuscleBlaze Biozyme Whey Protein - Deal of the Day",
-    price: 4399,
-    originalPrice: 6299,
-    rating: 4.5,
-  },
-  {
-    id: "2",
-    slug: "micronized-creatine-monohydrate-limited-day-offer",
-    imageSrc: "https://img2.hkrtcdn.com/43582/bnr_4358161_o.jpg",
-    imageAlt: "Creatine daily deal",
-    title: "Micronized Creatine Monohydrate - Limited Day Offer",
-    price: 799,
-    originalPrice: 1299,
-    rating: 4.4,
-  },
-  {
-    id: "3",
-    slug: "pre-workout-performance-formula-flash-price",
-    imageSrc: "https://img2.hkrtcdn.com/44106/bnr_4410581_o.jpg",
-    imageAlt: "Pre-workout daily deal",
-    title: "Pre-Workout Performance Formula - Flash Price",
-    price: 1399,
-    originalPrice: 2199,
-    rating: 4.3,
-  },
-  {
-    id: "4",
-    slug: "triple-strength-fish-oil-softgels-today-only",
-    imageSrc: "https://img4.hkrtcdn.com/44106/bnr_4410503_o.jpg",
-    imageAlt: "Fish oil daily deal",
-    title: "Triple Strength Fish Oil Softgels - Today Only",
-    price: 699,
-    originalPrice: 1199,
-    rating: 4.2,
-  },
-]
+type DealoftheDaySectionProps = {
+  products: ProductItem[]
+}
 
-export const DealoftheDaySection = () => {
+export const DealoftheDaySection = ({ products }: DealoftheDaySectionProps) => {
   const router = useRouter()
 
   return (
@@ -75,18 +38,17 @@ export const DealoftheDaySection = () => {
 
         <Carousel opts={{ align: "start", loop: true }} className="mt-6 w-full">
           <CarouselContent>
-            {dealOfTheDayProducts.map((product) => (
+            {products.map((product) => (
               <CarouselItem
                 key={product.id}
                 className="basis-[85%] sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
               >
                 <Card
-                  imageSrc={product.imageSrc}
-                  imageAlt={product.imageAlt}
+                  imageSrc={product.images.find((image) => image.isPrimary)?.url ?? product.images[0]?.url ?? "/images/placeholder.jpg"}
+                  imageAlt={product.images.find((image) => image.isPrimary)?.altText ?? product.title}
                   title={product.title}
-                  price={product.price}
-                  originalPrice={product.originalPrice}
-                  rating={product.rating}
+                  subtitle={product.brand?.name ?? "Muscle Essentials"}
+                  price={Number(product.price)}
                   onCardClick={() => router.push(`/shop/${product.slug}`)}
                   className="max-w-none rounded-2xl"
                 />
