@@ -392,4 +392,5 @@ export {
   SidebarProvider,
   SidebarSkeleton,
   SidebarTrigger,
+  useSidebar,
 }

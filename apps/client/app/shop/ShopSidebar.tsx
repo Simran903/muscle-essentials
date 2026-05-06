@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import { X } from "lucide-react"
 import { Dropdown } from "@/app/components/Common/Dropdown"
 import { Pill } from "@/app/components/Common/Pill"
 import { Button } from "@/app/components/ui/button"
@@ -12,6 +13,7 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarSkeleton,
+  useSidebar,
 } from "@/app/components/ui/sidebar"
 
 export const BRAND_PICKER_DEFAULT = "Select brand"
@@ -42,6 +44,8 @@ export type ShopSidebarProps = {
   onSelectedCategorySlugsChange: React.Dispatch<React.SetStateAction<string[]>>
   featuredOnly: boolean
   onFeaturedOnlyChange: (value: boolean) => void
+  bestsellerOnly: boolean
+  onBestsellerOnlyChange: (value: boolean) => void
   sortBy: ShopSortBy
   onSortByChange: (value: ShopSortBy) => void
   onResetFilters: () => void
@@ -62,11 +66,14 @@ export function ShopSidebar({
   onSelectedCategorySlugsChange,
   featuredOnly,
   onFeaturedOnlyChange,
+  bestsellerOnly,
+  onBestsellerOnlyChange,
   sortBy,
   onSortByChange,
   onResetFilters,
   onResetPage,
 }: ShopSidebarProps) {
+  const { setOpenMobile } = useSidebar()
   const selectedBrandLabels = React.useMemo(
     () =>
       selectedBrandSlugs.map(
@@ -98,7 +105,19 @@ export function ShopSidebar({
   return (
     <Sidebar variant="inset" collapsible="offcanvas">
       <SidebarHeader>
-        <p className="px-2 pt-1 text-sm font-semibold text-sidebar-foreground">Shop Controls</p>
+        <div className="flex items-center justify-between px-2 pt-1">
+          <p className="text-sm font-semibold text-sidebar-foreground">Shop Controls</p>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className="md:hidden"
+            onClick={() => setOpenMobile(false)}
+          >
+            <X className="size-4" />
+            <span className="sr-only">Close sidebar</span>
+          </Button>
+        </div>
       </SidebarHeader>
       <SidebarContent>
         {isLoading ? (
@@ -204,6 +223,38 @@ export function ShopSidebar({
                     label="Featured only"
                     onRemove={() => {
                       onFeaturedOnlyChange(false)
+                      onResetPage()
+                    }}
+                  />
+                ) : null}
+
+                <div className="flex items-center justify-between gap-2 pt-2">
+                  <span className="text-sm text-foreground">Bestseller only</span>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={bestsellerOnly}
+                    onClick={() => {
+                      onBestsellerOnlyChange(!bestsellerOnly)
+                      onResetPage()
+                    }}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      bestsellerOnly ? "bg-[#F1C232]" : "bg-muted"
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
+                        bestsellerOnly ? "translate-x-5" : "translate-x-0.5"
+                      }`}
+                    />
+                    <span className="sr-only">Toggle bestseller only</span>
+                  </button>
+                </div>
+                {bestsellerOnly ? (
+                  <Pill
+                    label="Bestseller only"
+                    onRemove={() => {
+                      onBestsellerOnlyChange(false)
                       onResetPage()
                     }}
                   />

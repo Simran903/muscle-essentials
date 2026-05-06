@@ -37,6 +37,7 @@ export default function ShopPage() {
     { value: CATEGORY_PICKER_DEFAULT, label: CATEGORY_PICKER_DEFAULT },
   ])
   const [featuredOnly, setFeaturedOnly] = React.useState(false)
+  const [bestsellerOnly, setBestsellerOnly] = React.useState(false)
   const [sortBy, setSortBy] = React.useState<ShopSortBy>("default")
 
   const resetPage = React.useCallback(() => setPage(1), [])
@@ -47,6 +48,7 @@ export default function ShopPage() {
     setSelectedBrandSlugs([])
     setSelectedCategorySlugs([])
     setFeaturedOnly(false)
+    setBestsellerOnly(false)
     setSortBy("default")
     setPage(1)
   }, [])
@@ -104,7 +106,6 @@ export default function ShopPage() {
         const response = await getProducts({
           page,
           limit: PAGE_SIZE,
-          featured: featuredOnly || undefined,
         })
         if (!cancelled) {
           setData(response)
@@ -123,7 +124,7 @@ export default function ShopPage() {
     return () => {
       cancelled = true
     }
-  }, [featuredOnly, page])
+  }, [page])
 
   const visibleItems = React.useMemo(() => {
     const items = [...(data?.items ?? [])]
@@ -139,7 +140,15 @@ export default function ShopPage() {
             (item) => item.category?.slug && selectedCategorySlugs.includes(item.category.slug)
           )
 
-    const sorted = [...categoryFiltered]
+    const bestsellerFiltered = bestsellerOnly
+      ? categoryFiltered.filter((item) => item.isBestseller)
+      : categoryFiltered
+
+    const featuredFiltered = featuredOnly
+      ? bestsellerFiltered.filter((item) => item.isFeatured)
+      : bestsellerFiltered
+
+    const sorted = [...featuredFiltered]
 
     const createdMs = (p: (typeof sorted)[number]) => new Date(p.createdAt).getTime()
 
@@ -158,10 +167,14 @@ export default function ShopPage() {
     }
 
     return sorted
-  }, [data?.items, selectedBrandSlugs, selectedCategorySlugs, sortBy])
+  }, [data?.items, selectedBrandSlugs, selectedCategorySlugs, sortBy, bestsellerOnly, featuredOnly])
 
   const hasClientFilters =
-    selectedBrandSlugs.length > 0 || selectedCategorySlugs.length > 0 || sortBy !== "default"
+    selectedBrandSlugs.length > 0 ||
+    selectedCategorySlugs.length > 0 ||
+    featuredOnly ||
+    bestsellerOnly ||
+    sortBy !== "default"
   const hasPrev = hasClientFilters ? false : (data?.pagination.page ?? 1) > 1
   const hasNext = hasClientFilters
     ? false
@@ -186,6 +199,8 @@ export default function ShopPage() {
         onSelectedCategorySlugsChange={setSelectedCategorySlugs}
         featuredOnly={featuredOnly}
         onFeaturedOnlyChange={setFeaturedOnly}
+        bestsellerOnly={bestsellerOnly}
+        onBestsellerOnlyChange={setBestsellerOnly}
         sortBy={sortBy}
         onSortByChange={setSortBy}
         onResetFilters={resetFilters}
@@ -193,17 +208,24 @@ export default function ShopPage() {
       />
 
       <SidebarInset>
-        <main className="mx-auto w-full max-w-360  px-4 py-6 sm:px-6">
-          <div className="mb-8 flex items-end justify-between gap-4">
-            <div>
-              <div className="mb-3 md:hidden">
+        <main className="mx-auto w-full max-w-screen-2xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+          <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+            <div className="min-w-0">
+              <div className="mb-2 md:hidden">
                 <SidebarTrigger />
               </div>
-            <h1 className="text-3xl font-normal tracking-tight text-foreground sm:text-4xl">All Products</h1>
-            <p className="text-sm text-muted-foreground">Explore all of the tested and vetted supplements sold on Muscle Essentials! Use our filter or sort by features to find your stack.</p>
+              <h1 className="text-2xl font-normal tracking-tight text-foreground sm:text-3xl lg:text-4xl">
+                All Products
+              </h1>
+              <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+                Explore all of the tested and vetted supplements sold on Muscle Essentials! Use our
+                filter or sort by features to find your stack.
+              </p>
             </div>
             {!isLoading && data ? (
-              <p className="text-lg font-semibold text-foreground">({productCount} products)</p>
+              <p className="shrink-0 text-sm font-semibold text-foreground sm:text-base lg:text-lg">
+                ({productCount} products)
+              </p>
             ) : null}
           </div>
 
