@@ -1,6 +1,7 @@
 "use client"
 
 import { Card } from "@/app/components/Common/Card"
+import { useRouter } from "next/navigation"
 import { SectionHeading } from "@/app/components/Common/SectionHeading"
 import {
   Carousel,
@@ -13,6 +14,7 @@ import {
 const featuredProducts = [
   {
     id: "1",
+    slug: "performance-nutrition-whey-creatine-pre-workout-picks",
     imageSrc: "https://img10.hkrtcdn.com/44105/bnr_4410499_o.jpg",
     imageAlt: "Performance nutrition supplements",
     title: "Performance Nutrition — whey, creatine & pre-workout picks",
@@ -23,6 +25,7 @@ const featuredProducts = [
   },
   {
     id: "2",
+    slug: "recovery-essentials-aminos-hydration-sleep-support",
     imageSrc: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=1200&q=80",
     imageAlt: "Recovery essentials",
     title: "Recovery Essentials — aminos, hydration & sleep support",
@@ -33,6 +36,7 @@ const featuredProducts = [
   },
   {
     id: "3",
+    slug: "goal-based-combos-stacks-for-strength-lean-gain-fat-loss",
     imageSrc: "https://img2.hkrtcdn.com/43582/bnr_4358161_o.jpg",
     imageAlt: "Goal-based supplement stacks",
     title: "Goal-Based Combos — stacks for strength, lean gain & fat loss",
@@ -43,6 +47,7 @@ const featuredProducts = [
   },
   {
     id: "4",
+    slug: "authentic-brands-only-transparent-labels-quality-sourcing",
     imageSrc: "https://images.unsplash.com/photo-1545231027-637d2f6210f8?auto=format&fit=crop&w=1200&q=80",
     imageAlt: "Trusted supplement brands",
     title: "Authentic Brands Only — transparent labels & quality sourcing",
@@ -54,6 +59,8 @@ const featuredProducts = [
 ]
 
 export const FeaturedSection = () => {
+  const router = useRouter()
+
   return (
     <section id="featured" className="mx-auto w-full max-w-360 px-4 pb-12 pt-6 sm:pt-8">
       <SectionHeading
@@ -75,6 +82,7 @@ export const FeaturedSection = () => {
                   price={product.price}
                   originalPrice={product.originalPrice}
                   rating={product.rating}
+                  onCardClick={() => router.push(`/shop/${product.slug}`)}
                   className={product.className}
                 />
               </CarouselItem>
@@ -94,6 +102,7 @@ export const FeaturedSection = () => {
               price={product.price}
               originalPrice={product.originalPrice}
               rating={product.rating}
+              onCardClick={() => router.push(`/shop/${product.slug}`)}
               className={product.className}
             />
           ))}

@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 import { Card } from "@/app/components/Common/Card"
 import { SectionHeading } from "@/app/components/Common/SectionHeading"
@@ -16,6 +17,7 @@ import {
 const comboProducts = [
   {
     id: "1",
+    slug: "biozyme-whey-micronized-creatine-stack",
     imageSrc: "https://img10.hkrtcdn.com/44105/bnr_4410499_o.jpg",
     imageAlt: "Whey and creatine combo",
     title: "Biozyme Whey + Micronized Creatine Stack",
@@ -25,6 +27,7 @@ const comboProducts = [
   },
   {
     id: "2",
+    slug: "mass-gainer-natural-peanut-butter-combo",
     imageSrc: "https://img2.hkrtcdn.com/43582/bnr_4358161_o.jpg",
     imageAlt: "Mass gainer and peanut butter combo",
     title: "Mass Gainer + Natural Peanut Butter Combo",
@@ -34,6 +37,7 @@ const comboProducts = [
   },
   {
     id: "3",
+    slug: "pre-workout-eaa-recovery-combo-pack",
     imageSrc: "https://img2.hkrtcdn.com/44106/bnr_4410581_o.jpg",
     imageAlt: "Pre-workout and amino combo",
     title: "Pre-Workout + EAA Recovery Combo Pack",
@@ -43,6 +47,7 @@ const comboProducts = [
   },
   {
     id: "4",
+    slug: "multivitamin-fish-oil-daily-wellness-stack",
     imageSrc: "https://img4.hkrtcdn.com/44106/bnr_4410503_o.jpg",
     imageAlt: "Daily wellness combo",
     title: "Multivitamin + Fish Oil Daily Wellness Stack",
@@ -53,6 +58,8 @@ const comboProducts = [
 ]
 
 export const CombosSection = () => {
+  const router = useRouter()
+
   return (
     <section id="combos" className="mx-auto w-full max-w-360 px-4 py-12">
       <div>
@@ -80,6 +87,7 @@ export const CombosSection = () => {
                   price={product.price}
                   originalPrice={product.originalPrice}
                   rating={product.rating}
+                  onCardClick={() => router.push(`/shop/${product.slug}`)}
                   className="max-w-none rounded-2xl"
                 />
               </CarouselItem>

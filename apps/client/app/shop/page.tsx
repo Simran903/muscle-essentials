@@ -245,7 +245,7 @@ export default function ShopPage() {
       />
 
       <SidebarInset>
-        <main className="mx-auto w-full max-w-screen-2xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+        <main className="mx-auto w-full px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
           <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
             <div className="min-w-0">
               <div className="mb-2 md:hidden">

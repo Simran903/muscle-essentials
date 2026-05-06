@@ -2,6 +2,7 @@
 
 import { Card } from "@/app/components/Common/Card"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { SectionHeading } from "@/app/components/Common/SectionHeading"
 
 import { Button } from "@/app/components/ui/button"
@@ -16,6 +17,7 @@ import {
 const bestSellerProducts = [
   {
     id: "1",
+    slug: "muscleblaze-biozyme-performance-whey-4-4-lb",
     imageSrc: "https://img10.hkrtcdn.com/44105/bnr_4410499_o.jpg",
     imageAlt: "MuscleBlaze Biozyme Whey",
     title: "MuscleBlaze Biozyme Performance Whey, 4.4 lb",
@@ -25,6 +27,7 @@ const bestSellerProducts = [
   },
   {
     id: "2",
+    slug: "nakpro-impact-whey-protein-2-2-lb-malai-kulfi",
     imageSrc: "https://img2.hkrtcdn.com/43582/bnr_4358161_o.jpg",
     imageAlt: "Nakpro Impact Whey",
     title: "Nakpro Impact Whey Protein, 2.2 lb Malai Kulfi",
@@ -34,6 +37,7 @@ const bestSellerProducts = [
   },
   {
     id: "3",
+    slug: "ronnie-coleman-pro-antium-protein-2-lb",
     imageSrc: "https://img2.hkrtcdn.com/44106/bnr_4410581_o.jpg",
     imageAlt: "Ronnie Coleman Pro-Antium",
     title: "Ronnie Coleman Pro-Antium Protein, 2 lb",
@@ -43,6 +47,7 @@ const bestSellerProducts = [
   },
   {
     id: "4",
+    slug: "as-it-is-nutrition-atom-whey-protein-with-enzymes",
     imageSrc: "https://img4.hkrtcdn.com/44106/bnr_4410503_o.jpg",
     imageAlt: "AS-IT-IS ATOM Whey Protein",
     title: "AS-IT-IS Nutrition ATOM Whey Protein with Enzymes",
@@ -52,6 +57,7 @@ const bestSellerProducts = [
   },
   {
     id: "5",
+    slug: "muscleblaze-micronized-creatine-monohydrate-250-g",
     imageSrc: "https://img10.hkrtcdn.com/44105/bnr_4410499_o.jpg",
     imageAlt: "MuscleBlaze Creatine",
     title: "MuscleBlaze Micronized Creatine Monohydrate, 250 g",
@@ -61,6 +67,7 @@ const bestSellerProducts = [
   },
   {
     id: "6",
+    slug: "gnc-triple-strength-fish-oil-60-softgels",
     imageSrc: "https://img2.hkrtcdn.com/43582/bnr_4358161_o.jpg",
     imageAlt: "GNC Fish Oil",
     title: "GNC Triple Strength Fish Oil, 60 Softgels",
@@ -70,6 +77,7 @@ const bestSellerProducts = [
   },
   {
     id: "7",
+    slug: "optimum-nutrition-gold-standard-100-whey-2-lb",
     imageSrc: "https://img2.hkrtcdn.com/44106/bnr_4410581_o.jpg",
     imageAlt: "ON Gold Standard Whey",
     title: "Optimum Nutrition Gold Standard 100% Whey, 2 lb",
@@ -79,6 +87,7 @@ const bestSellerProducts = [
   },
   {
     id: "8",
+    slug: "nakpro-high-protein-peanut-butter-crunchy-1-kg",
     imageSrc: "https://img4.hkrtcdn.com/44106/bnr_4410503_o.jpg",
     imageAlt: "Nakpro Peanut Butter",
     title: "Nakpro High Protein Peanut Butter, Crunchy, 1 kg",
@@ -88,6 +97,7 @@ const bestSellerProducts = [
   },
   {
     id: "9",
+    slug: "advanced-pre-workout-formula-fruit-blast-300-g",
     imageSrc: "https://img10.hkrtcdn.com/44105/bnr_4410499_o.jpg",
     imageAlt: "Pre Workout Powder",
     title: "Advanced Pre-Workout Formula, Fruit Blast, 300 g",
@@ -97,6 +107,7 @@ const bestSellerProducts = [
   },
   {
     id: "10",
+    slug: "high-calorie-mass-gainer-chocolate-3-kg",
     imageSrc: "https://img2.hkrtcdn.com/43582/bnr_4358161_o.jpg",
     imageAlt: "Mass Gainer",
     title: "High Calorie Mass Gainer, Chocolate, 3 kg",
@@ -107,6 +118,8 @@ const bestSellerProducts = [
 ]
 
 export const BestsellersSection = () => {
+  const router = useRouter()
+
   return (
     <section id="bestsellers" className="mx-auto w-full max-w-360 px-4 pt-12 pb-0">
       <div>
@@ -134,6 +147,7 @@ export const BestsellersSection = () => {
                   price={product.price}
                   originalPrice={product.originalPrice}
                   rating={product.rating}
+                  onCardClick={() => router.push(`/shop/${product.slug}`)}
                   className="max-w-none rounded-2xl"
                 />
               </CarouselItem>
