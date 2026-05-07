@@ -32,7 +32,7 @@ export const BestsellersSection = ({ products }: BestsellersSectionProps) => {
             description="Most-loved picks from athletes and everyday performers."
           />
           <Button asChild variant="outline" className="rounded-full px-5">
-            <Link href="/shop/bestsellers">View more</Link>
+            <Link href="/shop?bestseller=1">View more</Link>
           </Button>
         </div>
 

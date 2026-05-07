@@ -69,7 +69,7 @@ export const CombosSection = () => {
             description="Power-packed stacks curated for muscle gain, recovery, and performance."
           />
           <Button asChild variant="outline" className="rounded-full px-5">
-            <Link href="/shop/combos">View more</Link>
+            <Link href="/shop?combo=1">View more</Link>
           </Button>
         </div>
 

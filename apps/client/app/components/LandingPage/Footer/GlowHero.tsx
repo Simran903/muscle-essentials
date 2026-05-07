@@ -8,12 +8,12 @@ export function GlowHero() {
       <div className={`relative w-full min-w-0 pt-4 pb-0 ${type}`}>
         <span
           aria-hidden
-          className={`pointer-events-none absolute inset-0 flex items-center justify-center ${type} text-[#F1C232] opacity-45 blur-md dark:opacity-20 dark:blur-sm`}
+          className={`pointer-events-none absolute inset-0 flex items-center justify-center ${type} text-cyan-400 opacity-45 blur-md dark:text-cyan-300 dark:opacity-20 dark:blur-sm`}
         >
           {headline}
         </span>
         <h1
-          className={`glow-hero-text relative z-10 m-0 w-full text-zinc-950 dark:text-black dark:[-webkit-text-fill-color:#000] ${type}`}
+          className={`glow-hero-text relative z-10 m-0 w-full text-white dark:text-black dark:[-webkit-text-fill-color:#000] ${type}`}
         >
           {headline}
         </h1>

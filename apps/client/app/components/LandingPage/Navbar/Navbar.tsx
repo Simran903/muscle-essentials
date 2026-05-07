@@ -15,6 +15,7 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
 } from "@/app/components/ui/navigation-menu"
+import { InputField } from "@/app/components/Common/InputField"
 
 const ACCESS_TOKEN_STORAGE_KEY = "muscle-essentials-access-token"
 
@@ -203,7 +204,7 @@ export function Navbar() {
             </NavigationMenuItem>
             {!isLoggedIn ? (
               <NavigationMenuItem>
-                <Button asChild size="lg" className="rounded-full bg-[#F1C232] px-5 text-[#2d2a2a] hover:bg-[#dfb42f] dark:bg-[#F1C232] dark:text-[#2d2a2a] dark:hover:bg-[#dfb42f]">
+                <Button asChild size="lg" variant="default" className="rounded-full px-4 cursor-pointer">
                   <button type="button" onClick={openLoginDialog}>
                     Login
                   </button>
@@ -259,39 +260,32 @@ export function Navbar() {
 
             <form className="space-y-4" onSubmit={handleLoginSubmit}>
               <div className="space-y-2">
-                <label htmlFor="login-email" className="text-sm font-medium text-foreground">
-                  Email
-                </label>
-                <input
-                  id="login-email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  className="h-11 w-full rounded-xl border border-input bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
-                  placeholder="you@example.com"
+                
+                <InputField
+                id="login-email"
+                type="email"
+                required
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="email"
                 />
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="login-phone" className="text-sm font-medium text-foreground">
-                  Phone
-                </label>
-                <input
-                  id="login-phone"
-                  type="tel"
-                  required
-                  value={phone}
-                  onChange={(event) => setPhone(event.target.value)}
-                  className="h-11 w-full rounded-xl border border-input bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
-                  placeholder="+91 98765 43210"
+                <InputField
+                id="login-phone"
+                type="tel"
+                required
+                value={phone}
+                onChange={(event) => setPhone(event.target.value)}
+                placeholder="phone"
                 />
               </div>
               <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" variant="outline" onClick={closeLoginDialog} disabled={isSubmitting}>
+                <Button type="button" variant="outline" onClick={closeLoginDialog} disabled={isSubmitting} className="cursor-pointer rounded-full">
                   Cancel
                 </Button>
-                <Button type="submit" className="bg-[#F1C232] text-[#2d2a2a] hover:bg-[#dfb42f]" disabled={isSubmitting}>
+                <Button type="submit" variant="default" className="rounded-full px-4 cursor-pointer" disabled={isSubmitting}>
                   {isSubmitting ? "Verifying..." : "Verify"}
                 </Button>
               </div>

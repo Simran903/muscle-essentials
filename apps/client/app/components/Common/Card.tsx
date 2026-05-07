@@ -123,9 +123,9 @@ export function Card({
           </Button>
           <Button
             type="button"
-            variant="outline"
+            variant="default"
             size="lg"
-            className="w-full bg-[#F1C232] text-[#2d2a2a] hover:bg-[#dfb42f] dark:bg-[#F1C232] dark:text-[#2d2a2a] dark:hover:bg-[#dfb42f] cursor-pointer"
+            className="w-full cursor-pointer"
             onClick={onAddToCart}
           >
             <ShoppingCart className="size-4" />

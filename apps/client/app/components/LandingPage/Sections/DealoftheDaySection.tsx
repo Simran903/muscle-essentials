@@ -32,7 +32,7 @@ export const DealoftheDaySection = ({ products }: DealoftheDaySectionProps) => {
             description="Grab today’s top picks at special prices before the offer ends."
           />
           <Button asChild variant="outline" className="rounded-full px-5">
-            <Link href="/shop/deals">View more</Link>
+            <Link href="/shop?deal=1">View more</Link>
           </Button>
         </div>
 

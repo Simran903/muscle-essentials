@@ -52,6 +52,10 @@ export type ShopSidebarProps = {
   onFeaturedOnlyChange: (value: boolean) => void
   bestsellerOnly: boolean
   onBestsellerOnlyChange: (value: boolean) => void
+  dealOfTheDayOnly: boolean
+  onDealOfTheDayOnlyChange: (value: boolean) => void
+  comboOnly: boolean
+  onComboOnlyChange: (value: boolean) => void
   sortBy: ShopSortBy
   onSortByChange: (value: ShopSortBy) => void
   onResetFilters: () => void
@@ -79,6 +83,10 @@ export function ShopSidebar({
   onFeaturedOnlyChange,
   bestsellerOnly,
   onBestsellerOnlyChange,
+  dealOfTheDayOnly,
+  onDealOfTheDayOnlyChange,
+  comboOnly,
+  onComboOnlyChange,
   sortBy,
   onSortByChange,
   onResetFilters,
@@ -258,7 +266,7 @@ export function ShopSidebar({
                       onResetPage()
                     }}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      featuredOnly ? "bg-[#F1C232]" : "bg-muted"
+                      featuredOnly ? "bg-cyan-500" : "bg-muted"
                     }`}
                   >
                     <span
@@ -290,7 +298,7 @@ export function ShopSidebar({
                       onResetPage()
                     }}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      bestsellerOnly ? "bg-[#F1C232]" : "bg-muted"
+                      bestsellerOnly ? "bg-cyan-500" : "bg-muted"
                     }`}
                   >
                     <span
@@ -306,6 +314,70 @@ export function ShopSidebar({
                     label="Bestseller only"
                     onRemove={() => {
                       onBestsellerOnlyChange(false)
+                      onResetPage()
+                    }}
+                  />
+                ) : null}
+
+                <div className="flex items-center justify-between gap-2 pt-2">
+                  <span className="text-sm text-foreground">Deal of the day only</span>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={dealOfTheDayOnly}
+                    onClick={() => {
+                      onDealOfTheDayOnlyChange(!dealOfTheDayOnly)
+                      onResetPage()
+                    }}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      dealOfTheDayOnly ? "bg-cyan-500" : "bg-muted"
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
+                        dealOfTheDayOnly ? "translate-x-5" : "translate-x-0.5"
+                      }`}
+                    />
+                    <span className="sr-only">Toggle deal of the day only</span>
+                  </button>
+                </div>
+                {dealOfTheDayOnly ? (
+                  <Pill
+                    label="Deal of the day only"
+                    onRemove={() => {
+                      onDealOfTheDayOnlyChange(false)
+                      onResetPage()
+                    }}
+                  />
+                ) : null}
+
+                <div className="flex items-center justify-between gap-2 pt-2">
+                  <span className="text-sm text-foreground">Combo only</span>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={comboOnly}
+                    onClick={() => {
+                      onComboOnlyChange(!comboOnly)
+                      onResetPage()
+                    }}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      comboOnly ? "bg-cyan-500" : "bg-muted"
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
+                        comboOnly ? "translate-x-5" : "translate-x-0.5"
+                      }`}
+                    />
+                    <span className="sr-only">Toggle combo only</span>
+                  </button>
+                </div>
+                {comboOnly ? (
+                  <Pill
+                    label="Combo only"
+                    onRemove={() => {
+                      onComboOnlyChange(false)
                       onResetPage()
                     }}
                   />

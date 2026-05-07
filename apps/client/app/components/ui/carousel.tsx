@@ -179,7 +179,6 @@ function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
 
 function CarouselPrevious({
   className,
-  variant = "default",
   size = "icon-sm",
   ...props
 }: React.ComponentProps<typeof Button>) {
@@ -188,10 +187,10 @@ function CarouselPrevious({
   return (
     <Button
       data-slot="carousel-previous"
-      variant={variant}
+      variant="default"
       size={size}
       className={cn(
-        "absolute z-20 touch-manipulation rounded-full border-[#d8b12d] bg-[#F1C232] text-[#454040] shadow-sm hover:bg-[#dfb42f]",
+        "absolute z-20 touch-manipulation rounded-full shadow-sm hover:bg-cyan-600",
         orientation === "horizontal"
           ? "top-1/2 -left-5 -translate-y-1/2 sm:-left-10"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
@@ -209,7 +208,6 @@ function CarouselPrevious({
 
 function CarouselNext({
   className,
-  variant = "default",
   size = "icon-sm",
   ...props
 }: React.ComponentProps<typeof Button>) {
@@ -218,10 +216,10 @@ function CarouselNext({
   return (
     <Button
       data-slot="carousel-next"
-      variant={variant}
+      variant="default"
       size={size}
       className={cn(
-        "absolute z-20 touch-manipulation rounded-full border-[#d8b12d] bg-[#F1C232] text-[#454040] shadow-sm hover:bg-[#dfb42f]",
+        "absolute z-20 touch-manipulation rounded-full shadow-sm hover:bg-cyan-600",
         orientation === "horizontal"
           ? "top-1/2 -right-5 -translate-y-1/2 sm:-right-10"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",

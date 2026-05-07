@@ -30,7 +30,7 @@ export const FeaturedSection = ({ products }: FeaturedSectionProps) => {
           description="Explore curated picks and benefits tailored to your fitness goals."
         />
         <Button asChild variant="outline" className="rounded-full px-5">
-          <Link href="/shop/featured">View more</Link>
+          <Link href="/shop?featured=1">View more</Link>
         </Button>
       </div>
       <div className="mt-6">

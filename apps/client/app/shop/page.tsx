@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { Card } from "@/app/components/Common/Card"
 import { Pagination } from "@/app/components/Common/Pagination"
@@ -21,9 +21,11 @@ import {
 } from "./ShopSidebar"
 
 const PAGE_SIZE = 12
+const isQueryFlagEnabled = (value: string | null) => value === "1" || value === "true"
 
 export default function ShopPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [page, setPage] = React.useState(1)
   const [isLoading, setIsLoading] = React.useState(true)
   const [data, setData] = React.useState<ProductListResponse | null>(null)
@@ -42,9 +44,21 @@ export default function ShopPage() {
   const [flavourOptions, setFlavourOptions] = React.useState<Array<{ value: string; label: string }>>([
     { value: FLAVOUR_PICKER_DEFAULT, label: FLAVOUR_PICKER_DEFAULT },
   ])
-  const [featuredOnly, setFeaturedOnly] = React.useState(false)
-  const [bestsellerOnly, setBestsellerOnly] = React.useState(false)
+  const [featuredOnlyUser, setFeaturedOnlyUser] = React.useState<boolean | undefined>(undefined)
+  const [bestsellerOnlyUser, setBestsellerOnlyUser] = React.useState<boolean | undefined>(undefined)
+  const [dealOfTheDayOnlyUser, setDealOfTheDayOnlyUser] = React.useState<boolean | undefined>(undefined)
+  const [comboOnlyUser, setComboOnlyUser] = React.useState<boolean | undefined>(undefined)
   const [sortBy, setSortBy] = React.useState<ShopSortBy>("default")
+
+  const featuredOnlyFromQuery = isQueryFlagEnabled(searchParams.get("featured"))
+  const bestsellerOnlyFromQuery = isQueryFlagEnabled(searchParams.get("bestseller"))
+  const dealOfTheDayOnlyFromQuery = isQueryFlagEnabled(searchParams.get("deal"))
+  const comboOnlyFromQuery = isQueryFlagEnabled(searchParams.get("combo"))
+
+  const featuredOnly = featuredOnlyUser ?? featuredOnlyFromQuery
+  const bestsellerOnly = bestsellerOnlyUser ?? bestsellerOnlyFromQuery
+  const dealOfTheDayOnly = dealOfTheDayOnlyUser ?? dealOfTheDayOnlyFromQuery
+  const comboOnly = comboOnlyUser ?? comboOnlyFromQuery
 
   const resetPage = React.useCallback(() => setPage(1), [])
 
@@ -55,8 +69,10 @@ export default function ShopPage() {
     setSelectedBrandSlugs([])
     setSelectedCategorySlugs([])
     setSelectedFlavours([])
-    setFeaturedOnly(false)
-    setBestsellerOnly(false)
+    setFeaturedOnlyUser(false)
+    setBestsellerOnlyUser(false)
+    setDealOfTheDayOnlyUser(false)
+    setComboOnlyUser(false)
     setSortBy("default")
     setPage(1)
   }, [])
@@ -171,7 +187,17 @@ export default function ShopPage() {
       ? bestsellerFiltered.filter((item) => item.isFeatured)
       : bestsellerFiltered
 
-    const sorted = [...featuredFiltered]
+    const dealFiltered = dealOfTheDayOnly
+      ? featuredFiltered.filter((item) => item.isDealoftheDay)
+      : featuredFiltered
+
+    const comboFiltered = comboOnly
+      ? dealFiltered.filter((item) =>
+          `${item.title} ${item.shortDesc ?? ""} ${item.flavour}`.toLowerCase().includes("combo")
+        )
+      : dealFiltered
+
+    const sorted = [...comboFiltered]
 
     const createdMs = (p: (typeof sorted)[number]) => new Date(p.createdAt).getTime()
 
@@ -198,6 +224,8 @@ export default function ShopPage() {
     sortBy,
     bestsellerOnly,
     featuredOnly,
+    dealOfTheDayOnly,
+    comboOnly,
   ])
 
   const hasClientFilters =
@@ -206,6 +234,8 @@ export default function ShopPage() {
     selectedFlavours.length > 0 ||
     featuredOnly ||
     bestsellerOnly ||
+    dealOfTheDayOnly ||
+    comboOnly ||
     sortBy !== "default"
   const hasPrev = hasClientFilters ? false : (data?.pagination.page ?? 1) > 1
   const hasNext = hasClientFilters
@@ -235,9 +265,13 @@ export default function ShopPage() {
         onSelectedCategorySlugsChange={setSelectedCategorySlugs}
         onSelectedFlavoursChange={setSelectedFlavours}
         featuredOnly={featuredOnly}
-        onFeaturedOnlyChange={setFeaturedOnly}
+        onFeaturedOnlyChange={setFeaturedOnlyUser}
         bestsellerOnly={bestsellerOnly}
-        onBestsellerOnlyChange={setBestsellerOnly}
+        onBestsellerOnlyChange={setBestsellerOnlyUser}
+        dealOfTheDayOnly={dealOfTheDayOnly}
+        onDealOfTheDayOnlyChange={setDealOfTheDayOnlyUser}
+        comboOnly={comboOnly}
+        onComboOnlyChange={setComboOnlyUser}
         sortBy={sortBy}
         onSortByChange={setSortBy}
         onResetFilters={resetFilters}

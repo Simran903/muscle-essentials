@@ -67,7 +67,7 @@ function FooterLinkColumn({
           <li key={`${title}-${item.href}-${item.label}`}>
             <Link
               href={item.href}
-              className="text-sm text-zinc-600 transition-colors hover:text-[#F1C232] dark:text-zinc-400 dark:hover:text-[#F1C232] hover:underline underline-offset-2"
+              className="text-sm text-zinc-600 transition-colors hover:text-cyan-500 dark:text-zinc-400 dark:hover:text-cyan-500 hover:underline underline-offset-2"
             >
               {item.label}
             </Link>
@@ -123,7 +123,7 @@ export const Footer = () => {
           <div className="col-span-2 sm:col-span-3 lg:col-span-1 lg:col-start-6">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 text-zinc-950 transition-colors hover:text-[#F1C232] dark:text-white"
+              className="inline-flex items-center gap-2 text-zinc-950 transition-colors hover:text-cyan-500 dark:text-white"
             >
               <Image
                 src="/logo-new.png"
@@ -139,7 +139,7 @@ export const Footer = () => {
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-zinc-500 transition-colors hover:text-[#F1C232] dark:text-zinc-400"
+                className="text-zinc-500 transition-colors hover:text-cyan-500 dark:text-zinc-400"
                 aria-label="LinkedIn"
               >
                 <LinkedInIcon className="size-5" />
@@ -148,7 +148,7 @@ export const Footer = () => {
                 href="https://x.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-zinc-500 transition-colors hover:text-[#F1C232] dark:text-zinc-400"
+                className="text-zinc-500 transition-colors hover:text-cyan-500 dark:text-zinc-400"
                 aria-label="X"
               >
                 <XIcon className="size-5" />
@@ -157,7 +157,7 @@ export const Footer = () => {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-zinc-500 transition-colors hover:text-[#F1C232] dark:text-zinc-400"
+                className="text-zinc-500 transition-colors hover:text-cyan-500 dark:text-zinc-400"
                 aria-label="Instagram"
               >
                 <InstagramIcon className="size-5" />

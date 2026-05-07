@@ -50,7 +50,7 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
+  --background: #FFFFF0; /* ivory */
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -157,13 +157,13 @@
   0%,
   100% {
     text-shadow:
-      0 0 2px rgb(241 194 50 / 28%),
-      0 0 5px rgb(241 194 50 / 16%);
+      0 0 2px rgb(34 211 238 / 28%),
+      0 0 5px rgb(34 211 238 / 16%);
   }
   50% {
     text-shadow:
-      0 0 3px rgb(241 194 50 / 34%),
-      0 0 7px rgb(241 194 50 / 18%);
+      0 0 3px rgb(34 211 238 / 34%),
+      0 0 7px rgb(34 211 238 / 18%);
   }
 }
 
@@ -171,35 +171,35 @@
   0%,
   100% {
     text-shadow:
-      0 0 4px rgb(241 194 50 / 72%),
-      0 0 14px rgb(241 194 50 / 48%),
-      0 0 28px rgb(241 194 50 / 28%),
-      0 0 44px rgb(241 194 50 / 14%);
+      0 0 4px rgb(34 211 238 / 72%),
+      0 0 14px rgb(34 211 238 / 48%),
+      0 0 28px rgb(34 211 238 / 28%),
+      0 0 44px rgb(34 211 238 / 14%);
   }
   50% {
     text-shadow:
-      0 0 6px rgb(241 194 50 / 88%),
-      0 0 20px rgb(241 194 50 / 55%),
-      0 0 36px rgb(241 194 50 / 32%),
-      0 0 52px rgb(241 194 50 / 16%);
+      0 0 6px rgb(34 211 238 / 88%),
+      0 0 20px rgb(34 211 238 / 55%),
+      0 0 36px rgb(34 211 238 / 32%),
+      0 0 52px rgb(34 211 238 / 16%);
   }
 }
 
 /* Dark footer: subtle halo on near-black fill */
 .glow-hero-text {
   text-shadow:
-    0 0 2px rgb(241 194 50 / 28%),
-    0 0 5px rgb(241 194 50 / 16%);
+    0 0 2px rgb(34 211 238 / 28%),
+    0 0 5px rgb(34 211 238 / 16%);
   animation: heroGoldGlowPulse 4s ease-in-out infinite;
 }
 
 /* Light footer (zinc band): stronger gold so halo reads on pale bg */
 html:not(.dark) .glow-hero-text {
   text-shadow:
-    0 0 4px rgb(241 194 50 / 72%),
-    0 0 14px rgb(241 194 50 / 48%),
-    0 0 28px rgb(241 194 50 / 28%),
-    0 0 44px rgb(241 194 50 / 14%);
+    0 0 4px rgb(34 211 238 / 72%),
+    0 0 14px rgb(34 211 238 / 48%),
+    0 0 28px rgb(34 211 238 / 28%),
+    0 0 44px rgb(34 211 238 / 14%);
   animation: heroGoldGlowPulseLight 4s ease-in-out infinite;
 }
 
@@ -207,14 +207,14 @@ html:not(.dark) .glow-hero-text {
   .glow-hero-text {
     animation: none !important;
     text-shadow:
-      0 0 2px rgb(241 194 50 / 26%),
-      0 0 6px rgb(241 194 50 / 14%);
+      0 0 2px rgb(34 211 238 / 26%),
+      0 0 6px rgb(34 211 238 / 14%);
   }
 
   html:not(.dark) .glow-hero-text {
     text-shadow:
-      0 0 5px rgb(241 194 50 / 62%),
-      0 0 16px rgb(241 194 50 / 38%),
-      0 0 28px rgb(241 194 50 / 20%);
+      0 0 5px rgb(34 211 238 / 62%),
+      0 0 16px rgb(34 211 238 / 38%),
+      0 0 28px rgb(34 211 238 / 20%);
   }
 }
