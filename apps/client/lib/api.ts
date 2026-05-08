@@ -38,6 +38,7 @@ export type ProductItem = {
   isFeatured: boolean
   isBestseller: boolean
   isDealoftheDay: boolean
+  sizes: { id: string; label: string; sortOrder: number }[]
   brand: { id: string; name: string; slug: string } | null
   category: { id: string; name: string; slug: string } | null
   images: { id: string; url: string; altText: string | null; sortOrder: number; isPrimary: boolean }[]

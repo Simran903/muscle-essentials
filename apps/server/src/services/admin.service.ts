@@ -23,6 +23,22 @@ export type ProductImageAssetInput = {
   isPrimary?: boolean;
 };
 
+function normalizeSizeLabels(labels?: string[]): string[] {
+  if (!labels) return [];
+
+  const seen = new Set<string>();
+  const normalized: string[] = [];
+  for (const label of labels) {
+    const value = label.trim();
+    if (!value) continue;
+    const dedupeKey = value.toLowerCase();
+    if (seen.has(dedupeKey)) continue;
+    seen.add(dedupeKey);
+    normalized.push(value);
+  }
+  return normalized;
+}
+
 export async function adminRequireProduct(productId: string): Promise<void> {
   const p = await prisma.product.findUnique({ where: { id: productId } });
   if (!p) {
@@ -31,7 +47,11 @@ export async function adminRequireProduct(productId: string): Promise<void> {
 }
 
 type AdminProductRow = Prisma.ProductGetPayload<{
-  include: { brand: true; category: true };
+  include: {
+    brand: true;
+    category: true;
+    sizes: { orderBy: { sortOrder: "asc" } };
+  };
 }>;
 
 type AdminOrderListRow = Prisma.OrderGetPayload<{
@@ -84,7 +104,11 @@ export async function adminListProducts(page?: number, limit?: number) {
       orderBy: { createdAt: "desc" },
       skip,
       take,
-      include: { brand: true, category: true },
+      include: {
+        brand: true,
+        category: true,
+        sizes: { orderBy: { sortOrder: "asc" } },
+      },
     }),
     prisma.product.count(),
   ]);
@@ -108,6 +132,11 @@ export async function adminListProducts(page?: number, limit?: number) {
       category: p.category
         ? { id: p.category.id, name: p.category.name, slug: p.category.slug }
         : null,
+      sizes: p.sizes.map((size: AdminProductRow["sizes"][number]) => ({
+        id: size.id,
+        label: size.label,
+        sortOrder: size.sortOrder,
+      })),
     })),
     pagination: { page: pageN, limit: take, total, totalPages: Math.ceil(total / take) },
   };
@@ -123,6 +152,7 @@ export async function adminCreateProduct(data: {
   shortDesc: string;
   description: string;
   flavour: string;
+  sizes?: string[];
   costPrice: string;
   stockQuantity: number;
   currency: string;
@@ -156,6 +186,12 @@ export async function adminCreateProduct(data: {
       shortDesc: data.shortDesc,
       description: data.description,
       flavour: data.flavour,
+      sizes: {
+        create: normalizeSizeLabels(data.sizes).map((label, index) => ({
+          label,
+          sortOrder: index,
+        })),
+      },
       costPrice: new Prisma.Decimal(data.costPrice),
       stockQuantity: data.stockQuantity,
       currency: data.currency,
@@ -179,6 +215,7 @@ export async function adminUpdateProduct(
     shortDesc: string;
     description: string;
     flavour: string;
+    sizes: string[];
     costPrice: string;
     currency: string;
     stockQuantity: number;
@@ -222,6 +259,16 @@ export async function adminUpdateProduct(
   if (data.shortDesc !== undefined) update.shortDesc = data.shortDesc;
   if (data.description !== undefined) update.description = data.description;
   if (data.flavour !== undefined) update.flavour = data.flavour;
+  if (data.sizes !== undefined) {
+    const normalizedSizes = normalizeSizeLabels(data.sizes);
+    update.sizes = {
+      deleteMany: {},
+      create: normalizedSizes.map((label, index) => ({
+        label,
+        sortOrder: index,
+      })),
+    };
+  }
   if (data.costPrice !== undefined) {
     update.costPrice = new Prisma.Decimal(data.costPrice);
   }

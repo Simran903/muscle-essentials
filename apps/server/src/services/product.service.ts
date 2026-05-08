@@ -9,6 +9,7 @@ const productInclude = {
   brand: true,
   category: true,
   images: { orderBy: { sortOrder: "asc" as const } },
+  sizes: { orderBy: { sortOrder: "asc" as const } },
 } satisfies Prisma.ProductInclude;
 
 type ProductFull = Prisma.ProductGetPayload<{ include: typeof productInclude }>;
@@ -43,6 +44,11 @@ function mapProduct(p: ProductFull) {
       altText: i.altText,
       sortOrder: i.sortOrder,
       isPrimary: i.isPrimary,
+    })),
+    sizes: p.sizes.map((size: ProductFull["sizes"][number]) => ({
+      id: size.id,
+      label: size.label,
+      sortOrder: size.sortOrder,
     })),
   };
 }

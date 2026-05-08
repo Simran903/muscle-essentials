@@ -167,6 +167,7 @@ model Product {
   brand           Brand             @relation(fields: [brandId], references: [id], onDelete: Restrict)
   category        Category?         @relation("ProductPrimaryCategory", fields: [categoryId], references: [id], onDelete: SetNull)
   images          ProductImage[]
+  sizes           ProductSize[]
   bulletPoints    ProductBulletPoint[]
   cartItems       CartItem[]
   orderItems      OrderItem[]
@@ -177,6 +178,19 @@ model Product {
   @@index([isFeatured, isActive])
   @@index([isBestseller, isActive])
   @@index([isDealoftheDay, isActive])
+}
+
+model ProductSize {
+  id         String   @id @default(cuid())
+  productId  String
+  label      String
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId, sortOrder])
+  @@unique([productId, label])
 }
 
 model ProductImage {
