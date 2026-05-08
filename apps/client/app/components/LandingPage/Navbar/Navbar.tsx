@@ -18,6 +18,7 @@ import {
 import { InputField } from "@/app/components/Common/InputField"
 
 const ACCESS_TOKEN_STORAGE_KEY = "muscle-essentials-access-token"
+const HIDE_NAVBAR_CLASS = "image-viewer-open"
 
 function getStoredAccessToken() {
   if (typeof window === "undefined") return null
@@ -94,6 +95,7 @@ export function Navbar() {
   const [email, setEmail] = React.useState("")
   const [phone, setPhone] = React.useState("")
   const [isSubmitting, setIsSubmitting] = React.useState(false)
+  const [isNavbarHidden, setIsNavbarHidden] = React.useState(false)
   const { isLoggedIn, onLoginSuccess } = useAuthStatus()
 
   const navItems = [
@@ -117,6 +119,19 @@ export function Navbar() {
     window.addEventListener("keydown", onKeyDown)
     return () => window.removeEventListener("keydown", onKeyDown)
   }, [closeLoginDialog, isLoginDialogOpen])
+
+  React.useEffect(() => {
+    const updateVisibility = () => {
+      setIsNavbarHidden(document.body.classList.contains(HIDE_NAVBAR_CLASS))
+    }
+
+    updateVisibility()
+
+    const observer = new MutationObserver(updateVisibility)
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] })
+
+    return () => observer.disconnect()
+  }, [])
 
   const handleLoginSubmit = React.useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
@@ -163,6 +178,10 @@ export function Navbar() {
     },
     [closeLoginDialog, email, onLoginSuccess, phone]
   )
+
+  if (isNavbarHidden) {
+    return null
+  }
 
   return (
     <>

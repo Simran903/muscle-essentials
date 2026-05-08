@@ -30,6 +30,7 @@ export type ProductItem = {
   createdAt: string
   slug: string
   shortDesc: string | null
+  description: string | null
   flavour: string
   price: number | string
   currency: string
@@ -39,7 +40,7 @@ export type ProductItem = {
   isDealoftheDay: boolean
   brand: { id: string; name: string; slug: string } | null
   category: { id: string; name: string; slug: string } | null
-  images: { id: string; url: string; altText: string | null; isPrimary: boolean }[]
+  images: { id: string; url: string; altText: string | null; sortOrder: number; isPrimary: boolean }[]
 }
 
 export type ProductListResponse = {

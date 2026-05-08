@@ -14,7 +14,7 @@ export function ThemeFloatingToggle() {
       variant="outline"
       size="icon"
       onClick={toggleTheme}
-      className="fixed right-5 bottom-5 z-50 rounded-full bg-background/90 shadow-md backdrop-blur hover:bg-background"
+      className="fixed bottom-20 right-5 z-50 rounded-full bg-background/90 shadow-md backdrop-blur hover:bg-background md:bottom-5"
       aria-label="Toggle theme"
     >
       <Sun className="hidden size-4 dark:block" />

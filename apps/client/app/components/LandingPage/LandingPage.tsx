@@ -12,7 +12,6 @@ import { CategorySection } from "./Sections/CategorySection"
 import { BrandSection } from "./Sections/BrandSection"
 import { FAQSection } from "./Sections/FAQSection"
 import { TestimonialsSection } from "./Sections/Testimonials"
-import { ThemeFloatingToggle } from "./ThemeFloatingToggle"
 import { BrandCarousel } from "./Carousel/BrandCarousel"
 import { Footer } from "./Footer/Footer"
 import { getProducts, type ProductItem } from "@/lib/api"
@@ -258,7 +257,6 @@ const LandingPage = () => {
         </motion.div>
       </main>
       <Footer />
-      <ThemeFloatingToggle />
     </div>
   )
 }

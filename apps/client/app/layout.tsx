@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Michroma, Poppins } from "next/font/google";
 import { Navbar } from "@/app/components/LandingPage/Navbar/Navbar";
+import { ThemeFloatingToggle } from "@/app/components/LandingPage/ThemeFloatingToggle";
 import { ThemeProvider } from "@/app/components/theme-provider";
 import { Toaster } from "@/app/components/ui/sonner";
 import "./globals.css";
@@ -42,6 +43,7 @@ export default function RootLayout({
         <ThemeProvider>
           <Navbar />
           {children}
+          <ThemeFloatingToggle />
           <Toaster />
         </ThemeProvider>
       </body>

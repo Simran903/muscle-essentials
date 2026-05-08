@@ -246,7 +246,7 @@ export default function ShopPage() {
   const productCount = hasClientFilters ? visibleItems.length : data?.pagination.total ?? 0
 
   return (
-    <SidebarProvider>
+    <SidebarProvider className="bg-background text-foreground dark:bg-background">
       <ShopSidebar
         isLoading={isLoading}
         brandPickerValue={brandPickerValue}
@@ -278,14 +278,15 @@ export default function ShopPage() {
         onResetPage={resetPage}
       />
 
-      <SidebarInset>
-        <main className="mx-auto w-full px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
-          <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+      <SidebarInset className="overflow-hidden bg-transparent">
+        <main className="relative isolate mx-auto min-h-svh w-full px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+
+          <div className="mb-6 rounded-3xl border border-border bg-card/80 p-5 text-card-foreground shadow-sm backdrop-blur sm:mb-8 sm:flex sm:items-end sm:justify-between sm:p-6">
             <div className="min-w-0">
               <div className="mb-2 md:hidden">
-                <SidebarTrigger />
+                <SidebarTrigger className="bg-background/80 shadow-sm dark:bg-muted/60" />
               </div>
-              <h1 className="text-2xl font-normal tracking-tight text-foreground sm:text-3xl lg:text-4xl">
+              <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl lg:text-4xl">
                 All Products
               </h1>
               <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
@@ -294,7 +295,7 @@ export default function ShopPage() {
               </p>
             </div>
             {!isLoading && data ? (
-              <p className="shrink-0 text-sm font-semibold text-foreground sm:text-base lg:text-lg">
+              <p className="mt-4 inline-flex shrink-0 rounded-full border border-cyan-500/25 bg-cyan-500/10 px-3 py-1 text-sm font-semibold text-cyan-700 dark:text-cyan-300 sm:mt-0 sm:text-base">
                 ({productCount} products)
               </p>
             ) : null}
@@ -303,7 +304,10 @@ export default function ShopPage() {
           {isLoading ? (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {Array.from({ length: PAGE_SIZE }).map((_, index) => (
-                <div key={index} className="space-y-3 rounded-3xl border border-border p-4">
+                <div
+                  key={index}
+                  className="space-y-3 rounded-3xl border border-border bg-card/80 p-4 shadow-sm"
+                >
                   <Skeleton className="h-64 w-full rounded-2xl" />
                   <Skeleton className="h-4 w-1/3" />
                   <Skeleton className="h-5 w-5/6" />
@@ -341,7 +345,12 @@ export default function ShopPage() {
               />
             </>
           ) : (
-            <p className="text-sm text-muted-foreground">No products found.</p>
+            <div className="rounded-3xl border border-border bg-card/80 p-8 text-center shadow-sm">
+              <p className="text-sm font-medium text-foreground">No products found.</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Try changing filters or resetting the current selection.
+              </p>
+            </div>
           )}
         </main>
       </SidebarInset>

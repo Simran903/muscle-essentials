@@ -86,7 +86,7 @@ export const CustomDropdown: FC<CustomDropdownProps> = ({
     >
       <button
         type="button"
-        className="inline-flex justify-between w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+        className="inline-flex w-full justify-between rounded-lg border border-border bg-background px-4 py-2.5 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
         onClick={toggleDropdown}
       >
         <span className="truncate">{selectedOption?.label ?? value}</span>
@@ -109,12 +109,12 @@ export const CustomDropdown: FC<CustomDropdownProps> = ({
 
       {isOpen && (
         <div
-          className={`absolute right-0 left-0 z-300 w-full min-w-48 rounded-lg bg-white shadow-2xl ring-2 ring-gray-200/90 border border-gray-100 ${
+          className={`absolute right-0 left-0 z-300 w-full min-w-48 overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-2xl ring-1 ring-border/80 ${
             openUp ? "bottom-full mb-2 origin-bottom-right" : "mt-2 origin-top-right"
           }`}
         >
           {searchable && (
-            <div className="p-2 border-b border-gray-100">
+            <div className="border-b border-border p-2">
               <input
                 type="text"
                 value={query}
@@ -122,13 +122,13 @@ export const CustomDropdown: FC<CustomDropdownProps> = ({
                   setQuery(e.target.value)
                 }
                 placeholder={searchPlaceholder}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
               />
             </div>
           )}
 
           <div
-            className="py[1] max-h-240 overflow-y-auto overscroll-contain"
+            className="max-h-240 overflow-y-auto overscroll-contain py-1"
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="options-menu"
@@ -139,13 +139,8 @@ export const CustomDropdown: FC<CustomDropdownProps> = ({
                 key={option.value}
                 className={`block px-4 py-2.5 text-sm w-full text-left transition-colors duration-150 ${
                   value === option.value
-                    ? "bg-blue[100] text-blue[900] font-medium".replace(
-                        /\[(\d+)\]/g,
-                        "$1px"
-                      )
-                    : "text-gray[800] hover:bg-gray[100] hover:text-gray[950]"
-                        .replace(/\[(\d+)\]/g, "$1px")
-                        .replace(/text-gray\[800\]/g, "text-gray").replace(/hover:text-gray\[950\]/g, "hover:text-gray")
+                    ? "bg-cyan-500/10 font-medium text-cyan-700 dark:text-cyan-300"
+                    : "text-popover-foreground hover:bg-muted hover:text-foreground"
                 }`}
                 onClick={() => {
                   onChange(option.value);
@@ -157,7 +152,7 @@ export const CustomDropdown: FC<CustomDropdownProps> = ({
             ))}
 
             {filteredOptions.length === 0 && (
-              <div className="px-4 py-2.5 text-sm text-gray">No matching options</div>
+              <div className="px-4 py-2.5 text-sm text-muted-foreground">No matching options</div>
             )}
           </div>
         </div>
