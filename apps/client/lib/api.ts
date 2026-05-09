@@ -31,7 +31,9 @@ export type ProductItem = {
   slug: string
   shortDesc: string | null
   description: string | null
+  /** Comma-separated labels; use `flavours` for structured data. */
   flavour: string
+  flavours: { id: string; label: string; sortOrder: number }[]
   price: number | string
   currency: string
   stockQuantity: number

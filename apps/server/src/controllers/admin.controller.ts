@@ -82,7 +82,7 @@ const createProductBody = z.object({
   categoryId: z.string().optional().nullable(),
   shortDesc: z.string(),
   description: z.string(),
-  flavour: z.string().max(200),
+  flavours: z.array(z.string().trim().min(1).max(100)).max(50).optional(),
   sizes: z.array(z.string().trim().min(1).max(100)).max(50).optional(),
   costPrice: z.string().min(1),
   stockQuantity: z.coerce.number().int().min(0),

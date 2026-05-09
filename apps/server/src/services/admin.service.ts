@@ -23,7 +23,7 @@ export type ProductImageAssetInput = {
   isPrimary?: boolean;
 };
 
-function normalizeSizeLabels(labels?: string[]): string[] {
+function normalizeOrderedLabels(labels?: string[]): string[] {
   if (!labels) return [];
 
   const seen = new Set<string>();
@@ -51,6 +51,7 @@ type AdminProductRow = Prisma.ProductGetPayload<{
     brand: true;
     category: true;
     sizes: { orderBy: { sortOrder: "asc" } };
+    flavours: { orderBy: { sortOrder: "asc" } };
   };
 }>;
 
@@ -108,6 +109,7 @@ export async function adminListProducts(page?: number, limit?: number) {
         brand: true,
         category: true,
         sizes: { orderBy: { sortOrder: "asc" } },
+        flavours: { orderBy: { sortOrder: "asc" } },
       },
     }),
     prisma.product.count(),
@@ -118,7 +120,11 @@ export async function adminListProducts(page?: number, limit?: number) {
       title: p.title,
       slug: p.slug,
       sku: p.sku,
-      flavour: p.flavour,
+      flavours: p.flavours.map((f: AdminProductRow["flavours"][number]) => ({
+        id: f.id,
+        label: f.label,
+        sortOrder: f.sortOrder,
+      })),
       price: serializeDecimal(p.price),
       stockQuantity: p.stockQuantity,
       isActive: p.isActive,
@@ -151,7 +157,7 @@ export async function adminCreateProduct(data: {
   categoryId?: string | null;
   shortDesc: string;
   description: string;
-  flavour: string;
+  flavours?: string[];
   sizes?: string[];
   costPrice: string;
   stockQuantity: number;
@@ -185,9 +191,14 @@ export async function adminCreateProduct(data: {
       categoryId,
       shortDesc: data.shortDesc,
       description: data.description,
-      flavour: data.flavour,
+      flavours: {
+        create: normalizeOrderedLabels(data.flavours).map((label, index) => ({
+          label,
+          sortOrder: index,
+        })),
+      },
       sizes: {
-        create: normalizeSizeLabels(data.sizes).map((label, index) => ({
+        create: normalizeOrderedLabels(data.sizes).map((label, index) => ({
           label,
           sortOrder: index,
         })),
@@ -214,7 +225,7 @@ export async function adminUpdateProduct(
     categoryId: string | null;
     shortDesc: string;
     description: string;
-    flavour: string;
+    flavours: string[];
     sizes: string[];
     costPrice: string;
     currency: string;
@@ -258,9 +269,18 @@ export async function adminUpdateProduct(
   }
   if (data.shortDesc !== undefined) update.shortDesc = data.shortDesc;
   if (data.description !== undefined) update.description = data.description;
-  if (data.flavour !== undefined) update.flavour = data.flavour;
+  if (data.flavours !== undefined) {
+    const normalizedFlavours = normalizeOrderedLabels(data.flavours);
+    update.flavours = {
+      deleteMany: {},
+      create: normalizedFlavours.map((label, index) => ({
+        label,
+        sortOrder: index,
+      })),
+    };
+  }
   if (data.sizes !== undefined) {
-    const normalizedSizes = normalizeSizeLabels(data.sizes);
+    const normalizedSizes = normalizeOrderedLabels(data.sizes);
     update.sizes = {
       deleteMany: {},
       create: normalizedSizes.map((label, index) => ({

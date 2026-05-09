@@ -150,7 +150,6 @@ model Product {
   slug            String            @unique
   shortDesc       String            @default("")
   description     String            @default("")
-  flavour         String            @default("")
   sku             String            @unique
   brandId         String
   categoryId      String?
@@ -168,6 +167,7 @@ model Product {
   category        Category?         @relation("ProductPrimaryCategory", fields: [categoryId], references: [id], onDelete: SetNull)
   images          ProductImage[]
   sizes           ProductSize[]
+  flavours        ProductFlavour[]
   bulletPoints    ProductBulletPoint[]
   cartItems       CartItem[]
   orderItems      OrderItem[]
@@ -181,6 +181,19 @@ model Product {
 }
 
 model ProductSize {
+  id         String   @id @default(cuid())
+  productId  String
+  label      String
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId, sortOrder])
+  @@unique([productId, label])
+}
+
+model ProductFlavour {
   id         String   @id @default(cuid())
   productId  String
   label      String

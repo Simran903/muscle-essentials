@@ -96,8 +96,10 @@ export default function ShopPage() {
           if (product.category?.slug && product.category?.name) {
             categoryMap.set(product.category.slug, product.category.name)
           }
-          const flavour = product.flavour?.trim()
-          if (flavour) flavourSet.add(flavour)
+          for (const f of product.flavours ?? []) {
+            const label = f.label?.trim()
+            if (label) flavourSet.add(label)
+          }
         })
 
         setBrandOptions([
@@ -177,7 +179,9 @@ export default function ShopPage() {
     const flavourFiltered =
       selectedFlavours.length === 0
         ? categoryFiltered
-        : categoryFiltered.filter((item) => selectedFlavours.includes(item.flavour))
+        : categoryFiltered.filter((item) =>
+            (item.flavours ?? []).some((f) => selectedFlavours.includes(f.label)),
+          )
 
     const bestsellerFiltered = bestsellerOnly
       ? flavourFiltered.filter((item) => item.isBestseller)

@@ -10,11 +10,17 @@ const productInclude = {
   category: true,
   images: { orderBy: { sortOrder: "asc" as const } },
   sizes: { orderBy: { sortOrder: "asc" as const } },
+  flavours: { orderBy: { sortOrder: "asc" as const } },
 } satisfies Prisma.ProductInclude;
 
 type ProductFull = Prisma.ProductGetPayload<{ include: typeof productInclude }>;
 
 function mapProduct(p: ProductFull) {
+  const flavours = p.flavours.map((f: ProductFull["flavours"][number]) => ({
+    id: f.id,
+    label: f.label,
+    sortOrder: f.sortOrder,
+  }));
   return {
     id: p.id,
     title: p.title,
@@ -22,7 +28,8 @@ function mapProduct(p: ProductFull) {
     slug: p.slug,
     shortDesc: p.shortDesc,
     description: p.description,
-    flavour: p.flavour,
+    flavour: flavours.map((f: (typeof flavours)[number]) => f.label).join(", "),
+    flavours,
     sku: p.sku,
     price: serializeDecimal(p.price),
     currency: p.currency,
