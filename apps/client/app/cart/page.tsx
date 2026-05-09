@@ -142,7 +142,7 @@ function CartLineRow({
             </Button>
           </div>
 
-          <p className="min-w-[5.5rem] text-right text-lg font-bold tabular-nums text-foreground sm:text-xl">
+          <p className="min-w-22 text-right text-lg font-bold tabular-nums text-foreground sm:text-xl">
             {formatInr(item.lineTotal)}
           </p>
 
