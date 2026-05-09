@@ -197,7 +197,7 @@ export default function ShopPage() {
 
     const comboFiltered = comboOnly
       ? dealFiltered.filter((item) =>
-          `${item.title} ${item.shortDesc ?? ""} ${item.flavour}`.toLowerCase().includes("combo")
+          `${item.title} ${item.shortDesc ?? ""} ${item.flavours?.map((f) => f.label).join(" ")}`.toLowerCase().includes("combo")
         )
       : dealFiltered
 
