@@ -1,16 +1,10 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import {
-  ChevronRight,
-  PackageCheck,
-  ShieldCheck,
-  ShoppingCart,
-  Truck,
-} from "lucide-react"
+import { ChevronRight, PackageCheck, ShieldCheck, Truck } from "lucide-react"
 
-import { Button } from "@/app/components/ui/button"
 import { getProductBySlug } from "@/lib/api"
 import { ProductGallery } from "./ProductGallery"
+import { ProductPurchasePanel } from "./ProductPurchasePanel"
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>
@@ -134,7 +128,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </div>
             </div>
 
-            <dl className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <dl className="mt-6">
               <div className="rounded-2xl border border-border bg-background/70 p-4 dark:bg-muted/30">
                 <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                   Category
@@ -143,38 +137,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   {product.category?.name ?? "Supplements"}
                 </dd>
               </div>
-
-              <div className="rounded-2xl border border-border bg-background/70 p-4 dark:bg-muted/30">
-                <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  Flavour
-                </dt>
-                <dd className="mt-1 font-medium text-foreground">
-                  {product.flavour || "Original"}
-                </dd>
-              </div>
             </dl>
 
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              <Button
-                type="button"
-                size="lg"
-                className="h-12 rounded-2xl text-base"
-                disabled={!isInStock}
-              >
-                <ShoppingCart className="size-4" />
-                Add to Cart
-              </Button>
-
-              <Button
-                type="button"
-                variant="outline"
-                size="lg"
-                className="h-12 rounded-2xl text-base"
-                disabled={!isInStock}
-              >
-                Buy Now
-              </Button>
-            </div>
+            <ProductPurchasePanel
+              productTitle={product.title}
+              flavours={product.flavours}
+              sizes={product.sizes}
+              isInStock={isInStock}
+            />
 
             <div className="mt-6 grid gap-3 border-t border-border pt-6 text-sm text-muted-foreground">
               <div className="flex items-center gap-3">
