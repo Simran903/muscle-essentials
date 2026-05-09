@@ -8,7 +8,12 @@ import Link from "next/link"
 import { toast } from "sonner"
 
 import { SearchBar } from "@/app/components/Common/SearchBar"
-import { getMe, refreshSession, verifyDid } from "@/lib/api"
+import {
+  clearAccessToken,
+  getAccessToken,
+  setAccessToken,
+} from "@/lib/auth-storage"
+import { fetchCart, getMe, refreshSession, verifyDid } from "@/lib/api"
 import { Button } from "@/app/components/ui/button"
 import {
   NavigationMenu,
@@ -17,29 +22,13 @@ import {
 } from "@/app/components/ui/navigation-menu"
 import { InputField } from "@/app/components/Common/InputField"
 
-const ACCESS_TOKEN_STORAGE_KEY = "muscle-essentials-access-token"
 const HIDE_NAVBAR_CLASS = "image-viewer-open"
-
-function getStoredAccessToken() {
-  if (typeof window === "undefined") return null
-  return window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
-}
-
-function setStoredAccessToken(token: string) {
-  if (typeof window === "undefined") return
-  window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, token)
-}
-
-function clearStoredAccessToken() {
-  if (typeof window === "undefined") return
-  window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY)
-}
 
 function useAuthStatus() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false)
 
   const checkLoginStatus = React.useCallback(async () => {
-    const token = getStoredAccessToken()
+    const token = getAccessToken()
 
     try {
       const isValidSession = await getMe(token)
@@ -50,12 +39,12 @@ function useAuthStatus() {
 
       const rotatedToken = await refreshSession()
       if (rotatedToken) {
-        setStoredAccessToken(rotatedToken)
+        setAccessToken(rotatedToken)
         setIsLoggedIn(true)
         return
       }
 
-      clearStoredAccessToken()
+      clearAccessToken()
       setIsLoggedIn(false)
     } catch {
       setIsLoggedIn(false)
@@ -81,7 +70,7 @@ function useAuthStatus() {
 
   const onLoginSuccess = React.useCallback((accessToken: string | null) => {
     if (accessToken) {
-      setStoredAccessToken(accessToken)
+      setAccessToken(accessToken)
     }
     setIsLoggedIn(true)
   }, [])
@@ -96,7 +85,32 @@ export function Navbar() {
   const [phone, setPhone] = React.useState("")
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const [isNavbarHidden, setIsNavbarHidden] = React.useState(false)
+  const [cartItemCountWhenLoggedIn, setCartItemCountWhenLoggedIn] = React.useState(0)
   const { isLoggedIn, onLoginSuccess } = useAuthStatus()
+  const cartItemCount = isLoggedIn ? cartItemCountWhenLoggedIn : 0
+
+  React.useEffect(() => {
+    if (!isLoggedIn) {
+      return
+    }
+    const loadCount = async () => {
+      const token = getAccessToken()
+      if (!token) return
+      try {
+        const cart = await fetchCart(token)
+        const n = cart.items.reduce((sum, line) => sum + line.quantity, 0)
+        setCartItemCountWhenLoggedIn(n)
+      } catch {
+        setCartItemCountWhenLoggedIn(0)
+      }
+    }
+    void loadCount()
+    const onCartUpdated = () => {
+      void loadCount()
+    }
+    window.addEventListener("cart:updated", onCartUpdated)
+    return () => window.removeEventListener("cart:updated", onCartUpdated)
+  }, [isLoggedIn])
 
   const navItems = [
     { href: "/", label: "Home" },
@@ -215,9 +229,14 @@ export function Navbar() {
               </NavigationMenuItem>
             ))}
             <NavigationMenuItem>
-              <Button asChild variant="outline" size="icon" className="rounded-full" aria-label="Cart">
+              <Button asChild variant="outline" size="icon" className="relative rounded-full" aria-label="Cart">
                 <Link href="/cart">
                   <ShoppingCart className="size-4" />
+                  {cartItemCount > 0 ? (
+                    <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-cyan-500 text-[10px] font-bold text-white">
+                      {cartItemCount > 99 ? "99+" : cartItemCount}
+                    </span>
+                  ) : null}
                 </Link>
               </Button>
             </NavigationMenuItem>
@@ -244,9 +263,17 @@ export function Navbar() {
             <Store className="size-4" />
             Shop
           </Link>
-          <Link href="/cart" className="flex flex-col items-center gap-1 px-2 py-1 text-[11px] font-medium text-muted-foreground">
+          <Link
+            href="/cart"
+            className="relative flex flex-col items-center gap-1 px-2 py-1 text-[11px] font-medium text-muted-foreground"
+          >
             <ShoppingCart className="size-4" />
             Cart
+            {cartItemCount > 0 ? (
+              <span className="absolute right-1 top-0 flex size-4 items-center justify-center rounded-full bg-cyan-500 text-[9px] font-bold text-white">
+                {cartItemCount > 99 ? "99+" : cartItemCount}
+              </span>
+            ) : null}
           </Link>
           {!isLoggedIn ? (
             <button

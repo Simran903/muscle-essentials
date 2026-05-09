@@ -1,11 +1,13 @@
 "use client"
 
 import * as React from "react"
+import { useRouter } from "next/navigation"
 import { Minus, Plus, ShoppingCart } from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@/app/components/ui/button"
 import { cn } from "@/lib/utils"
+import { addProductToCart } from "@/lib/cart-client"
 
 export type PurchaseVariantOption = {
   id: string
@@ -16,6 +18,7 @@ export type PurchaseVariantOption = {
 const MAX_QUANTITY_PER_ADD = 5
 
 type ProductPurchasePanelProps = {
+  productId: string
   productTitle: string
   flavours: PurchaseVariantOption[]
   sizes: PurchaseVariantOption[]
@@ -28,12 +31,16 @@ function sortOptions<T extends { sortOrder: number; label: string }>(items: T[])
 }
 
 export function ProductPurchasePanel({
+  productId,
   productTitle,
   flavours,
   sizes,
   isInStock,
   stockQuantity,
 }: ProductPurchasePanelProps) {
+  const router = useRouter()
+  const [isCartBusy, setIsCartBusy] = React.useState(false)
+
   const flavourList = React.useMemo(() => sortOptions(flavours), [flavours])
   const sizeList = React.useMemo(() => sortOptions(sizes), [sizes])
 
@@ -43,10 +50,7 @@ export function ProductPurchasePanel({
   )
 
   const [quantity, setQuantity] = React.useState(1)
-
-  React.useEffect(() => {
-    setQuantity((q) => Math.min(Math.max(1, q), maxSelectable))
-  }, [maxSelectable])
+  const resolvedQuantity = Math.max(1, Math.min(quantity, maxSelectable))
 
   const [flavourId, setFlavourId] = React.useState<string | null>(() =>
     flavourList.length === 1 ? flavourList[0]!.id : null,
@@ -81,22 +85,46 @@ export function ProductPurchasePanel({
     return true
   }
 
-  const handleAddToCart = () => {
-    if (!validate()) return
-    const q = Math.min(quantity, maxSelectable)
-    toast.success(`Added ${q} × ${announceSelection()} to your bag.`)
+  const addWithApi = async (q: number) => {
+    setIsCartBusy(true)
+    try {
+      const result = await addProductToCart(productId, q, {
+        selectedFlavourLabel: flavourList.length > 0 ? (flavourLabel ?? "") : "",
+        selectedSizeLabel: sizeList.length > 0 ? (sizeLabel ?? "") : "",
+      })
+      if (result.ok) return true
+      if (result.reason === "auth") {
+        toast.error("Sign in to add items to your cart.")
+        return false
+      }
+      toast.error(result.message ?? "Couldn't add to cart.")
+      return false
+    } finally {
+      setIsCartBusy(false)
+    }
   }
 
-  const handleBuyNow = () => {
+  const handleAddToCart = async () => {
     if (!validate()) return
-    const q = Math.min(quantity, maxSelectable)
-    toast.message("Buy now", {
-      description: `${q} × ${announceSelection()} — checkout will open here when payments go live.`,
-    })
+    const ok = await addWithApi(resolvedQuantity)
+    if (ok) {
+      toast.success(`Added ${resolvedQuantity} × ${announceSelection()} to your bag.`)
+    }
+  }
+
+  const handleBuyNow = async () => {
+    if (!validate()) return
+    const ok = await addWithApi(resolvedQuantity)
+    if (ok) {
+      router.push("/cart")
+    }
   }
 
   const bumpQuantity = (delta: number) => {
-    setQuantity((q) => Math.min(maxSelectable, Math.max(1, q + delta)))
+    setQuantity((q) => {
+      const current = Math.max(1, Math.min(q, maxSelectable))
+      return Math.min(maxSelectable, Math.max(1, current + delta))
+    })
   }
 
   const optionButtonClass = (active: boolean) =>
@@ -184,21 +212,21 @@ export function ProductPurchasePanel({
               variant="ghost"
               size="icon"
               className="size-10 shrink-0 rounded-xl"
-              disabled={!canPurchase || quantity <= 1}
+              disabled={!canPurchase || resolvedQuantity <= 1}
               onClick={() => bumpQuantity(-1)}
               aria-label="Decrease quantity"
             >
               <Minus className="size-4" />
             </Button>
             <span className="min-w-[2ch] text-center text-base font-semibold tabular-nums">
-              {quantity}
+              {resolvedQuantity}
             </span>
             <Button
               type="button"
               variant="ghost"
               size="icon"
               className="size-10 shrink-0 rounded-xl"
-              disabled={!canPurchase || quantity >= maxSelectable}
+              disabled={!canPurchase || resolvedQuantity >= maxSelectable}
               onClick={() => bumpQuantity(1)}
               aria-label="Increase quantity"
             >
@@ -213,11 +241,11 @@ export function ProductPurchasePanel({
           type="button"
           size="lg"
           className="h-12 rounded-2xl text-base"
-          disabled={!canPurchase}
-          onClick={handleAddToCart}
+          disabled={!canPurchase || isCartBusy}
+          onClick={() => void handleAddToCart()}
         >
           <ShoppingCart className="size-4" />
-          Add to Cart
+          {isCartBusy ? "Adding…" : "Add to Cart"}
         </Button>
 
         <Button
@@ -225,8 +253,8 @@ export function ProductPurchasePanel({
           variant="outline"
           size="lg"
           className="h-12 rounded-2xl text-base"
-          disabled={!canPurchase}
-          onClick={handleBuyNow}
+          disabled={!canPurchase || isCartBusy}
+          onClick={() => void handleBuyNow()}
         >
           Buy Now
         </Button>

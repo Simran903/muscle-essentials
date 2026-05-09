@@ -81,6 +81,115 @@ function toRequestError(e: unknown, fallback: string): Error {
   return new Error(envelopeMessage(e, fallback))
 }
 
+function bearerHeaders(accessToken: string) {
+  return { Authorization: `Bearer ${accessToken}` }
+}
+
+export type CartProductSummary = {
+  id: string
+  title: string
+  slug: string
+  sku: string
+  stockQuantity: number
+  isActive: boolean
+  /** Primary image if set, else first gallery image by sort order. */
+  imageUrl: string | null
+  imageAlt: string | null
+}
+
+export type CartLineItem = {
+  id: string
+  quantity: number
+  selectedFlavourLabel: string
+  selectedSizeLabel: string
+  unitPrice: number | string
+  lineTotal: number | string
+  product: CartProductSummary
+}
+
+export type Cart = {
+  id: string
+  status: string
+  currency: string
+  subtotalAmount: number | string
+  discountAmount: number | string
+  totalAmount: number | string
+  items: CartLineItem[]
+}
+
+export async function fetchCart(accessToken: string): Promise<Cart> {
+  try {
+    const { data: body } = await api.get<ApiEnvelope<{ cart: Cart }>>("/api/cart", {
+      headers: bearerHeaders(accessToken),
+    })
+    if (!body.data?.cart) {
+      throw new Error(body.message ?? "Unable to load cart.")
+    }
+    return body.data.cart
+  } catch (e) {
+    throw toRequestError(e, "Unable to load cart.")
+  }
+}
+
+export async function addToCart(
+  accessToken: string,
+  payload: {
+    productId: string
+    quantity: number
+    selectedFlavourLabel: string
+    selectedSizeLabel: string
+  },
+): Promise<Cart> {
+  try {
+    const { data: body } = await api.post<ApiEnvelope<{ cart: Cart }>>(
+      "/api/cart/add",
+      payload,
+      { headers: bearerHeaders(accessToken) },
+    )
+    if (!body.data?.cart) {
+      throw new Error(body.message ?? "Unable to add to cart.")
+    }
+    return body.data.cart
+  } catch (e) {
+    throw toRequestError(e, "Unable to add to cart.")
+  }
+}
+
+export async function updateCartLineQuantity(
+  accessToken: string,
+  itemId: string,
+  quantity: number,
+): Promise<Cart> {
+  try {
+    const { data: body } = await api.patch<ApiEnvelope<{ cart: Cart }>>(
+      `/api/cart/item/${itemId}`,
+      { quantity },
+      { headers: bearerHeaders(accessToken) },
+    )
+    if (!body.data?.cart) {
+      throw new Error(body.message ?? "Unable to update cart.")
+    }
+    return body.data.cart
+  } catch (e) {
+    throw toRequestError(e, "Unable to update cart.")
+  }
+}
+
+export async function removeCartLine(accessToken: string, itemId: string): Promise<Cart> {
+  try {
+    const { data: body } = await api.delete<ApiEnvelope<{ cart: Cart }>>(
+      `/api/cart/item/${itemId}`,
+      { headers: bearerHeaders(accessToken) },
+    )
+    if (!body.data?.cart) {
+      throw new Error(body.message ?? "Unable to remove item.")
+    }
+    return body.data.cart
+  } catch (e) {
+    throw toRequestError(e, "Unable to remove item.")
+  }
+}
+
 export async function verifyDid(payload: VerifyDidPayload): Promise<string | null> {
   try {
     const { data: body } = await api.post<ApiEnvelope<VerifyDidData>>("/api/auth/verify-did", payload)

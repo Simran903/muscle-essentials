@@ -18,7 +18,7 @@ import {
   FLAVOUR_PICKER_DEFAULT,
   ShopSidebar,
   type ShopSortBy,
-} from "./ShopSidebar"
+} from "../components/Shop/ShopSidebar"
 
 const PAGE_SIZE = 12
 const isQueryFlagEnabled = (value: string | null) => value === "1" || value === "true"
@@ -312,6 +312,15 @@ export default function ShopPage() {
                       title={product.title}
                       subtitle={product.brand?.name ?? "Muscle Essentials"}
                       price={Number(product.price)}
+                      productId={product.id}
+                      productSlug={product.slug}
+                      flavourOptionCount={product.flavours?.length ?? 0}
+                      sizeOptionCount={product.sizes?.length ?? 0}
+                      outOfStock={product.stockQuantity <= 0}
+                      defaultFlavourLabel={
+                        product.flavours?.length === 1 ? product.flavours[0]!.label : undefined
+                      }
+                      defaultSizeLabel={product.sizes?.length === 1 ? product.sizes[0]!.label : undefined}
                       onCardClick={() => router.push(`/shop/${product.slug}`)}
                       className="max-w-none"
                     />

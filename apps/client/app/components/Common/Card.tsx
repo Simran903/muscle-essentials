@@ -2,11 +2,15 @@
 
 import Image from "next/image"
 import { ShoppingCart, Star } from "lucide-react"
+import { useRouter } from "next/navigation"
 import React from "react"
 
 import { Button } from "@/app/components/ui/button"
 import { Skeleton } from "@/app/components/ui/skeleton"
 import { cn } from "@/lib/utils"
+import { getProductBySlug } from "@/lib/api"
+import { addProductToCart } from "@/lib/cart-client"
+import { toast } from "sonner"
 
 type ProductCardProps = {
   imageSrc: string
@@ -17,6 +21,20 @@ type ProductCardProps = {
   originalPrice?: number
   rating?: number
   countryCode?: string
+  /** Server product id — used for Add to cart when set. */
+  productId?: string
+  /** Resolved to id on Add when `productId` is omitted (e.g. marketing slugs). */
+  productSlug?: string
+  /** From listing data: number of flavour options (0 = none). Used to block quick-add when there is more than one. */
+  flavourOptionCount?: number
+  /** From listing data: number of size options (0 = none). */
+  sizeOptionCount?: number
+  /** When true, Add to cart is disabled. */
+  outOfStock?: boolean
+  /** Sent with add-to-cart when product has a single flavour (e.g. from listing data). */
+  defaultFlavourLabel?: string | null
+  /** Sent with add-to-cart when product has a single size. */
+  defaultSizeLabel?: string | null
   onAddToCart?: () => void
   onBuyNow?: () => void
   onCardClick?: () => void
@@ -39,11 +57,87 @@ export function Card({
   price,
   originalPrice,
   rating = 4.2,
+  productId,
+  productSlug,
+  flavourOptionCount,
+  sizeOptionCount,
+  outOfStock = false,
+  defaultFlavourLabel,
+  defaultSizeLabel,
   onAddToCart,
   onCardClick,
   className,
 }: ProductCardProps) {
+  const router = useRouter()
   const [imageLoaded, setImageLoaded] = React.useState(false)
+  const [isAdding, setIsAdding] = React.useState(false)
+
+  const canUseCartApi = Boolean(productId || productSlug)
+
+  const listingNeedsVariantChoice =
+    productId != null &&
+    flavourOptionCount !== undefined &&
+    sizeOptionCount !== undefined &&
+    (flavourOptionCount > 1 || sizeOptionCount > 1)
+
+  const handleAddToCart = async (event: React.MouseEvent) => {
+    event.stopPropagation()
+    event.preventDefault()
+    if (onAddToCart) {
+      onAddToCart()
+      return
+    }
+    if (!canUseCartApi || outOfStock) return
+
+    if (listingNeedsVariantChoice) {
+      if (productSlug) router.push(`/shop/${productSlug}`)
+      else onCardClick?.()
+      return
+    }
+
+    setIsAdding(true)
+    try {
+      let id = productId
+      let flavour = (defaultFlavourLabel ?? "").trim()
+      let size = (defaultSizeLabel ?? "").trim()
+      if (!id && productSlug) {
+        try {
+          const item = await getProductBySlug(productSlug)
+          id = item.id
+          const nFl = item.flavours?.length ?? 0
+          const nSz = item.sizes?.length ?? 0
+          if (nFl > 1 || nSz > 1) {
+            toast.message("Choose flavour and size on the product page.", {
+              description: "This item has multiple options.",
+            })
+            router.push(`/shop/${productSlug}`)
+            return
+          }
+          if (nFl === 1) flavour = item.flavours![0]!.label
+          if (nSz === 1) size = item.sizes![0]!.label
+        } catch {
+          toast.error("Product not available.")
+          return
+        }
+      }
+      if (!id) return
+      const result = await addProductToCart(id, 1, {
+        selectedFlavourLabel: flavour,
+        selectedSizeLabel: size,
+      })
+      if (result.ok) {
+        toast.success(`Added ${title} to your bag.`)
+        return
+      }
+      if (result.reason === "auth") {
+        toast.error("Sign in to add items to your cart.")
+        return
+      }
+      toast.error(result.message ?? "Couldn't add to cart.")
+    } finally {
+      setIsAdding(false)
+    }
+  }
 
   return (
     <article
@@ -126,10 +220,19 @@ export function Card({
             variant="default"
             size="lg"
             className="w-full cursor-pointer"
-            onClick={onAddToCart}
+            disabled={
+              outOfStock || isAdding || (!onAddToCart && !canUseCartApi)
+            }
+            onClick={handleAddToCart}
           >
             <ShoppingCart className="size-4" />
-            Add to Cart
+            {outOfStock
+              ? "Out of stock"
+              : listingNeedsVariantChoice
+                ? "Choose options"
+                : isAdding
+                  ? "Adding…"
+                  : "Add to Cart"}
           </Button>
         </div>
       </div>

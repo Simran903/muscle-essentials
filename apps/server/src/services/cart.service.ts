@@ -47,6 +47,11 @@ type CartWithItems = Prisma.CartGetPayload<{
             sku: true;
             stockQuantity: true;
             isActive: true;
+            images: {
+              select: { url: true; altText: true };
+              orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }];
+              take: 1;
+            };
           };
         };
       };
@@ -69,6 +74,11 @@ export async function getCartForUser(userId: string) {
               sku: true,
               stockQuantity: true,
               isActive: true,
+              images: {
+                select: { url: true, altText: true },
+                orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }],
+                take: 1,
+              },
             },
           },
         },
@@ -84,20 +94,27 @@ export async function getCartForUser(userId: string) {
     subtotalAmount: serializeDecimal(full.subtotalAmount),
     discountAmount: serializeDecimal(full.discountAmount),
     totalAmount: serializeDecimal(full.totalAmount),
-    items: full.items.map((i: CartWithItems["items"][number]) => ({
-      id: i.id,
-      quantity: i.quantity,
-      unitPrice: serializeDecimal(i.unitPrice),
-      lineTotal: serializeDecimal(i.lineTotal),
-      product: {
-        id: i.product.id,
-        title: i.product.title,
-        slug: i.product.slug,
-        sku: i.product.sku,
-        stockQuantity: i.product.stockQuantity,
-        isActive: i.product.isActive,
-      },
-    })),
+    items: full.items.map((i: CartWithItems["items"][number]) => {
+      const thumb = i.product.images[0];
+      return {
+        id: i.id,
+        quantity: i.quantity,
+        selectedFlavourLabel: i.selectedFlavourLabel,
+        selectedSizeLabel: i.selectedSizeLabel,
+        unitPrice: serializeDecimal(i.unitPrice),
+        lineTotal: serializeDecimal(i.lineTotal),
+        product: {
+          id: i.product.id,
+          title: i.product.title,
+          slug: i.product.slug,
+          sku: i.product.sku,
+          stockQuantity: i.product.stockQuantity,
+          isActive: i.product.isActive,
+          imageUrl: thumb?.url ?? null,
+          imageAlt: thumb?.altText ?? null,
+        },
+      };
+    }),
   };
 }
 
@@ -105,10 +122,17 @@ export async function addCartItem(
   userId: string,
   productId: string,
   quantity: number,
+  options: {
+    selectedFlavourLabel: string;
+    selectedSizeLabel: string;
+  },
 ) {
   if (quantity < 1) {
     throw new AppError("Invalid quantity", 400);
   }
+  const flavour = options.selectedFlavourLabel.trim();
+  const size = options.selectedSizeLabel.trim();
+
   const product = await prisma.product.findFirst({
     where: { id: productId, isActive: true },
   });
@@ -116,11 +140,51 @@ export async function addCartItem(
     throw new AppError("Product not found", 404);
   }
 
+  const [flavourCount, sizeCount] = await Promise.all([
+    prisma.productFlavour.count({ where: { productId } }),
+    prisma.productSize.count({ where: { productId } }),
+  ]);
+
+  if (flavourCount > 0 && flavour.length === 0) {
+    throw new AppError("Flavour is required for this product", 400);
+  }
+  if (sizeCount > 0 && size.length === 0) {
+    throw new AppError("Size is required for this product", 400);
+  }
+  if (flavourCount === 0 && flavour.length > 0) {
+    throw new AppError("This product has no flavours", 400);
+  }
+  if (sizeCount === 0 && size.length > 0) {
+    throw new AppError("This product has no sizes", 400);
+  }
+
+  if (flavour.length > 0) {
+    const row = await prisma.productFlavour.findFirst({
+      where: { productId, label: flavour },
+    });
+    if (!row) {
+      throw new AppError("Invalid flavour selection", 400);
+    }
+  }
+  if (size.length > 0) {
+    const row = await prisma.productSize.findFirst({
+      where: { productId, label: size },
+    });
+    if (!row) {
+      throw new AppError("Invalid size selection", 400);
+    }
+  }
+
   const cart = await getOrCreateActiveCart(userId);
 
   const existing = await prisma.cartItem.findUnique({
     where: {
-      cartId_productId: { cartId: cart.id, productId },
+      cartId_productId_selectedFlavourLabel_selectedSizeLabel: {
+        cartId: cart.id,
+        productId,
+        selectedFlavourLabel: flavour,
+        selectedSizeLabel: size,
+      },
     },
   });
 
@@ -133,10 +197,19 @@ export async function addCartItem(
   const lineTotal = unitPrice.mul(newQty);
 
   await prisma.cartItem.upsert({
-    where: { cartId_productId: { cartId: cart.id, productId } },
+    where: {
+      cartId_productId_selectedFlavourLabel_selectedSizeLabel: {
+        cartId: cart.id,
+        productId,
+        selectedFlavourLabel: flavour,
+        selectedSizeLabel: size,
+      },
+    },
     create: {
       cartId: cart.id,
       productId,
+      selectedFlavourLabel: flavour,
+      selectedSizeLabel: size,
       quantity: newQty,
       unitPrice,
       lineTotal,

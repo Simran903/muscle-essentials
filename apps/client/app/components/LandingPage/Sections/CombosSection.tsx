@@ -87,6 +87,7 @@ export const CombosSection = () => {
                   price={product.price}
                   originalPrice={product.originalPrice}
                   rating={product.rating}
+                  productSlug={product.slug}
                   onCardClick={() => router.push(`/shop/${product.slug}`)}
                   className="max-w-none rounded-2xl"
                 />

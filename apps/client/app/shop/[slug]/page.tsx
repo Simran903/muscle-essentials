@@ -3,8 +3,8 @@ import { notFound } from "next/navigation"
 import { ChevronRight, PackageCheck, ShieldCheck, Truck } from "lucide-react"
 
 import { getProductBySlug } from "@/lib/api"
-import { ProductGallery } from "./ProductGallery"
-import { ProductPurchasePanel } from "./ProductPurchasePanel"
+import { ProductGallery } from "../../components/Shop/ProductGallery"
+import { ProductPurchasePanel } from "../../components/Shop/ProductPurchasePanel"
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>
@@ -140,6 +140,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </dl>
 
             <ProductPurchasePanel
+              productId={product.id}
               productTitle={product.title}
               flavours={product.flavours}
               sizes={product.sizes}

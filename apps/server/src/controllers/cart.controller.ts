@@ -17,6 +17,8 @@ export async function getCart(req: Request, res: Response): Promise<void> {
 const addBody = z.object({
   productId: z.string().min(1),
   quantity: z.coerce.number().int().min(1).default(1),
+  selectedFlavourLabel: z.string().max(100),
+  selectedSizeLabel: z.string().max(100),
 });
 
 export async function postAddCartItem(
@@ -25,7 +27,10 @@ export async function postAddCartItem(
 ): Promise<void> {
   const userId = req.user!.id;
   const body = addBody.parse(req.body);
-  const cart = await addCartItem(userId, body.productId, body.quantity);
+  const cart = await addCartItem(userId, body.productId, body.quantity, {
+    selectedFlavourLabel: body.selectedFlavourLabel,
+    selectedSizeLabel: body.selectedSizeLabel,
+  });
   sendSuccess(res, { cart }, "Item added");
 }
 
