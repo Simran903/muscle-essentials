@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { ShoppingCart } from "lucide-react"
+import { Minus, Plus, ShoppingCart } from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@/app/components/ui/button"
@@ -13,11 +13,14 @@ export type PurchaseVariantOption = {
   sortOrder: number
 }
 
+const MAX_QUANTITY_PER_ADD = 5
+
 type ProductPurchasePanelProps = {
   productTitle: string
   flavours: PurchaseVariantOption[]
   sizes: PurchaseVariantOption[]
   isInStock: boolean
+  stockQuantity: number
 }
 
 function sortOptions<T extends { sortOrder: number; label: string }>(items: T[]): T[] {
@@ -29,9 +32,21 @@ export function ProductPurchasePanel({
   flavours,
   sizes,
   isInStock,
+  stockQuantity,
 }: ProductPurchasePanelProps) {
   const flavourList = React.useMemo(() => sortOptions(flavours), [flavours])
   const sizeList = React.useMemo(() => sortOptions(sizes), [sizes])
+
+  const maxSelectable = React.useMemo(
+    () => (isInStock ? Math.min(MAX_QUANTITY_PER_ADD, Math.max(1, stockQuantity)) : 1),
+    [isInStock, stockQuantity],
+  )
+
+  const [quantity, setQuantity] = React.useState(1)
+
+  React.useEffect(() => {
+    setQuantity((q) => Math.min(Math.max(1, q), maxSelectable))
+  }, [maxSelectable])
 
   const [flavourId, setFlavourId] = React.useState<string | null>(() =>
     flavourList.length === 1 ? flavourList[0]!.id : null,
@@ -68,14 +83,20 @@ export function ProductPurchasePanel({
 
   const handleAddToCart = () => {
     if (!validate()) return
-    toast.success(`Added ${announceSelection()} to your bag.`)
+    const q = Math.min(quantity, maxSelectable)
+    toast.success(`Added ${q} × ${announceSelection()} to your bag.`)
   }
 
   const handleBuyNow = () => {
     if (!validate()) return
+    const q = Math.min(quantity, maxSelectable)
     toast.message("Buy now", {
-      description: `${announceSelection()} — checkout will open here when payments go live.`,
+      description: `${q} × ${announceSelection()} — checkout will open here when payments go live.`,
     })
+  }
+
+  const bumpQuantity = (delta: number) => {
+    setQuantity((q) => Math.min(maxSelectable, Math.max(1, q + delta)))
   }
 
   const optionButtonClass = (active: boolean) =>
@@ -136,6 +157,53 @@ export function ProductPurchasePanel({
                 {s.label}
               </button>
             ))}
+          </div>
+        </div>
+      ) : null}
+
+      {isInStock ? (
+        <div className="space-y-2">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Quantity
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {maxSelectable < MAX_QUANTITY_PER_ADD
+                ? `${maxSelectable} available`
+                : `Up to ${MAX_QUANTITY_PER_ADD} per add`}
+            </p>
+          </div>
+          <div
+            className={cn(
+              "flex h-12 max-w-44 items-center justify-between gap-1 rounded-2xl border border-border bg-background/80 px-1 dark:bg-muted/30",
+              !canPurchase && "opacity-50",
+            )}
+          >
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="size-10 shrink-0 rounded-xl"
+              disabled={!canPurchase || quantity <= 1}
+              onClick={() => bumpQuantity(-1)}
+              aria-label="Decrease quantity"
+            >
+              <Minus className="size-4" />
+            </Button>
+            <span className="min-w-[2ch] text-center text-base font-semibold tabular-nums">
+              {quantity}
+            </span>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="size-10 shrink-0 rounded-xl"
+              disabled={!canPurchase || quantity >= maxSelectable}
+              onClick={() => bumpQuantity(1)}
+              aria-label="Increase quantity"
+            >
+              <Plus className="size-4" />
+            </Button>
           </div>
         </div>
       ) : null}

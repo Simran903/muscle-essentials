@@ -144,6 +144,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               flavours={product.flavours}
               sizes={product.sizes}
               isInStock={isInStock}
+              stockQuantity={product.stockQuantity}
             />
 
             <div className="mt-6 grid gap-3 border-t border-border pt-6 text-sm text-muted-foreground">
