@@ -6,7 +6,7 @@ import { toast } from "sonner"
 import { Card } from "@/app/components/Common/Card"
 import { Pagination } from "@/app/components/Common/Pagination"
 import { Skeleton } from "@/app/components/ui/skeleton"
-import { getProducts, type ProductListResponse } from "@/lib/api"
+import { getProducts, getShopFilters, type ProductListResponse } from "@/lib/api"
 import {
   SidebarInset,
   SidebarProvider,
@@ -82,43 +82,24 @@ export default function ShopPage() {
 
     const loadFilterOptions = async () => {
       try {
-        const response = await getProducts({ page: 1, limit: 100 })
+        const filters = await getShopFilters()
         if (cancelled) return
-
-        const brandMap = new Map<string, string>()
-        const categoryMap = new Map<string, string>()
-        const flavourSet = new Set<string>()
-
-        response.items.forEach((product) => {
-          if (product.brand?.slug && product.brand?.name) {
-            brandMap.set(product.brand.slug, product.brand.name)
-          }
-          if (product.category?.slug && product.category?.name) {
-            categoryMap.set(product.category.slug, product.category.name)
-          }
-          for (const f of product.flavours ?? []) {
-            const label = f.label?.trim()
-            if (label) flavourSet.add(label)
-          }
-        })
 
         setBrandOptions([
           { value: BRAND_PICKER_DEFAULT, label: BRAND_PICKER_DEFAULT },
-          ...Array.from(brandMap.entries())
-            .sort((a, b) => a[1].localeCompare(b[1]))
-            .map(([slug, name]) => ({ value: slug, label: name })),
+          ...filters.brands.map((b) => ({ value: b.slug, label: b.name })),
         ])
 
         setCategoryOptions([
           { value: CATEGORY_PICKER_DEFAULT, label: CATEGORY_PICKER_DEFAULT },
-          ...Array.from(categoryMap.entries())
-            .sort((a, b) => a[1].localeCompare(b[1]))
-            .map(([slug, name]) => ({ value: slug, label: name })),
+          ...filters.categories.map((c) => ({ value: c.slug, label: c.name })),
         ])
 
         setFlavourOptions([
           { value: FLAVOUR_PICKER_DEFAULT, label: FLAVOUR_PICKER_DEFAULT },
-          ...Array.from(flavourSet)
+          ...filters.flavours
+            .map((f) => f.label.trim())
+            .filter(Boolean)
             .sort((a, b) => a.localeCompare(b))
             .map((flavour) => ({ value: flavour, label: flavour })),
         ])

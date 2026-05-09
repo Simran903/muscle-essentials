@@ -64,6 +64,12 @@ export type ProductListResponse = {
   }
 }
 
+export type ShopFilters = {
+  brands: { slug: string; name: string }[]
+  categories: { slug: string; name: string }[]
+  flavours: { label: string }[]
+}
+
 function envelopeMessage(err: unknown, fallback: string): string {
   if (!isAxiosError(err)) return fallback
   const data = err.response?.data as ApiEnvelope<unknown> | undefined
@@ -110,6 +116,18 @@ function queryParams(record: Record<string, string | number | boolean | undefine
   return Object.fromEntries(
     Object.entries(record).filter(([, v]) => v !== undefined && v !== ""),
   ) as Record<string, string | number | boolean>
+}
+
+export async function getShopFilters(): Promise<ShopFilters> {
+  try {
+    const { data: body } = await api.get<ApiEnvelope<ShopFilters>>("/api/filters")
+    if (!body.data) {
+      throw new Error(body.message ?? "Unable to fetch shop filters.")
+    }
+    return body.data
+  } catch (e) {
+    throw toRequestError(e, "Unable to fetch shop filters.")
+  }
 }
 
 export async function getProducts(params?: {

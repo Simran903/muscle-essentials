@@ -180,3 +180,44 @@ export async function getProductIdBySlug(slug: string): Promise<string> {
   }
   return p.id;
 }
+
+const activeCatalogProduct = { isActive: true } as const;
+
+export type ShopFilters = {
+  brands: { slug: string; name: string }[];
+  categories: { slug: string; name: string }[];
+  flavours: { label: string }[];
+};
+
+/** Distinct brands, categories, and flavour labels that appear on at least one active product. */
+export async function listShopFilters(): Promise<ShopFilters> {
+  const [brands, categories, flavourGroups] = await Promise.all([
+    prisma.brand.findMany({
+      where: {
+        isActive: true,
+        products: { some: activeCatalogProduct },
+      },
+      select: { slug: true, name: true },
+      orderBy: { name: "asc" },
+    }),
+    prisma.category.findMany({
+      where: {
+        isActive: true,
+        primaryProducts: { some: activeCatalogProduct },
+      },
+      select: { slug: true, name: true },
+      orderBy: { name: "asc" },
+    }),
+    prisma.productFlavour.groupBy({
+      by: ["label"],
+      where: { product: activeCatalogProduct },
+      orderBy: { label: "asc" },
+    }),
+  ]);
+
+  return {
+    brands,
+    categories,
+    flavours: flavourGroups.map((g: { label: string }) => ({ label: g.label })),
+  };
+}
