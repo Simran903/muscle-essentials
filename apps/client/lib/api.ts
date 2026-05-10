@@ -34,6 +34,14 @@ type ProductBySlugResponse = {
   product: ProductItem
 }
 
+export type ProductVariantSpotlight = {
+  flavourLabel: string
+  sizeLabel: string
+  isFeatured: boolean
+  isBestseller: boolean
+  isDealoftheDay: boolean
+}
+
 export type ProductItem = {
   id: string
   title: string
@@ -51,10 +59,64 @@ export type ProductItem = {
   isFeatured: boolean
   isBestseller: boolean
   isDealoftheDay: boolean
+  /** Per (flavour, size) merchandising flags; flavourLabel is "" when the product has no flavours. */
+  variantSpotlights?: ProductVariantSpotlight[]
   sizes: { id: string; label: string; sortOrder: number; price: number | string }[]
   brand: { id: string; name: string; slug: string }
   category: { id: string; name: string; slug: string }
   images: { id: string; url: string; altText: string | null; sortOrder: number; isPrimary: boolean }[]
+}
+
+function normalizeSpotlightFlavour(
+  flavourLabel: string | null | undefined,
+  productHasFlavours: boolean,
+): string {
+  if (!productHasFlavours) return ""
+  return (flavourLabel ?? "").trim()
+}
+
+export function getVariantSpotlightRow(
+  product: Pick<ProductItem, "variantSpotlights" | "flavours">,
+  flavourLabel: string | null | undefined,
+  sizeLabel: string | null | undefined,
+): ProductVariantSpotlight | undefined {
+  const spotlights = product.variantSpotlights ?? []
+  if (!spotlights.length) return undefined
+  const sz = (sizeLabel ?? "").trim()
+  if (!sz) return undefined
+  const fl = normalizeSpotlightFlavour(flavourLabel, (product.flavours?.length ?? 0) > 0)
+  return spotlights.find((s) => s.sizeLabel === sz && s.flavourLabel === fl)
+}
+
+export function effectiveVariantFlags(
+  product: ProductItem,
+  flavourLabel: string | null | undefined,
+  sizeLabel: string | null | undefined,
+): {
+  isFeatured: boolean
+  isBestseller: boolean
+  isDealoftheDay: boolean
+} {
+  const row = getVariantSpotlightRow(product, flavourLabel, sizeLabel)
+  return {
+    isFeatured: product.isFeatured || Boolean(row?.isFeatured),
+    isBestseller: product.isBestseller || Boolean(row?.isBestseller),
+    isDealoftheDay: product.isDealoftheDay || Boolean(row?.isDealoftheDay),
+  }
+}
+
+export function productQualifiesForMerchFlag(
+  product: ProductItem,
+  key: "isFeatured" | "isBestseller" | "isDealoftheDay",
+): boolean {
+  if (product[key]) return true
+  const spotlightKey =
+    key === "isFeatured"
+      ? "isFeatured"
+      : key === "isBestseller"
+        ? "isBestseller"
+        : "isDealoftheDay"
+  return (product.variantSpotlights ?? []).some((s) => s[spotlightKey])
 }
 
 export type ProductListResponse = {
@@ -248,6 +310,8 @@ export async function getProducts(params?: {
   categorySlug?: string
   brandSlug?: string
   featured?: boolean
+  bestseller?: boolean
+  dealOfTheDay?: boolean
 }): Promise<ProductListResponse> {
   try {
     const { data: body } = await api.get<ApiEnvelope<ProductListResponse>>("/api/products", {
@@ -257,6 +321,8 @@ export async function getProducts(params?: {
         categorySlug: params?.categorySlug,
         brandSlug: params?.brandSlug,
         featured: params?.featured,
+        bestseller: params?.bestseller,
+        deal: params?.dealOfTheDay === true ? true : undefined,
       }),
     })
     if (!body.data) {

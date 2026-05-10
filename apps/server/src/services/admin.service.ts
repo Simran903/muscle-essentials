@@ -78,6 +78,9 @@ type AdminProductRow = Prisma.ProductGetPayload<{
     category: true;
     sizes: { orderBy: { sortOrder: "asc" } };
     flavours: { orderBy: { sortOrder: "asc" } };
+    variantSpotlights: {
+      orderBy: [{ flavourLabel: "asc" }, { sizeLabel: "asc" }];
+    };
   };
 }>;
 
@@ -136,6 +139,9 @@ export async function adminListProducts(page?: number, limit?: number) {
         category: true,
         sizes: { orderBy: { sortOrder: "asc" } },
         flavours: { orderBy: { sortOrder: "asc" } },
+        variantSpotlights: {
+          orderBy: [{ flavourLabel: "asc" }, { sizeLabel: "asc" }],
+        },
       },
     }),
     prisma.product.count(),
@@ -180,6 +186,16 @@ export async function adminListProducts(page?: number, limit?: number) {
           price: serializeDecimal(size.price),
           costPrice: serializeDecimal(size.costPrice),
         })),
+        variantSpotlights: p.variantSpotlights.map(
+          (v: AdminProductRow["variantSpotlights"][number]) => ({
+            id: v.id,
+            flavourLabel: v.flavourLabel,
+            sizeLabel: v.sizeLabel,
+            isFeatured: v.isFeatured,
+            isBestseller: v.isBestseller,
+            isDealoftheDay: v.isDealoftheDay,
+          }),
+        ),
       };
     }),
     pagination: { page: pageN, limit: take, total, totalPages: Math.ceil(total / take) },
@@ -337,7 +353,107 @@ export async function adminUpdateProduct(
   if (data.isFeatured !== undefined) update.isFeatured = data.isFeatured;
   if (data.isBestseller !== undefined) update.isBestseller = data.isBestseller;
   if (data.isDealoftheDay !== undefined) update.isDealoftheDay = data.isDealoftheDay;
+
+  if (data.flavours !== undefined || data.sizes !== undefined) {
+    await prisma.productVariantSpotlight.deleteMany({ where: { productId: id } });
+  }
+
   return prisma.product.update({ where: { id }, data: update });
+}
+
+export type AdminVariantSpotlightInput = {
+  flavourLabel: string;
+  sizeLabel: string;
+  isFeatured: boolean;
+  isBestseller: boolean;
+  isDealoftheDay: boolean;
+};
+
+/** Replace all variant-level merchandising rows for a product (admin). */
+export async function adminSetProductVariantSpotlights(
+  productId: string,
+  spotlights: AdminVariantSpotlightInput[],
+) {
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+    include: {
+      flavours: { orderBy: { sortOrder: "asc" } },
+      sizes: { orderBy: { sortOrder: "asc" } },
+    },
+  });
+  if (!product) {
+    throw new AppError("Product not found", 404);
+  }
+
+  const flavourLabels = new Set(
+    product.flavours.map((f: { label: string }) => f.label),
+  );
+  const sizeLabels = new Set(
+    product.sizes.map((s: { label: string }) => s.label),
+  );
+  const noFlavours = product.flavours.length === 0;
+
+  const normalized = spotlights.map((row) => {
+    const sizeLabel = row.sizeLabel.trim();
+    const flavourLabel = noFlavours ? "" : row.flavourLabel.trim();
+    return {
+      flavourLabel,
+      sizeLabel,
+      isFeatured: row.isFeatured,
+      isBestseller: row.isBestseller,
+      isDealoftheDay: row.isDealoftheDay,
+    };
+  });
+
+  for (const row of normalized) {
+    if (!row.sizeLabel) {
+      throw new AppError("Each variant spotlight must include a non-empty sizeLabel", 400);
+    }
+    if (!sizeLabels.has(row.sizeLabel)) {
+      throw new AppError(`Unknown size label for this product: ${row.sizeLabel}`, 400);
+    }
+    if (noFlavours) {
+      if (row.flavourLabel !== "") {
+        throw new AppError(
+          "flavourLabel must be empty when the product has no flavours",
+          400,
+        );
+      }
+    } else if (!flavourLabels.has(row.flavourLabel)) {
+      throw new AppError(`Unknown flavour label for this product: ${row.flavourLabel}`, 400);
+    }
+  }
+
+  const keySeen = new Set<string>();
+  for (const row of normalized) {
+    const k = `${row.flavourLabel}\0${row.sizeLabel}`;
+    if (keySeen.has(k)) {
+      throw new AppError("Duplicate flavour + size in variant spotlights", 400);
+    }
+    keySeen.add(k);
+  }
+
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    await tx.productVariantSpotlight.deleteMany({ where: { productId } });
+    if (normalized.length === 0) {
+      return;
+    }
+    await tx.productVariantSpotlight.createMany({
+      data: normalized.map((r) => ({
+        productId,
+        flavourLabel: r.flavourLabel,
+        sizeLabel: r.sizeLabel,
+        isFeatured: r.isFeatured,
+        isBestseller: r.isBestseller,
+        isDealoftheDay: r.isDealoftheDay,
+      })),
+    });
+  });
+
+  return prisma.productVariantSpotlight.findMany({
+    where: { productId },
+    orderBy: [{ flavourLabel: "asc" }, { sizeLabel: "asc" }],
+  });
 }
 
 export async function adminDeleteProduct(id: string) {

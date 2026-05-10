@@ -6,7 +6,12 @@ import { toast } from "sonner"
 import { Card } from "@/app/components/Common/Card"
 import { Pagination } from "@/app/components/Common/Pagination"
 import { Skeleton } from "@/app/components/ui/skeleton"
-import { getProducts, getShopFilters, type ProductListResponse } from "@/lib/api"
+import {
+  effectiveVariantFlags,
+  getProducts,
+  getShopFilters,
+  type ProductListResponse,
+} from "@/lib/api"
 import {
   SidebarInset,
   SidebarProvider,
@@ -195,23 +200,11 @@ export default function ShopPage() {
             (item.flavours ?? []).some((f) => selectedFlavours.includes(f.label)),
           )
 
-    const bestsellerFiltered = bestsellerOnly
-      ? flavourFiltered.filter((item) => item.isBestseller)
-      : flavourFiltered
-
-    const featuredFiltered = featuredOnly
-      ? bestsellerFiltered.filter((item) => item.isFeatured)
-      : bestsellerFiltered
-
-    const dealFiltered = dealOfTheDayOnly
-      ? featuredFiltered.filter((item) => item.isDealoftheDay)
-      : featuredFiltered
-
     const comboFiltered = comboOnly
-      ? dealFiltered.filter((item) =>
+      ? flavourFiltered.filter((item) =>
           `${item.title} ${item.shortDesc ?? ""} ${item.flavours?.map((f) => f.label).join(" ")}`.toLowerCase().includes("combo")
         )
-      : dealFiltered
+      : flavourFiltered
 
     const expanded = comboFiltered.flatMap((product) => {
       const flavourOptions = (product.flavours ?? []).length ? product.flavours : [null]
@@ -228,7 +221,15 @@ export default function ShopPage() {
       )
     })
 
-    const sorted = [...expanded]
+    const spotlightFiltered = expanded.filter((row) => {
+      const flags = effectiveVariantFlags(row.product, row.flavourLabel, row.sizeLabel)
+      if (featuredOnly && !flags.isFeatured) return false
+      if (bestsellerOnly && !flags.isBestseller) return false
+      if (dealOfTheDayOnly && !flags.isDealoftheDay) return false
+      return true
+    })
+
+    const sorted = [...spotlightFiltered]
 
     const createdMs = (p: ShopVariantItem) => new Date(p.product.createdAt).getTime()
 
@@ -374,6 +375,11 @@ export default function ShopPage() {
                       defaultSizeLabel={item.sizeLabel}
                       onCardClick={() => router.push(`/shop/${item.product.slug}`)}
                       className="max-w-none"
+                      merchBadges={effectiveVariantFlags(
+                        item.product,
+                        item.flavourLabel,
+                        item.sizeLabel,
+                      )}
                     />
                   </div>
                 ))}

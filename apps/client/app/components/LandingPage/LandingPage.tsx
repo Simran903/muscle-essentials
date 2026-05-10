@@ -14,7 +14,7 @@ import { FAQSection } from "./Sections/FAQSection"
 import { TestimonialsSection } from "./Sections/Testimonials"
 import { BrandCarousel } from "./Carousel/BrandCarousel"
 import { Footer } from "./Footer/Footer"
-import { getProducts, type ProductItem } from "@/lib/api"
+import { getProducts, productQualifiesForMerchFlag, type ProductItem } from "@/lib/api"
 
 function SectionBlockSkeleton({
   withCtaRow,
@@ -158,15 +158,15 @@ const LandingPage = () => {
   }, [])
 
   const dealOfTheDayProducts = React.useMemo(
-    () => landingProducts.filter((item) => item.isDealoftheDay).slice(0, 8),
+    () => landingProducts.filter((item) => productQualifiesForMerchFlag(item, "isDealoftheDay")).slice(0, 8),
     [landingProducts]
   )
   const bestSellerProducts = React.useMemo(
-    () => landingProducts.filter((item) => item.isBestseller).slice(0, 10),
+    () => landingProducts.filter((item) => productQualifiesForMerchFlag(item, "isBestseller")).slice(0, 10),
     [landingProducts]
   )
   const featuredProducts = React.useMemo(
-    () => landingProducts.filter((item) => item.isFeatured).slice(0, 8),
+    () => landingProducts.filter((item) => productQualifiesForMerchFlag(item, "isFeatured")).slice(0, 8),
     [landingProducts]
   )
 

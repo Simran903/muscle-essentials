@@ -166,6 +166,7 @@ model Product {
   images          ProductImage[]
   sizes           ProductSize[]
   flavours        ProductFlavour[]
+  variantSpotlights ProductVariantSpotlight[]
   bulletPoints    ProductBulletPoint[]
   cartItems       CartItem[]
   orderItems      OrderItem[]
@@ -206,6 +207,25 @@ model ProductFlavour {
 
   @@index([productId, sortOrder])
   @@unique([productId, label])
+}
+
+/** Admin merchandising flags for a specific flavour + size variant of a product. */
+model ProductVariantSpotlight {
+  id             String   @id @default(cuid())
+  productId      String
+  /** Matches `ProductFlavour.label`; empty string when the product has no flavours. */
+  flavourLabel   String   @default("")
+  /** Matches `ProductSize.label`. */
+  sizeLabel      String
+  isFeatured     Boolean  @default(false)
+  isBestseller   Boolean  @default(false)
+  isDealoftheDay Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  product        Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, flavourLabel, sizeLabel])
+  @@index([productId])
 }
 
 model ProductImage {

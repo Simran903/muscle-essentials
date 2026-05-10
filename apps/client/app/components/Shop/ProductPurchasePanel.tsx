@@ -31,6 +31,8 @@ type ProductPurchasePanelProps = {
   sizes: PurchaseSizeOption[]
   isInStock: boolean
   stockQuantity: number
+  /** Called when flavour/size are resolved enough to map variant-level merchandising. */
+  onResolvedSelection?: (selection: { flavourLabel: string; sizeLabel: string }) => void
 }
 
 function formatInr(value: number | string) {
@@ -52,6 +54,7 @@ export function ProductPurchasePanel({
   sizes,
   isInStock,
   stockQuantity,
+  onResolvedSelection,
 }: ProductPurchasePanelProps) {
   const router = useRouter()
   const [isCartBusy, setIsCartBusy] = React.useState(false)
@@ -81,6 +84,21 @@ export function ProductPurchasePanel({
   const flavourLabel = flavourList.find((f) => f.id === flavourId)?.label
   const selectedSize = sizeList.find((s) => s.id === sizeId)
   const sizeLabel = selectedSize?.label
+
+  React.useEffect(() => {
+    if (!onResolvedSelection) return
+    if (flavourList.length > 0 && flavourLabel == null) return
+    if (sizeList.length > 0 && sizeLabel == null) return
+    const fl = flavourList.length > 0 ? (flavourLabel ?? "") : ""
+    const sz = sizeList.length > 0 ? (sizeLabel ?? "") : ""
+    onResolvedSelection({ flavourLabel: fl, sizeLabel: sz })
+  }, [
+    onResolvedSelection,
+    flavourList.length,
+    sizeList.length,
+    flavourLabel,
+    sizeLabel,
+  ])
 
   const displayUnitPrice = React.useMemo(() => {
     if (sizeList.length === 0) return null

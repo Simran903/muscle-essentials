@@ -26,6 +26,7 @@ import {
   adminUpdateProduct,
   adminUpdateProductImage,
   adminUpdateUser,
+  adminSetProductVariantSpotlights,
 } from "../services/admin.service.js";
 import { signProductImageUpload } from "../services/upload.service.js";
 
@@ -118,6 +119,28 @@ export async function adminPatchProduct(
   const body = patchProductBody.parse(req.body);
   const product = await adminUpdateProduct(id, body);
   sendSuccess(res, { product }, "Product updated");
+}
+
+const variantSpotlightRow = z.object({
+  flavourLabel: z.string(),
+  sizeLabel: z.string().trim().min(1).max(100),
+  isFeatured: z.boolean(),
+  isBestseller: z.boolean(),
+  isDealoftheDay: z.boolean(),
+});
+
+const putVariantSpotlightsBody = z.object({
+  spotlights: z.array(variantSpotlightRow).max(200),
+});
+
+export async function adminPutProductVariantSpotlights(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { id } = z.object({ id: z.string().min(1) }).parse(req.params);
+  const body = putVariantSpotlightsBody.parse(req.body);
+  const spotlights = await adminSetProductVariantSpotlights(id, body.spotlights);
+  sendSuccess(res, { spotlights }, "Variant spotlights updated");
 }
 
 export async function adminRemoveProduct(

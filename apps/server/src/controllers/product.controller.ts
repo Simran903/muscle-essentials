@@ -26,6 +26,17 @@ export async function getProducts(req: Request, res: Response): Promise<void> {
     req.query.featured === "1" || req.query.featured === "true"
       ? true
       : undefined;
+  const bestseller =
+    req.query.bestseller === "1" || req.query.bestseller === "true"
+      ? true
+      : undefined;
+  const dealOfTheDay =
+    req.query.deal === "1" ||
+    req.query.deal === "true" ||
+    req.query.dealOfTheDay === "1" ||
+    req.query.dealOfTheDay === "true"
+      ? true
+      : undefined;
 
   const data = await listProducts({
     page: q.page,
@@ -33,6 +44,8 @@ export async function getProducts(req: Request, res: Response): Promise<void> {
     categorySlug,
     brandSlug,
     featured,
+    bestseller,
+    dealOfTheDay,
   });
   sendSuccess(res, data, "");
 }

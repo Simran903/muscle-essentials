@@ -11,6 +11,9 @@ const productInclude = {
   images: { orderBy: { sortOrder: "asc" as const } },
   sizes: { orderBy: { sortOrder: "asc" as const } },
   flavours: { orderBy: { sortOrder: "asc" as const } },
+  variantSpotlights: {
+    orderBy: [{ flavourLabel: "asc" as const }, { sizeLabel: "asc" as const }],
+  },
 } satisfies Prisma.ProductInclude;
 
 type ProductFull = Prisma.ProductGetPayload<{ include: typeof productInclude }>;
@@ -75,6 +78,15 @@ function mapProduct(p: ProductFull) {
       sortOrder: size.sortOrder,
       price: serializeDecimal(size.price),
     })),
+    variantSpotlights: (p.variantSpotlights ?? []).map(
+      (v: ProductFull["variantSpotlights"][number]) => ({
+        flavourLabel: v.flavourLabel,
+        sizeLabel: v.sizeLabel,
+        isFeatured: v.isFeatured,
+        isBestseller: v.isBestseller,
+        isDealoftheDay: v.isDealoftheDay,
+      }),
+    ),
   };
 }
 
@@ -84,21 +96,46 @@ export async function listProducts(params: {
   categorySlug?: string;
   brandSlug?: string;
   featured?: boolean;
+  bestseller?: boolean;
+  dealOfTheDay?: boolean;
 }) {
   const page = Math.max(1, params.page ?? 1);
   const take = Math.min(maxTake, Math.max(1, params.limit ?? defaultTake));
   const skip = (page - 1) * take;
 
-  const where: Prisma.ProductWhereInput = { isActive: true };
+  const clauses: Prisma.ProductWhereInput[] = [{ isActive: true }];
   if (params.featured === true) {
-    where.isFeatured = true;
+    clauses.push({
+      OR: [
+        { isFeatured: true },
+        { variantSpotlights: { some: { isFeatured: true } } },
+      ],
+    });
+  }
+  if (params.bestseller === true) {
+    clauses.push({
+      OR: [
+        { isBestseller: true },
+        { variantSpotlights: { some: { isBestseller: true } } },
+      ],
+    });
+  }
+  if (params.dealOfTheDay === true) {
+    clauses.push({
+      OR: [
+        { isDealoftheDay: true },
+        { variantSpotlights: { some: { isDealoftheDay: true } } },
+      ],
+    });
   }
   if (params.brandSlug) {
-    where.brand = { slug: params.brandSlug, isActive: true };
+    clauses.push({ brand: { slug: params.brandSlug, isActive: true } });
   }
   if (params.categorySlug) {
-    where.category = { slug: params.categorySlug, isActive: true };
+    clauses.push({ category: { slug: params.categorySlug, isActive: true } });
   }
+  const where: Prisma.ProductWhereInput =
+    clauses.length === 1 ? clauses[0]! : { AND: clauses };
 
   const [items, total] = await Promise.all([
     prisma.product.findMany({

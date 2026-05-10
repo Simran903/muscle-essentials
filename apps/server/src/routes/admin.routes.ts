@@ -12,6 +12,7 @@ import {
   adminPatchCategory,
   adminPatchOrder,
   adminPatchProduct,
+  adminPutProductVariantSpotlights,
   adminPatchProductImage,
   adminPatchReview,
   adminPatchUser,
@@ -45,6 +46,7 @@ r.delete("/admin/categories/:id", ...admin, adminRemoveCategory);
 r.get("/admin/products", ...admin, adminGetProducts);
 r.post("/admin/products", ...admin, adminPostProduct);
 r.patch("/admin/products/:id", ...admin, adminPatchProduct);
+r.put("/admin/products/:id/variant-spotlights", ...admin, adminPutProductVariantSpotlights);
 r.delete("/admin/products/:id", ...admin, adminRemoveProduct);
 
 r.post("/admin/uploads/sign", ...admin, adminSignUpload);

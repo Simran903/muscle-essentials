@@ -41,6 +41,12 @@ type ProductCardProps = {
   onBuyNow?: () => void
   onCardClick?: () => void
   className?: string
+  /** Small labels on the image for variant- or product-level merchandising. */
+  merchBadges?: {
+    isFeatured?: boolean
+    isBestseller?: boolean
+    isDealoftheDay?: boolean
+  }
 }
 
 function formatPrice(value: number) {
@@ -70,6 +76,7 @@ export function Card({
   onAddToCart,
   onCardClick,
   className,
+  merchBadges,
 }: ProductCardProps) {
   const router = useRouter()
   const [imageLoaded, setImageLoaded] = React.useState(false)
@@ -191,9 +198,28 @@ export function Card({
             onLoad={() => setImageLoaded(true)}
             onError={() => setImageLoaded(true)}
           />
+          {(merchBadges?.isFeatured ||
+            merchBadges?.isBestseller ||
+            merchBadges?.isDealoftheDay) && (
+            <div className="pointer-events-none absolute left-2 top-2 z-5 flex max-w-[calc(100%-1rem)] flex-wrap gap-1">
+              {merchBadges?.isFeatured ? (
+                <span className="rounded-md border border-primary/35 bg-primary/15 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-foreground shadow-sm dark:bg-primary/20">
+                  Featured
+                </span>
+              ) : null}
+              {merchBadges?.isBestseller ? (
+                <span className="rounded-md border border-emerald-500/35 bg-emerald-500/15 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-emerald-800 dark:text-emerald-200">
+                  Bestseller
+                </span>
+              ) : null}
+              {merchBadges?.isDealoftheDay ? (
+                <span className="rounded-md border border-cyan-500/40 bg-cyan-500/15 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-cyan-950 dark:text-cyan-100">
+                  Deal
+                </span>
+              ) : null}
+            </div>
+          )}
         </div>
-
-        
       </div>
 
       <div className="flex flex-1 flex-col space-y-3 p-4 sm:p-5">
