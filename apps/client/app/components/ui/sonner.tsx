@@ -8,7 +8,7 @@ type ToasterProps = ComponentProps<typeof Sonner>
 export function Toaster({ ...props }: ToasterProps) {
   return (
     <Sonner
-      position="top-right"
+      position="bottom-right"
       richColors
       closeButton
       toastOptions={{

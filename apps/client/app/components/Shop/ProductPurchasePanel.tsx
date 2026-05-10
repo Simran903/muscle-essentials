@@ -195,11 +195,6 @@ export function ProductPurchasePanel({
         <div className="space-y-2">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
             Flavour
-            {flavourList.length > 1 && !flavourId ? (
-              <span className="ml-2 font-normal normal-case text-amber-600 dark:text-amber-400">
-                — choose one
-              </span>
-            ) : null}
           </p>
           <div className="flex flex-wrap gap-2">
             {flavourList.map((f) => (
@@ -221,11 +216,6 @@ export function ProductPurchasePanel({
         <div className="space-y-2">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
             Size
-            {sizeList.length > 1 && !sizeId ? (
-              <span className="ml-2 font-normal normal-case text-amber-600 dark:text-amber-400">
-                — choose one
-              </span>
-            ) : null}
           </p>
           <div className="flex flex-wrap gap-2">
             {sizeList.map((s) => (
@@ -233,7 +223,7 @@ export function ProductPurchasePanel({
                 key={s.id}
                 type="button"
                 onClick={() => setSizeId(s.id)}
-                className={optionButtonClass(sizeId === s.id)}
+                className={`${optionButtonClass(sizeId === s.id)}`}
                 aria-pressed={sizeId === s.id}
               >
                 <span className="block">{s.label}</span>
