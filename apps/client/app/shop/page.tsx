@@ -22,6 +22,13 @@ import {
 
 const PAGE_SIZE = 12
 const isQueryFlagEnabled = (value: string | null) => value === "1" || value === "true"
+type ShopVariantItem = {
+  key: string
+  product: ProductListResponse["items"][number]
+  flavourLabel?: string
+  sizeLabel?: string
+  price: number
+}
 
 export default function ShopPage() {
   const router = useRouter()
@@ -167,7 +174,7 @@ export default function ShopPage() {
     }
   }, [page])
 
-  const visibleItems = React.useMemo(() => {
+  const visibleItems = React.useMemo<ShopVariantItem[]>(() => {
     const items = [...(data?.items ?? [])]
     const brandFiltered =
       selectedBrandSlugs.length === 0
@@ -206,18 +213,33 @@ export default function ShopPage() {
         )
       : dealFiltered
 
-    const sorted = [...comboFiltered]
+    const expanded = comboFiltered.flatMap((product) => {
+      const flavourOptions = (product.flavours ?? []).length ? product.flavours : [null]
+      const sizeOptions = (product.sizes ?? []).length ? product.sizes : [null]
 
-    const createdMs = (p: (typeof sorted)[number]) => new Date(p.createdAt).getTime()
+      return flavourOptions.flatMap((flavour) =>
+        sizeOptions.map((size) => ({
+          key: `${product.id}:${flavour?.id ?? "noflavour"}:${size?.id ?? "nosize"}`,
+          product,
+          flavourLabel: flavour?.label,
+          sizeLabel: size?.label,
+          price: size ? Number(size.price) : Number(product.price),
+        }))
+      )
+    })
+
+    const sorted = [...expanded]
+
+    const createdMs = (p: ShopVariantItem) => new Date(p.product.createdAt).getTime()
 
     if (sortBy === "price-asc") {
-      sorted.sort((a, b) => Number(a.price) - Number(b.price))
+      sorted.sort((a, b) => a.price - b.price)
     } else if (sortBy === "price-desc") {
-      sorted.sort((a, b) => Number(b.price) - Number(a.price))
+      sorted.sort((a, b) => b.price - a.price)
     } else if (sortBy === "title-asc") {
-      sorted.sort((a, b) => a.title.localeCompare(b.title))
+      sorted.sort((a, b) => a.product.title.localeCompare(b.product.title))
     } else if (sortBy === "title-desc") {
-      sorted.sort((a, b) => b.title.localeCompare(a.title))
+      sorted.sort((a, b) => b.product.title.localeCompare(a.product.title))
     } else if (sortBy === "date-desc") {
       sorted.sort((a, b) => createdMs(b) - createdMs(a))
     } else if (sortBy === "date-asc") {
@@ -252,7 +274,7 @@ export default function ShopPage() {
     : (data?.pagination.page ?? 1) < (data?.pagination.totalPages ?? 1)
   const currentPage = hasClientFilters ? 1 : (data?.pagination.page ?? 1)
   const totalPages = hasClientFilters ? 1 : (data?.pagination.totalPages ?? 1)
-  const productCount = hasClientFilters ? visibleItems.length : data?.pagination.total ?? 0
+  const productCount = visibleItems.length
 
   return (
     <SidebarProvider className="bg-background text-foreground dark:bg-background">
@@ -328,28 +350,29 @@ export default function ShopPage() {
           ) : visibleItems.length ? (
             <>
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {visibleItems.map((product) => (
-                  <div key={product.id} className="h-full">
+                {visibleItems.map((item) => (
+                  <div key={item.key} className="h-full">
                     <Card
-                      imageSrc={product.images.find((image) => image.isPrimary)?.url ?? product.images[0]?.url ?? "/images/placeholder.jpg"}
-                      imageAlt={product.images.find((image) => image.isPrimary)?.altText ?? product.title}
-                      title={product.title}
-                      subtitle={product.brand?.name ?? "Muscle Essentials"}
-                      price={Number(product.price)}
-                      priceFrom={
-                        product.maxPrice != null &&
-                        Number(product.maxPrice) > Number(product.price)
-                      }
-                      productId={product.id}
-                      productSlug={product.slug}
-                      flavourOptionCount={product.flavours?.length ?? 0}
-                      sizeOptionCount={product.sizes?.length ?? 0}
-                      outOfStock={product.stockQuantity <= 0}
-                      defaultFlavourLabel={
-                        product.flavours?.length === 1 ? product.flavours[0]!.label : undefined
-                      }
-                      defaultSizeLabel={product.sizes?.length === 1 ? product.sizes[0]!.label : undefined}
-                      onCardClick={() => router.push(`/shop/${product.slug}`)}
+                      imageSrc={item.product.images.find((image) => image.isPrimary)?.url ?? item.product.images[0]?.url ?? "/images/placeholder.jpg"}
+                      imageAlt={item.product.images.find((image) => image.isPrimary)?.altText ?? item.product.title}
+                      title={item.product.title}
+                      subtitle={[
+                        item.product.brand?.name ?? "Muscle Essentials",
+                        item.flavourLabel ? `Flavour: ${item.flavourLabel}` : null,
+                        item.sizeLabel ? `Size: ${item.sizeLabel}` : null,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
+                      price={item.price}
+                      priceFrom={false}
+                      productId={item.product.id}
+                      productSlug={item.product.slug}
+                      flavourOptionCount={item.flavourLabel ? 1 : 0}
+                      sizeOptionCount={item.sizeLabel ? 1 : 0}
+                      outOfStock={item.product.stockQuantity <= 0}
+                      defaultFlavourLabel={item.flavourLabel}
+                      defaultSizeLabel={item.sizeLabel}
+                      onCardClick={() => router.push(`/shop/${item.product.slug}`)}
                       className="max-w-none"
                     />
                   </div>

@@ -74,6 +74,7 @@ export function Card({
   const router = useRouter()
   const [imageLoaded, setImageLoaded] = React.useState(false)
   const [isAdding, setIsAdding] = React.useState(false)
+  const imageRef = React.useRef<HTMLImageElement | null>(null)
 
   const canUseCartApi = Boolean(productId || productSlug)
 
@@ -142,6 +143,16 @@ export function Card({
     }
   }
 
+  React.useEffect(() => {
+    setImageLoaded(false)
+  }, [imageSrc])
+
+  React.useEffect(() => {
+    if (imageRef.current?.complete) {
+      setImageLoaded(true)
+    }
+  }, [imageSrc])
+
   return (
     <article
       role={onCardClick ? "button" : undefined}
@@ -166,18 +177,19 @@ export function Card({
       )}
     >
       <div className="relative">
-        <div className="overflow-hidden rounded-t-xl bg-muted/25">
-          {!imageLoaded && <Skeleton className="h-64 w-full rounded-none" />}
+        <div className="relative h-64 overflow-hidden rounded-t-xl bg-muted/25">
+          {!imageLoaded && (
+            <Skeleton className="absolute inset-0 z-10 h-full w-full rounded-none" />
+          )}
           <Image
+            ref={imageRef}
             src={imageSrc}
             alt={imageAlt}
             width={600}
             height={600}
-            className={cn(
-              "h-64 w-full object-cover transition-opacity duration-500",
-              imageLoaded ? "opacity-100" : "opacity-0"
-            )}
+            className="h-full w-full object-cover transition-opacity duration-300"
             onLoad={() => setImageLoaded(true)}
+            onError={() => setImageLoaded(true)}
           />
         </div>
 
