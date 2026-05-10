@@ -23,33 +23,33 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const isInStock = product.stockQuantity > 0
 
   return (
-    <main className="relative isolate mx-auto min-h-svh w-full max-w-7xl overflow-hidden px-4 py-6 text-foreground sm:px-6 sm:py-8 lg:px-8 lg:py-10">
+    <main className="relative isolate mx-auto min-h-svh w-full max-w-7xl overflow-hidden px-4 py-6 text-foreground sm:px-6 sm:py-8 lg:px-10 lg:py-12">
 
-      <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+      <nav className="mb-8 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
         <Link
           href="/"
-          className="rounded-full px-2 py-1 transition-colors hover:bg-muted hover:text-foreground"
+          className="rounded-md px-2.5 py-1 transition-colors hover:bg-muted/80 hover:text-foreground"
         >
           Home
         </Link>
 
-        <ChevronRight className="size-4" />
+        <ChevronRight className="size-4 opacity-50" />
 
         <Link
           href="/shop"
-          className="rounded-full px-2 py-1 transition-colors hover:bg-muted hover:text-foreground"
+          className="rounded-md px-2.5 py-1 transition-colors hover:bg-muted/80 hover:text-foreground"
         >
           Shop
         </Link>
 
-        <ChevronRight className="size-4" />
+        <ChevronRight className="size-4 opacity-50" />
 
-        <span className="line-clamp-1 rounded-full border border-border bg-card px-2 py-1 text-foreground shadow-sm">
+        <span className="line-clamp-1 max-w-[min(100%,28rem)] rounded-md border border-border/60 bg-card/80 px-3 py-1 text-foreground shadow-none">
           {product.title}
         </span>
       </nav>
 
-      <section className="grid gap-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)] lg:gap-8">
+      <section className="grid gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)] lg:gap-10">
         <ProductGallery
           images={images}
           productTitle={product.title}
@@ -57,22 +57,22 @@ export default async function ProductPage({ params }: ProductPageProps) {
         />
 
         <aside className="lg:sticky lg:top-24 lg:self-start">
-          <div className="rounded-3xl border border-border bg-card/90 p-5 text-card-foreground shadow-sm backdrop-blur sm:p-6 lg:p-8">
+          <div className="rounded-xl border border-border/60 bg-card/85 p-5 text-card-foreground shadow-none backdrop-blur-sm sm:p-6 lg:p-8">
             <div className="mb-4 flex flex-wrap gap-2">
               {product.isFeatured && (
-                <span className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-700 dark:text-cyan-300">
+                <span className="rounded-md border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-foreground dark:border-primary/35 dark:bg-primary/15">
                   Featured
                 </span>
               )}
 
               {product.isBestseller && (
-                <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                <span className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
                   Bestseller
                 </span>
               )}
 
               <span
-                className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${
+                className={`inline-flex items-center gap-2 rounded-md px-3 py-1 text-xs font-semibold ${
                   isInStock
                     ? "border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
                     : "border border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-300"
@@ -92,7 +92,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 {product.brand?.name ?? "Muscle Essentials"}
               </p>
 
-              <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+              <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-[2.8rem] lg:leading-tight">
                 {product.title}
               </h1>
 
@@ -104,7 +104,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
 
             <dl className="mt-6">
-              <div className="rounded-2xl border border-border bg-background/70 p-4 dark:bg-muted/30">
+              <div className="rounded-2xl border border-border/50 bg-muted/20 p-4 dark:bg-muted/25">
                 <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                   Category
                 </dt>
@@ -123,19 +123,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
               stockQuantity={product.stockQuantity}
             />
 
-            <div className="mt-6 grid gap-3 border-t border-border pt-6 text-sm text-muted-foreground">
+            <div className="mt-6 grid gap-3 border-t border-border/50 pt-6 text-sm text-muted-foreground">
               <div className="flex items-center gap-3">
-                <Truck className="size-5 text-cyan-500" />
+                <Truck className="size-5 text-muted-foreground" />
                 Fast delivery across India
               </div>
 
               <div className="flex items-center gap-3">
-                <ShieldCheck className="size-5 text-cyan-500" />
+                <ShieldCheck className="size-5 text-muted-foreground" />
                 Genuine supplements, curated for quality
               </div>
 
               <div className="flex items-center gap-3">
-                <PackageCheck className="size-5 text-cyan-500" />
+                <PackageCheck className="size-5 text-muted-foreground" />
                 Packed and shipped with care
               </div>
             </div>
@@ -144,9 +144,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
       </section>
 
       {product.description && (
-        <section className="mt-8 rounded-3xl border border-border bg-card/90 p-5 shadow-sm backdrop-blur sm:p-6 lg:p-8">
+        <section className="mt-10 rounded-2xl border border-border/50 bg-card/80 p-6 shadow-none backdrop-blur-sm sm:p-8 lg:p-10">
           <div className="max-w-3xl">
-            <p className="text-sm font-medium uppercase tracking-wide text-cyan-600 dark:text-cyan-300">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               Details
             </p>
 

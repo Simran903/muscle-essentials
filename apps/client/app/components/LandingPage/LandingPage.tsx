@@ -52,7 +52,7 @@ export function LandingMainSkeleton() {
       aria-label="Loading page content"
     >
       <div className="mx-auto w-full max-w-360 px-4 sm:px-4">
-        <Skeleton className="h-80 w-full rounded-none sm:rounded-3xl sm:h-112 md:h-165" />
+        <Skeleton className="h-80 w-full rounded-none sm:rounded-xl sm:h-112 md:h-165" />
       </div>
 
       <div className="mx-auto w-full max-w-360 px-4">
@@ -174,7 +174,7 @@ const LandingPage = () => {
     <div className="flex min-h-dvh flex-col bg-background">
       <main className="flex w-full flex-1 flex-col pb-24 sm:pb-16">
         <motion.div
-          className="py-4 pb-8"
+          className="py-6 pb-10 md:py-8 md:pb-14"
           initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
@@ -184,7 +184,7 @@ const LandingPage = () => {
         </motion.div>
           <BrandCarousel />
         <motion.div
-          className="py-10"
+          className="py-16 md:py-20"
           initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.06, ease: "easeOut" }}
@@ -193,7 +193,7 @@ const LandingPage = () => {
           <DealoftheDaySection products={dealOfTheDayProducts} />
         </motion.div>
         <motion.div
-          className="py-10"
+          className="py-16 md:py-20"
           initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.08, ease: "easeOut" }}
@@ -202,7 +202,7 @@ const LandingPage = () => {
           <BestsellersSection products={bestSellerProducts} />
         </motion.div>
         <motion.div
-          className="py-10"
+          className="py-16 md:py-20"
           initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.1, ease: "easeOut" }}
@@ -211,7 +211,7 @@ const LandingPage = () => {
           <FeaturedSection products={featuredProducts} />
         </motion.div>
         <motion.div
-          className="py-10"
+          className="py-16 md:py-20"
           initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.12, ease: "easeOut" }}
@@ -220,7 +220,7 @@ const LandingPage = () => {
           <CategorySection />
         </motion.div>
         <motion.div
-          className="py-10"
+          className="py-16 md:py-20"
           initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.14, ease: "easeOut" }}
@@ -229,7 +229,7 @@ const LandingPage = () => {
           <CombosSection />
         </motion.div>
         <motion.div
-          className="py-10"
+          className="py-16 md:py-20"
           initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.16, ease: "easeOut" }}
@@ -238,7 +238,7 @@ const LandingPage = () => {
           <BrandSection />
         </motion.div>
         <motion.div
-          className="py-10"
+          className="py-16 md:py-20"
           initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.18, ease: "easeOut" }}
@@ -247,7 +247,7 @@ const LandingPage = () => {
           <TestimonialsSection />
         </motion.div>
         <motion.div
-          className="py-10"
+          className="py-16 md:py-20"
           initial={{ opacity: 0, y: 32 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.2, ease: "easeOut" }}

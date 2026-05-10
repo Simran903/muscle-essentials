@@ -56,7 +56,7 @@ export function BrandCarousel() {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: "easeOut" }}
       viewport={{ once: true, amount: 0.3 }}
-      className="mx-auto w-full max-w-360 px-4"
+      className="mx-auto w-full max-w-360 px-5 sm:px-8"
     >
       {/* <SectionHeading title="POPULAR BRANDS" /> */}
       <Carousel
@@ -72,7 +72,7 @@ export function BrandCarousel() {
               key={brand.name}
               className="basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/6"
             >
-              <div className="flex h-18 items-center justify-center rounded-xl border border-border bg-card px-3 shadow-sm">
+              <div className="flex h-18 items-center justify-center rounded-2xl border border-border/50 bg-card/60 px-3 shadow-none transition-colors hover:border-cyan-500/20 hover:bg-cyan-500/[0.04] dark:hover:border-cyan-400/25">
                 <Image
                   src={brand.logoSrc}
                   alt={brand.name}

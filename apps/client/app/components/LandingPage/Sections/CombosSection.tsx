@@ -61,14 +61,14 @@ export const CombosSection = () => {
   const router = useRouter()
 
   return (
-    <section id="combos" className="mx-auto w-full max-w-360 px-4 py-12">
+    <section id="combos" className="mx-auto w-full max-w-360 px-5 sm:px-8">
       <div>
-        <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex flex-wrap items-end justify-between gap-5">
           <SectionHeading
-            title="SUPER SAVER STACKS"
+            title="Bundle stacks"
             description="Power-packed stacks curated for muscle gain, recovery, and performance."
           />
-          <Button asChild variant="outline" className="rounded-full px-5">
+          <Button asChild variant="outline" className="rounded-full px-6 shadow-none">
             <Link href="/shop?combo=1">View more</Link>
           </Button>
         </div>

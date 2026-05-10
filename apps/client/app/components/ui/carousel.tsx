@@ -190,7 +190,7 @@ function CarouselPrevious({
       variant="default"
       size={size}
       className={cn(
-        "absolute z-20 touch-manipulation rounded-full shadow-sm hover:bg-cyan-600",
+        "absolute z-20 touch-manipulation rounded-full border border-border/40 bg-primary text-primary-foreground shadow-none",
         orientation === "horizontal"
           ? "top-1/2 -left-5 -translate-y-1/2 sm:-left-10"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
@@ -219,7 +219,7 @@ function CarouselNext({
       variant="default"
       size={size}
       className={cn(
-        "absolute z-20 touch-manipulation rounded-full shadow-sm hover:bg-cyan-600",
+        "absolute z-20 touch-manipulation rounded-full border border-border/40 bg-primary text-primary-foreground shadow-none",
         orientation === "horizontal"
           ? "top-1/2 -right-5 -translate-y-1/2 sm:-right-10"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",

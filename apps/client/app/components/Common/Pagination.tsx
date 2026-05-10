@@ -32,7 +32,7 @@ export function Pagination({
     isNextDisabled ?? (page >= totalPages || totalPages < 1)
 
   const buttonClass =
-    "rounded-full border border-border px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+    "rounded-md border border-border/60 bg-background px-5 py-2 text-sm font-medium transition-colors hover:border-border hover:bg-muted/40 disabled:cursor-not-allowed disabled:opacity-50"
 
   return (
     <div

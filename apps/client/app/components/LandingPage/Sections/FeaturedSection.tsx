@@ -23,13 +23,13 @@ export const FeaturedSection = ({ products }: FeaturedSectionProps) => {
   const router = useRouter()
 
   return (
-    <section id="featured" className="mx-auto w-full max-w-360 px-4 pb-12 pt-6 sm:pt-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <section id="featured" className="mx-auto w-full max-w-360 px-5 pb-4 pt-2 sm:px-8">
+      <div className="flex flex-wrap items-end justify-between gap-5">
         <SectionHeading
-          title="FEATURED PRODUCTS"
+          title="Featured products"
           description="Explore curated picks and benefits tailored to your fitness goals."
         />
-        <Button asChild variant="outline" className="rounded-full px-5">
+        <Button asChild variant="outline" className="rounded-full px-6 shadow-none">
           <Link href="/shop?featured=1">View more</Link>
         </Button>
       </div>

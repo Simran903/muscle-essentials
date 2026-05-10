@@ -59,7 +59,7 @@ function FooterLinkColumn({
 }) {
   return (
     <div>
-      <h3 className="mb-4 text-sm font-semibold tracking-wide text-zinc-950 dark:text-white">
+      <h3 className="mb-4 text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-cyan-700/80 dark:text-cyan-400/70">
         {title}
       </h3>
       <ul className="space-y-2.5">
@@ -67,7 +67,7 @@ function FooterLinkColumn({
           <li key={`${title}-${item.href}-${item.label}`}>
             <Link
               href={item.href}
-              className="text-sm text-zinc-600 transition-colors hover:text-cyan-500 dark:text-zinc-400 dark:hover:text-cyan-500 hover:underline underline-offset-2"
+              className="text-sm text-muted-foreground transition-colors hover:text-cyan-700 dark:hover:text-cyan-300"
             >
               {item.label}
             </Link>
@@ -113,9 +113,9 @@ function InstagramIcon({ className }: { className?: string }) {
 
 export const Footer = () => {
   return (
-    <footer className="relative overflow-hidden border-t border-zinc-200/90 bg-zinc-50 text-zinc-800 dark:border-white/6 dark:bg-black dark:text-zinc-300">
-      <div className="relative z-10 mx-auto w-full max-w-360 px-6 pt-14 sm:pt-16">
-        <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:grid-cols-4 lg:gap-x-10">
+    <footer className="relative overflow-hidden border-t border-border/50 bg-muted/20 text-foreground dark:bg-background">
+      <div className="relative z-10 mx-auto w-full max-w-360 px-5 pt-16 sm:px-8 sm:pt-20">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-3 lg:grid-cols-4 lg:gap-x-12">
           {linkColumns.map((col) => (
             <FooterLinkColumn key={col.title} title={col.title} links={col.links} />
           ))}
@@ -123,7 +123,7 @@ export const Footer = () => {
           <div className="col-span-2 sm:col-span-3 lg:col-span-1 lg:col-start-6">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 text-zinc-950 transition-colors hover:text-cyan-500 dark:text-white"
+              className="inline-flex items-center gap-2 text-foreground transition-opacity hover:opacity-80"
             >
               <Image
                 src="/logo-new.png"
@@ -139,7 +139,7 @@ export const Footer = () => {
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-zinc-500 transition-colors hover:text-cyan-500 dark:text-zinc-400"
+                className="text-muted-foreground transition-colors hover:text-foreground"
                 aria-label="LinkedIn"
               >
                 <LinkedInIcon className="size-5" />
@@ -148,7 +148,7 @@ export const Footer = () => {
                 href="https://x.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-zinc-500 transition-colors hover:text-cyan-500 dark:text-zinc-400"
+                className="text-muted-foreground transition-colors hover:text-foreground"
                 aria-label="X"
               >
                 <XIcon className="size-5" />
@@ -157,7 +157,7 @@ export const Footer = () => {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-zinc-500 transition-colors hover:text-cyan-500 dark:text-zinc-400"
+                className="text-muted-foreground transition-colors hover:text-foreground"
                 aria-label="Instagram"
               >
                 <InstagramIcon className="size-5" />
@@ -166,10 +166,10 @@ export const Footer = () => {
           </div>
         </div>
 
-        <p className="mt-8 text-center text-sm text-zinc-500 dark:text-zinc-500">
+        <p className="mt-12 text-center text-sm text-muted-foreground">
           © {new Date().getFullYear()} Muscle Essentials. All rights reserved.
         </p>
-        <hr className="my-12 border-zinc-200 dark:border-white/10" />
+        <hr className="my-10 border-border/50" />
 
 
       </div>

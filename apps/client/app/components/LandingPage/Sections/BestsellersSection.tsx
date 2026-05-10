@@ -24,14 +24,14 @@ export const BestsellersSection = ({ products }: BestsellersSectionProps) => {
   const router = useRouter()
 
   return (
-    <section id="bestsellers" className="mx-auto w-full max-w-360 px-4 pt-12 pb-0">
+    <section id="bestsellers" className="mx-auto w-full max-w-360 px-5 sm:px-8">
       <div>
-        <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex flex-wrap items-end justify-between gap-5">
           <SectionHeading
-            title="BEST SELLERS"
+            title="Best sellers"
             description="Most-loved picks from athletes and everyday performers."
           />
-          <Button asChild variant="outline" className="rounded-full px-5">
+          <Button asChild variant="outline" className="rounded-full px-6 shadow-none">
             <Link href="/shop?bestseller=1">View more</Link>
           </Button>
         </div>

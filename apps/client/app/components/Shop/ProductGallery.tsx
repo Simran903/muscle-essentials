@@ -49,12 +49,12 @@ export function ProductGallery({
 
   return (
     <div className="space-y-4">
-      <div className="overflow-hidden rounded-3xl border border-border bg-card p-3 shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-border/50 bg-card/80 p-2 shadow-none sm:p-3">
         <button
           type="button"
           onClick={() => selectedImage && setIsViewerOpen(true)}
           disabled={!selectedImage}
-          className="relative aspect-square w-full overflow-hidden rounded-2xl bg-muted/40 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/60 disabled:cursor-default"
+          className="relative aspect-square w-full overflow-hidden rounded-xl bg-muted/25 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/25 disabled:cursor-default dark:focus-visible:ring-cyan-400/30"
         >
           {selectedImage ? (
             <Image
@@ -73,7 +73,7 @@ export function ProductGallery({
           )}
 
           {isDealOfTheDay && (
-            <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-red-500 px-3 py-1 text-xs font-semibold text-white shadow-sm">
+            <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-cyan-600 px-2.5 py-1 text-xs font-medium text-white shadow-sm dark:bg-cyan-500 dark:text-cyan-950">
               <Zap className="size-3.5" />
               Deal of the Day
             </span>
@@ -93,10 +93,10 @@ export function ProductGallery({
                 aria-label={`View ${image.altText ?? productTitle}`}
                 aria-pressed={isSelected}
                 onClick={() => setSelectedImageId(image.id)}
-                className={`relative aspect-square overflow-hidden rounded-2xl border bg-card shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/60 ${
+                className={`relative aspect-square overflow-hidden rounded-xl border bg-card shadow-none transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/25 dark:focus-visible:ring-cyan-400/30 ${
                   isSelected
-                    ? "border-cyan-500 ring-2 ring-cyan-500/20"
-                    : "border-border hover:border-cyan-500/60"
+                    ? "border-cyan-500/50 ring-1 ring-cyan-500/20 dark:border-cyan-400/55 dark:ring-cyan-400/25"
+                    : "border-border/60 hover:border-cyan-500/30 dark:hover:border-cyan-400/35"
                 }`}
               >
                 <Image
@@ -124,7 +124,7 @@ export function ProductGallery({
             type="button"
             aria-label="Close full image view"
             onClick={() => setIsViewerOpen(false)}
-            className="absolute right-4 top-4 z-10 inline-flex size-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+            className="absolute right-4 top-4 z-10 inline-flex size-10 items-center justify-center rounded-full bg-white/12 text-white transition hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
           >
             <X className="size-5" />
           </button>

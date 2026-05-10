@@ -148,9 +148,7 @@ function CategoryTileCard({ tile }: { tile: CategoryTile }) {
     <a
       href="#shop"
       className={cn(
-        "group rounded-xl border p-2 shadow-sm transition-transform hover:-translate-y-0.5 dark:bg-card/50! dark:border-border!",
-        tile.bgClassName,
-        tile.borderClassName
+        "group rounded-2xl border border-border/50 bg-card/70 p-2 shadow-none transition-[border-color,background-color] duration-200 hover:border-cyan-500/30 hover:bg-cyan-500/[0.04] dark:hover:border-cyan-400/35 dark:hover:bg-cyan-400/[0.06]",
       )}
       aria-label={tile.title}
     >
@@ -172,9 +170,7 @@ function CategoryTileCard({ tile }: { tile: CategoryTile }) {
         <p className="text-base font-bold tracking-tight text-foreground">
           {tile.name}
         </p>
-        <p className="text-xs font-semibold uppercase text-muted-foreground dark:text-muted-foreground/90">
-          UPTO {tile.discount} OFF
-        </p>
+        <p className="text-xs font-medium text-muted-foreground">Up to {tile.discount} off</p>
       </div>
     </a>
   )
@@ -182,10 +178,10 @@ function CategoryTileCard({ tile }: { tile: CategoryTile }) {
 
 export const CategorySection = () => {
   return (
-    <section id="categories" className="mx-auto w-full max-w-360 px-4 py-12">
+    <section id="categories" className="mx-auto w-full max-w-360 px-5 sm:px-8">
       <div>
-        <SectionHeading 
-          title="SHOP BY CATEGORY"
+        <SectionHeading
+          title="Shop by category"
           description="Quick entry points based on your goal, routine, or nutrient focus."
         />
         <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">

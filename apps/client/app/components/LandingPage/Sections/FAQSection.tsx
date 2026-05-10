@@ -43,16 +43,16 @@ const faqs = [
 
 export const FAQSection = () => {
   return (
-    <section id="faq" className="mx-auto w-full max-w-360 px-4 py-12">
+    <section id="faq" className="mx-auto w-full max-w-360 px-5 sm:px-8">
       <SectionHeading
-        title="FAQs"
+        title="Questions & answers"
         description="Straight answers about shopping, delivery, and using supplements responsibly."
       />
       <div className="mt-6 px-1 py-2 sm:px-2 sm:py-3">
         <Accordion type="single" collapsible className="w-full px-2 sm:px-3">
           {faqs.map((item) => (
             <AccordionItem key={item.id} value={item.id}>
-              <AccordionTrigger className="text-left text-base font-semibold text-foreground sm:text-lg">
+              <AccordionTrigger className="text-left text-base font-medium text-foreground sm:text-lg">
                 {item.question}
               </AccordionTrigger>
               <AccordionContent>

@@ -117,8 +117,8 @@ const brands: BrandTile[] = [
     name: "Universal Nutrition",
     image:
       "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D",
-    bgClassName: "bg-teal-100/70",
-    borderClassName: "border-teal-200",
+    bgClassName: "bg-cyan-50/90 dark:bg-cyan-950/35",
+    borderClassName: "border-cyan-200/90 dark:border-cyan-800/50",
     className: "md:col-span-2 xl:col-span-2",
   },
 ]
@@ -128,10 +128,7 @@ function BrandHeader({ tile }: { tile: BrandTile }) {
 
   return (
     <div
-      className={cn(
-        "overflow-hidden rounded-lg border bg-background/70 dark:bg-black/20",
-        tile.borderClassName
-      )}
+      className="overflow-hidden rounded-lg border border-border bg-muted/20"
     >
       {!imageLoaded && <Skeleton className="h-42 w-full rounded-lg" />}
       <Image
@@ -151,10 +148,10 @@ function BrandHeader({ tile }: { tile: BrandTile }) {
 
 export const BrandSection = () => {
   return (
-    <section id="brands" className="mx-auto w-full max-w-360 px-4 py-12">
+    <section id="brands" className="mx-auto w-full max-w-360 px-5 sm:px-8">
       <div>
         <SectionHeading
-          title="SHOP BY BRAND"
+          title="Shop by brand"
           description="Explore trusted supplement brands and discover their best-selling products."
         />
 
@@ -168,9 +165,7 @@ export const BrandSection = () => {
             >
               <BentoGridItem
                 className={cn(
-                  "h-full cursor-pointer transition-transform hover:-translate-y-0.5",
-                  brand.bgClassName,
-                  brand.borderClassName,
+                  "h-full cursor-pointer border-border bg-card/70 transition-colors hover:border-foreground/12 hover:bg-muted/25",
                   brand.className
                 )}
                 header={<BrandHeader tile={brand} />}

@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { Card } from "@/app/components/Common/Card"
 import { Pagination } from "@/app/components/Common/Pagination"
@@ -25,7 +25,6 @@ const isQueryFlagEnabled = (value: string | null) => value === "1" || value === 
 
 export default function ShopPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const [page, setPage] = React.useState(1)
   const [isLoading, setIsLoading] = React.useState(true)
   const [data, setData] = React.useState<ProductListResponse | null>(null)
@@ -48,12 +47,37 @@ export default function ShopPage() {
   const [bestsellerOnlyUser, setBestsellerOnlyUser] = React.useState<boolean | undefined>(undefined)
   const [dealOfTheDayOnlyUser, setDealOfTheDayOnlyUser] = React.useState<boolean | undefined>(undefined)
   const [comboOnlyUser, setComboOnlyUser] = React.useState<boolean | undefined>(undefined)
+  const [queryFlags, setQueryFlags] = React.useState({
+    featured: false,
+    bestseller: false,
+    deal: false,
+    combo: false,
+  })
   const [sortBy, setSortBy] = React.useState<ShopSortBy>("default")
 
-  const featuredOnlyFromQuery = isQueryFlagEnabled(searchParams.get("featured"))
-  const bestsellerOnlyFromQuery = isQueryFlagEnabled(searchParams.get("bestseller"))
-  const dealOfTheDayOnlyFromQuery = isQueryFlagEnabled(searchParams.get("deal"))
-  const comboOnlyFromQuery = isQueryFlagEnabled(searchParams.get("combo"))
+  React.useEffect(() => {
+    const readQueryFlags = () => {
+      const params = new URLSearchParams(window.location.search)
+      setQueryFlags({
+        featured: isQueryFlagEnabled(params.get("featured")),
+        bestseller: isQueryFlagEnabled(params.get("bestseller")),
+        deal: isQueryFlagEnabled(params.get("deal")),
+        combo: isQueryFlagEnabled(params.get("combo")),
+      })
+    }
+
+    readQueryFlags()
+    window.addEventListener("popstate", readQueryFlags)
+
+    return () => {
+      window.removeEventListener("popstate", readQueryFlags)
+    }
+  }, [])
+
+  const featuredOnlyFromQuery = queryFlags.featured
+  const bestsellerOnlyFromQuery = queryFlags.bestseller
+  const dealOfTheDayOnlyFromQuery = queryFlags.deal
+  const comboOnlyFromQuery = queryFlags.combo
 
   const featuredOnly = featuredOnlyUser ?? featuredOnlyFromQuery
   const bestsellerOnly = bestsellerOnlyUser ?? bestsellerOnlyFromQuery
@@ -264,14 +288,14 @@ export default function ShopPage() {
       />
 
       <SidebarInset className="overflow-hidden bg-transparent">
-        <main className="relative isolate mx-auto min-h-svh w-full px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+        <main className="relative isolate mx-auto min-h-svh w-full px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
 
-          <div className="mb-6 rounded-3xl border border-border bg-card/80 p-5 text-card-foreground shadow-sm backdrop-blur sm:mb-8 sm:flex sm:items-end sm:justify-between sm:p-6">
+          <div className="mb-8 rounded-xl border border-border/60 bg-card/80 p-6 text-card-foreground shadow-none backdrop-blur-sm sm:mb-10 sm:flex sm:items-end sm:justify-between sm:p-8">
             <div className="min-w-0">
               <div className="mb-2 md:hidden">
                 <SidebarTrigger className="bg-background/80 shadow-sm dark:bg-muted/60" />
               </div>
-              <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl lg:text-4xl">
+              <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl lg:text-[2.15rem] lg:leading-tight">
                 All Products
               </h1>
               <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
@@ -280,8 +304,8 @@ export default function ShopPage() {
               </p>
             </div>
             {!isLoading && data ? (
-              <p className="mt-4 inline-flex shrink-0 rounded-full border border-cyan-500/25 bg-cyan-500/10 px-3 py-1 text-sm font-semibold text-cyan-700 dark:text-cyan-300 sm:mt-0 sm:text-base">
-                ({productCount} products)
+              <p className="mt-4 inline-flex shrink-0 rounded-md border border-border/60 bg-muted/20 px-4 py-1.5 text-sm font-medium text-muted-foreground sm:mt-0">
+                {productCount} products
               </p>
             ) : null}
           </div>
@@ -291,7 +315,7 @@ export default function ShopPage() {
               {Array.from({ length: PAGE_SIZE }).map((_, index) => (
                 <div
                   key={index}
-                  className="space-y-3 rounded-3xl border border-border bg-card/80 p-4 shadow-sm"
+                  className="space-y-3 rounded-xl border border-border/80 bg-card/80 p-4 shadow-none"
                 >
                   <Skeleton className="h-64 w-full rounded-2xl" />
                   <Skeleton className="h-4 w-1/3" />
@@ -303,7 +327,7 @@ export default function ShopPage() {
             </div>
           ) : visibleItems.length ? (
             <>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {visibleItems.map((product) => (
                   <div key={product.id} className="h-full">
                     <Card
@@ -343,7 +367,7 @@ export default function ShopPage() {
               />
             </>
           ) : (
-            <div className="rounded-3xl border border-border bg-card/80 p-8 text-center shadow-sm">
+            <div className="rounded-2xl border border-border/50 bg-card/70 p-10 text-center shadow-none">
               <p className="text-sm font-medium text-foreground">No products found.</p>
               <p className="mt-1 text-sm text-muted-foreground">
                 Try changing filters or resetting the current selection.

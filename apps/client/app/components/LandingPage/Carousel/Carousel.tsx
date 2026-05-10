@@ -72,7 +72,7 @@ export function CarouselComponent() {
         {slides.map((slide, idx) => (
           <CarouselItem key={slide.src}>
             <div
-              className="group relative overflow-hidden sm:mx-4 sm:rounded-3xl sm:border sm:border-border sm:bg-card sm:shadow-sm"
+              className="group relative overflow-hidden sm:mx-6 sm:rounded-2xl sm:border sm:border-border/50 sm:bg-card sm:shadow-none"
               onMouseEnter={() => setIsPaused(true)}
               onMouseLeave={() => setIsPaused(false)}
             >
@@ -86,9 +86,9 @@ export function CarouselComponent() {
                 className="h-80 w-full object-cover transition-transform duration-700 group-hover:scale-[1.03] sm:h-112 md:h-165"
               />
 
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-linear-to-t from-black/60 to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3">
-                <p className="max-w-[70%] text-sm font-medium text-white drop-shadow sm:text-base">
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-black/45 to-transparent" />
+              <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between gap-3">
+                <p className="max-w-[70%] text-sm font-medium text-white/95 sm:text-base">
                   {slide.alt}
                 </p>
                 <div className="hidden items-center gap-1.5 sm:flex">
@@ -108,8 +108,8 @@ export function CarouselComponent() {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious className="left-4 z-10 bg-background/90 shadow-sm backdrop-blur hover:bg-background sm:left-10" />
-      <CarouselNext className="right-4 z-10 bg-background/90 shadow-sm backdrop-blur hover:bg-background sm:right-10" />
+      <CarouselPrevious className="left-4 z-10 border-border/80 bg-background/90 shadow-none backdrop-blur-sm hover:bg-background sm:left-10" />
+      <CarouselNext className="right-4 z-10 border-border/80 bg-background/90 shadow-none backdrop-blur-sm hover:bg-background sm:right-10" />
     </Carousel>
   )
 }

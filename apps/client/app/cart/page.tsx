@@ -59,13 +59,13 @@ function CartLineRow({
   return (
     <li
       className={cn(
-        "flex gap-4 rounded-3xl border border-border bg-card/90 p-4 shadow-sm backdrop-blur sm:p-5",
+        "flex gap-4 rounded-2xl border border-border/50 bg-card/80 p-4 shadow-none backdrop-blur-sm sm:p-5",
         inactive && "opacity-80",
       )}
     >
       <Link
         href={`/shop/${item.product.slug}`}
-        className="relative flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-border bg-muted/50 sm:size-28"
+        className="relative flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-border/50 bg-muted/35 sm:size-28"
         aria-label={`View ${item.product.title}`}
       >
         {thumbUrl ? (
@@ -85,14 +85,14 @@ function CartLineRow({
         <div className="min-w-0 flex-1 space-y-1">
           <Link
             href={`/shop/${item.product.slug}`}
-            className="line-clamp-2 text-base font-semibold leading-snug text-foreground transition-colors hover:text-cyan-600 dark:hover:text-cyan-400"
+            className="line-clamp-2 text-base font-semibold leading-snug text-foreground underline-offset-2 transition-opacity hover:opacity-80"
           >
             {item.product.title}
           </Link>
           {item.selectedFlavourLabel !== "" || item.selectedSizeLabel !== "" ? (
             <div className="flex flex-wrap gap-2 pt-1">
               {item.selectedFlavourLabel !== "" ? (
-                <span className="inline-flex items-center rounded-full border border-cyan-500/25 bg-cyan-500/10 px-2.5 py-0.5 text-xs font-medium text-cyan-900 dark:text-cyan-100">
+                <span className="inline-flex items-center rounded-full border border-border bg-muted/50 px-2.5 py-0.5 text-xs font-medium text-foreground">
                   Flavour: {item.selectedFlavourLabel}
                 </span>
               ) : null}
@@ -114,7 +114,7 @@ function CartLineRow({
         </div>
 
         <div className="flex flex-wrap items-center gap-3 sm:flex-nowrap sm:justify-end">
-          <div className="flex h-11 items-center rounded-2xl border border-border bg-background/90 px-0.5 dark:bg-muted/40">
+          <div className="flex h-11 items-center rounded-2xl border border-border/60 bg-background/90 px-0.5 dark:bg-muted/40">
             <Button
               type="button"
               variant="ghost"
@@ -176,7 +176,7 @@ function EmptyState({
 }) {
   return (
     <main className="relative isolate mx-auto flex min-h-[calc(100svh-5rem)] max-w-lg flex-col items-center justify-center px-4 py-16 text-center sm:py-24">
-      <div className="mb-6 flex size-20 items-center justify-center rounded-3xl border border-cyan-500/25 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">
+      <div className="mb-6 flex size-20 items-center justify-center rounded-2xl border border-border/50 bg-muted/30 text-muted-foreground">
         <Icon className="size-9" strokeWidth={1.5} aria-hidden />
       </div>
       <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">{title}</h1>
@@ -296,10 +296,10 @@ export default function CartPage() {
         </div>
         <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_22rem] lg:items-start lg:gap-10">
           <div className="space-y-4">
-            <Skeleton className="h-40 w-full rounded-3xl" />
-            <Skeleton className="h-40 w-full rounded-3xl" />
+            <Skeleton className="h-40 w-full rounded-xl" />
+            <Skeleton className="h-40 w-full rounded-xl" />
           </div>
-          <Skeleton className="h-72 w-full rounded-3xl lg:sticky lg:top-24" />
+          <Skeleton className="h-72 w-full rounded-xl lg:sticky lg:top-24" />
         </div>
       </main>
     )
@@ -344,30 +344,30 @@ export default function CartPage() {
   const hasDiscount = discount > 0
 
   return (
-    <main className="relative isolate mx-auto min-h-svh w-full max-w-7xl overflow-hidden px-4 py-6 text-foreground sm:px-6 sm:py-8 lg:px-8 lg:py-10">
-      <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+    <main className="relative isolate mx-auto min-h-svh w-full max-w-7xl overflow-hidden px-4 py-6 text-foreground sm:px-6 sm:py-8 lg:px-10 lg:py-12">
+      <nav className="mb-8 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
         <Link
           href="/"
-          className="rounded-full px-2 py-1 transition-colors hover:bg-muted hover:text-foreground"
+          className="rounded-full px-2.5 py-1 transition-colors hover:bg-muted/80 hover:text-foreground"
         >
           Home
         </Link>
-        <ChevronRight className="size-4 shrink-0 opacity-70" />
+        <ChevronRight className="size-4 shrink-0 opacity-50" />
         <Link
           href="/shop"
-          className="rounded-full px-2 py-1 transition-colors hover:bg-muted hover:text-foreground"
+          className="rounded-full px-2.5 py-1 transition-colors hover:bg-muted/80 hover:text-foreground"
         >
           Shop
         </Link>
-        <ChevronRight className="size-4 shrink-0 opacity-70" />
-        <span className="line-clamp-1 rounded-full border border-border bg-card px-2 py-1 text-foreground shadow-sm">
+        <ChevronRight className="size-4 shrink-0 opacity-50" />
+        <span className="line-clamp-1 rounded-full border border-border/50 bg-card/80 px-3 py-1 text-foreground shadow-none">
           Cart
         </span>
       </nav>
 
-      <header className="mb-8 flex flex-col gap-4 border-b border-border pb-8 sm:flex-row sm:items-end sm:justify-between">
+      <header className="mb-10 flex flex-col gap-4 border-b border-border/50 pb-10 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm font-medium uppercase tracking-wide text-cyan-600 dark:text-cyan-400">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-cyan-700/85 dark:text-cyan-400/75">
             Shopping bag
           </p>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
@@ -396,8 +396,8 @@ export default function CartPage() {
         </ul>
 
         <aside className="lg:sticky lg:top-24">
-          <div className="rounded-3xl border border-border bg-card/90 p-6 shadow-sm backdrop-blur">
-            <h2 className="text-lg font-semibold text-foreground">Order summary</h2>
+          <div className="rounded-2xl border border-border/50 bg-card/80 p-6 shadow-none backdrop-blur-sm">
+            <h2 className="text-lg font-semibold tracking-tight text-foreground">Order summary</h2>
             <div className="mt-6 space-y-3 text-sm">
               <div className="flex justify-between gap-4">
                 <span className="text-muted-foreground">Subtotal</span>
@@ -411,7 +411,7 @@ export default function CartPage() {
                   <span className="font-medium tabular-nums">−{formatInr(cart.discountAmount)}</span>
                 </div>
               ) : null}
-              <div className="border-t border-border pt-3" />
+              <div className="border-t border-border/50 pt-3" />
               <div className="flex justify-between gap-4 text-base font-bold">
                 <span>Total</span>
                 <span className="tabular-nums text-foreground">{formatInr(cart.totalAmount)}</span>
@@ -424,7 +424,7 @@ export default function CartPage() {
             <Button
               type="button"
               size="lg"
-              className="mt-6 h-12 w-full rounded-2xl text-base font-semibold"
+              className="mt-6 h-12 w-full rounded-2xl text-base font-semibold shadow-none"
               onClick={() =>
                 toast.message("Checkout", {
                   description: "Payments and shipping will be available in a future update.",
@@ -434,13 +434,13 @@ export default function CartPage() {
               Proceed to checkout
             </Button>
 
-            <div className="mt-6 space-y-3 border-t border-border pt-6 text-sm text-muted-foreground">
+            <div className="mt-6 space-y-3 border-t border-border/50 pt-6 text-sm text-muted-foreground">
               <div className="flex items-center gap-3">
-                <Truck className="size-5 shrink-0 text-cyan-500" />
+                <Truck className="size-5 shrink-0 text-cyan-600/80 dark:text-cyan-400/80" />
                 Fast delivery across India
               </div>
               <div className="flex items-center gap-3">
-                <Package className="size-5 shrink-0 text-cyan-500" />
+                <Package className="size-5 shrink-0 text-cyan-600/80 dark:text-cyan-400/80" />
                 Genuine products, packed with care
               </div>
             </div>

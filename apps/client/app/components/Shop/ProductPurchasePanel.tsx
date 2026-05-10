@@ -158,25 +158,25 @@ export function ProductPurchasePanel({
 
   const optionButtonClass = (active: boolean) =>
     cn(
-      "h-10 min-w-[2.75rem] rounded-2xl border px-3 text-sm font-medium transition-colors",
+      "h-10 min-w-[2.75rem] rounded-md border px-3 text-sm font-medium transition-colors cursor-pointer",
       active
-        ? "border-cyan-500/50 bg-cyan-500/10 text-cyan-900 dark:border-cyan-400/40 dark:bg-cyan-500/15 dark:text-cyan-100"
-        : "border-border bg-background/80 text-foreground hover:bg-muted dark:bg-muted/30",
+        ? "border-primary/35 bg-primary/8 text-foreground"
+        : "border-border/70 bg-background text-foreground hover:border-border dark:bg-muted/20",
     )
 
   return (
     <div className="mt-6 space-y-6">
       {displayUnitPrice != null ? (
-        <div className="rounded-2xl border border-border bg-muted/40 p-4 dark:bg-muted/30">
+        <div className="rounded-xl border border-border/60 bg-muted/20 p-4 dark:bg-muted/15">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <p className="text-xs font-medium tracking-wide text-muted-foreground">
                 Price
               </p>
-              <p className="mt-1 text-4xl font-bold tracking-tight text-foreground">
+              <p className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
                 {showFromPrefix ? (
                   <>
-                    <span className="text-2xl font-semibold text-muted-foreground">From </span>
+                    <span className="text-xl font-medium text-muted-foreground">From </span>
                     {formatInr(displayUnitPrice)}
                   </>
                 ) : (
@@ -184,7 +184,7 @@ export function ProductPurchasePanel({
                 )}
               </p>
             </div>
-            <span className="rounded-full border border-border bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground">
+            <span className="rounded-md border border-border/60 bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground">
               Inclusive of taxes
             </span>
           </div>
@@ -193,7 +193,7 @@ export function ProductPurchasePanel({
 
       {flavourList.length > 0 ? (
         <div className="space-y-2">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          <p className="text-xs font-medium tracking-wide text-muted-foreground">
             Flavour
           </p>
           <div className="flex flex-wrap gap-2">
@@ -214,7 +214,7 @@ export function ProductPurchasePanel({
 
       {sizeList.length > 0 ? (
         <div className="space-y-2">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          <p className="text-xs font-medium tracking-wide text-muted-foreground">
             Size
           </p>
           <div className="flex flex-wrap gap-2">
@@ -223,12 +223,15 @@ export function ProductPurchasePanel({
                 key={s.id}
                 type="button"
                 onClick={() => setSizeId(s.id)}
-                className={`${optionButtonClass(sizeId === s.id)}`}
+                className={optionButtonClass(sizeId === s.id)}
                 aria-pressed={sizeId === s.id}
               >
-                <span className="block">{s.label}</span>
-                <span className="mt-0.5 block text-[11px] font-normal tabular-nums text-muted-foreground">
-                  {formatInr(s.price)}
+                <span className="inline-flex items-baseline gap-1.5 whitespace-nowrap text-sm">
+                  <span className="font-medium">{s.label}</span>
+                  <span className="text-muted-foreground">-</span>
+                  <span className="tabular-nums font-normal text-muted-foreground">
+                    {formatInr(s.price)}
+                  </span>
                 </span>
               </button>
             ))}
@@ -239,7 +242,7 @@ export function ProductPurchasePanel({
       {isInStock ? (
         <div className="space-y-2">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <p className="text-xs font-medium tracking-wide text-muted-foreground">
               Quantity
             </p>
             <p className="text-xs text-muted-foreground">
@@ -250,7 +253,7 @@ export function ProductPurchasePanel({
           </div>
           <div
             className={cn(
-              "flex h-12 max-w-44 items-center justify-between gap-1 rounded-2xl border border-border bg-background/80 px-1 dark:bg-muted/30",
+              "flex h-12 max-w-44 items-center justify-between gap-1 rounded-lg border border-border/70 bg-background px-1 dark:bg-muted/20",
               !canPurchase && "opacity-50",
             )}
           >
@@ -258,7 +261,7 @@ export function ProductPurchasePanel({
               type="button"
               variant="ghost"
               size="icon"
-              className="size-10 shrink-0 rounded-xl"
+              className="size-10 shrink-0 rounded-md"
               disabled={!canPurchase || resolvedQuantity <= 1}
               onClick={() => bumpQuantity(-1)}
               aria-label="Decrease quantity"
@@ -272,7 +275,7 @@ export function ProductPurchasePanel({
               type="button"
               variant="ghost"
               size="icon"
-              className="size-10 shrink-0 rounded-xl"
+              className="size-10 shrink-0 rounded-md"
               disabled={!canPurchase || resolvedQuantity >= maxSelectable}
               onClick={() => bumpQuantity(1)}
               aria-label="Increase quantity"
@@ -287,7 +290,7 @@ export function ProductPurchasePanel({
         <Button
           type="button"
           size="lg"
-          className="h-12 rounded-2xl text-base"
+          className="h-12 rounded-lg text-base shadow-none"
           disabled={!canPurchase || isCartBusy}
           onClick={() => void handleAddToCart()}
         >
@@ -299,7 +302,7 @@ export function ProductPurchasePanel({
           type="button"
           variant="outline"
           size="lg"
-          className="h-12 rounded-2xl text-base"
+          className="h-12 rounded-lg text-base border-border/70"
           disabled={!canPurchase || isCartBusy}
           onClick={() => void handleBuyNow()}
         >

@@ -24,14 +24,14 @@ export const DealoftheDaySection = ({ products }: DealoftheDaySectionProps) => {
   const router = useRouter()
 
   return (
-    <section id="deal-of-the-day" className="mx-auto w-full max-w-360 px-4 py-12">
+    <section id="deal-of-the-day" className="mx-auto w-full max-w-360 px-5 sm:px-8">
       <div>
-        <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex flex-wrap items-end justify-between gap-5">
           <SectionHeading
-            title="DEAL OF THE DAY"
+            title="Deal of the day"
             description="Grab today’s top picks at special prices before the offer ends."
           />
-          <Button asChild variant="outline" className="rounded-full px-5">
+          <Button asChild variant="outline" className="rounded-full px-6 shadow-none">
             <Link href="/shop?deal=1">View more</Link>
           </Button>
         </div>

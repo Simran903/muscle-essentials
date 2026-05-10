@@ -199,11 +199,11 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 hidden border-b border-border/70 bg-background/95 backdrop-blur md:block">
-        <NavigationMenu className="mx-auto flex w-full max-w-360 items-center justify-between px-4 py-3">
+      <header className="sticky top-0 z-50 hidden border-b border-border/40 bg-background/75 backdrop-blur-xl supports-backdrop-filter:bg-background/65 md:block">
+        <NavigationMenu className="mx-auto flex w-full max-w-360 items-center justify-between px-5 py-3 lg:px-8">
           <Link
             href="/"
-            className="flex items-center text-lg font-semibold tracking-tight text-foreground"
+            className="flex items-center text-lg font-medium tracking-tight text-foreground"
           >
             <Image
               src="/logo-new.png"
@@ -211,7 +211,7 @@ export function Navbar() {
               width={200}
               height={200}
               priority
-              className="h-16 w-auto object-contain"
+              className="h-11 w-auto object-contain"
             />
           </Link>
 
@@ -222,18 +222,18 @@ export function Navbar() {
               <NavigationMenuItem key={item.href}>
                 <Link
                   href={item.href}
-                  className="inline-flex h-9 items-center rounded-full px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+                  className="inline-flex h-9 items-center rounded-md px-3.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35"
                 >
                   {item.label}
                 </Link>
               </NavigationMenuItem>
             ))}
             <NavigationMenuItem>
-              <Button asChild variant="outline" size="icon" className="relative rounded-full" aria-label="Cart">
+              <Button asChild variant="outline" size="icon" className="relative rounded-md border-border/60" aria-label="Cart">
                 <Link href="/cart">
                   <ShoppingCart className="size-4" />
                   {cartItemCount > 0 ? (
-                    <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-cyan-500 text-[10px] font-bold text-white">
+                    <span className="absolute -right-1 -top-1 inline-flex min-w-4 items-center justify-center rounded-sm bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
                       {cartItemCount > 99 ? "99+" : cartItemCount}
                     </span>
                   ) : null}
@@ -242,7 +242,7 @@ export function Navbar() {
             </NavigationMenuItem>
             {!isLoggedIn ? (
               <NavigationMenuItem>
-                <Button asChild size="lg" variant="default" className="rounded-full px-4 cursor-pointer">
+                <Button asChild size="lg" variant="default" className="cursor-pointer rounded-md px-5 shadow-none">
                   <button type="button" onClick={openLoginDialog}>
                     Login
                   </button>
@@ -253,8 +253,8 @@ export function Navbar() {
         </NavigationMenu>
       </header>
 
-      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border/70 bg-background/95 backdrop-blur md:hidden">
-        <div className="mx-auto flex w-full max-w-360 items-center justify-around px-2 py-2">
+      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border/40 bg-background/85 backdrop-blur-xl md:hidden">
+        <div className="mx-auto flex w-full max-w-360 items-center justify-around px-2 py-2.5 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
           <Link href="/" className="flex flex-col items-center gap-1 px-2 py-1 text-[11px] font-medium text-foreground">
             <House className="size-4" />
             Home
@@ -270,7 +270,7 @@ export function Navbar() {
             <ShoppingCart className="size-4" />
             Cart
             {cartItemCount > 0 ? (
-              <span className="absolute right-1 top-0 flex size-4 items-center justify-center rounded-full bg-cyan-500 text-[9px] font-bold text-white">
+              <span className="absolute right-1 top-0 inline-flex min-w-4 items-center justify-center rounded-sm bg-primary px-1 text-[9px] font-semibold text-primary-foreground">
                 {cartItemCount > 99 ? "99+" : cartItemCount}
               </span>
             ) : null}
@@ -296,10 +296,10 @@ export function Navbar() {
             className="absolute inset-0 bg-black/45 backdrop-blur-[1px]"
             onClick={closeLoginDialog}
           />
-          <div className="relative z-10 w-full max-w-md rounded-2xl border border-border bg-background p-6 shadow-2xl">
-            <div className="mb-5">
-              <h2 className="text-xl font-semibold text-foreground">Login</h2>
-              <p className="mt-1 text-sm text-muted-foreground">
+          <div className="relative z-10 w-full max-w-md rounded-xl border border-border/60 bg-card/95 p-7 shadow-xl backdrop-blur-sm">
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold tracking-tight text-foreground">Login</h2>
+              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
                 Enter your email and phone to verify your account.
               </p>
             </div>
@@ -328,10 +328,10 @@ export function Navbar() {
                 />
               </div>
               <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" variant="outline" onClick={closeLoginDialog} disabled={isSubmitting} className="cursor-pointer rounded-full">
+                <Button type="button" variant="outline" onClick={closeLoginDialog} disabled={isSubmitting} className="cursor-pointer rounded-md">
                   Cancel
                 </Button>
-                <Button type="submit" variant="default" className="rounded-full px-4 cursor-pointer" disabled={isSubmitting}>
+                <Button type="submit" variant="default" className="cursor-pointer rounded-md px-5 shadow-none" disabled={isSubmitting}>
                   {isSubmitting ? "Verifying..." : "Verify"}
                 </Button>
               </div>

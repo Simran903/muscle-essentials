@@ -22,12 +22,12 @@ export function SearchBar({
         {label}
       </label>
       <div className="group relative">
-        <Search className="pointer-events-none absolute left-4 top-1/2 z-10 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-cyan-500" />
+        <Search className="pointer-events-none absolute left-4 top-1/2 z-10 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-cyan-600 dark:group-focus-within:text-cyan-400" />
         <InputField
         id={id}
         type="search"
         placeholder={placeholder}
-        className="h-11 w-full rounded-full border border-border/80 bg-background/95 pl-11 pr-10 text-sm text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.06)] transition-all placeholder:text-muted-foreground/90 hover:shadow-[0_4px_14px_rgba(0,0,0,0.08)]"
+        className="h-10 w-full rounded-full border border-border/60 bg-muted/15 pl-11 pr-4 text-sm text-foreground shadow-none transition-[border-color,background-color,box-shadow] placeholder:text-muted-foreground hover:border-border hover:bg-muted/25 focus-visible:border-cyan-500/40 focus-visible:ring-2 focus-visible:ring-cyan-500/15 dark:focus-visible:border-cyan-400/45 dark:focus-visible:ring-cyan-400/15"
         />
       </div>
     </div>

@@ -86,7 +86,7 @@ export const CustomDropdown: FC<CustomDropdownProps> = ({
     >
       <button
         type="button"
-        className="inline-flex w-full justify-between rounded-lg border border-border bg-background px-4 py-2.5 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+        className="inline-flex w-full justify-between rounded-md border border-border/60 bg-background px-4 py-2.5 text-sm font-medium text-foreground shadow-none transition-colors hover:border-border hover:bg-muted/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
         onClick={toggleDropdown}
       >
         <span className="truncate">{selectedOption?.label ?? value}</span>
@@ -109,7 +109,7 @@ export const CustomDropdown: FC<CustomDropdownProps> = ({
 
       {isOpen && (
         <div
-          className={`absolute right-0 left-0 z-300 w-full min-w-48 overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-2xl ring-1 ring-border/80 ${
+          className={`absolute right-0 left-0 z-300 w-full min-w-48 overflow-hidden rounded-md border border-border/60 bg-popover text-popover-foreground shadow-xl ring-1 ring-border/40 ${
             openUp ? "bottom-full mb-2 origin-bottom-right" : "mt-2 origin-top-right"
           }`}
         >
@@ -122,7 +122,7 @@ export const CustomDropdown: FC<CustomDropdownProps> = ({
                   setQuery(e.target.value)
                 }
                 placeholder={searchPlaceholder}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                className="w-full rounded-md border border-input/80 bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
               />
             </div>
           )}
@@ -139,8 +139,8 @@ export const CustomDropdown: FC<CustomDropdownProps> = ({
                 key={option.value}
                 className={`block px-4 py-2.5 text-sm w-full text-left transition-colors duration-150 ${
                   value === option.value
-                    ? "bg-cyan-500/10 font-medium text-cyan-700 dark:text-cyan-300"
-                    : "text-popover-foreground hover:bg-muted hover:text-foreground"
+                    ? "bg-muted font-medium text-foreground"
+                    : "text-popover-foreground hover:bg-muted/80 hover:text-foreground"
                 }`}
                 onClick={() => {
                   onChange(option.value);

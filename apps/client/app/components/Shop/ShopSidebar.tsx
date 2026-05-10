@@ -93,6 +93,12 @@ export function ShopSidebar({
   onResetPage,
 }: ShopSidebarProps) {
   const { setOpenMobile } = useSidebar()
+  const switchClass = (enabled: boolean) =>
+    `relative inline-flex h-6 w-10 items-center rounded-md border transition-colors ${
+      enabled
+        ? "border-primary/40 bg-primary/15"
+        : "border-border/70 bg-muted/40"
+    }`
   const selectedBrandLabels = React.useMemo(
     () =>
       selectedBrandSlugs.map(
@@ -131,8 +137,8 @@ export function ShopSidebar({
   return (
     <Sidebar variant="inset" collapsible="offcanvas">
       <SidebarHeader>
-        <div className="flex items-center justify-between px-2 pt-1">
-          <p className="text-sm font-semibold text-sidebar-foreground">Shop Controls</p>
+        <div className="flex items-center justify-between border-b border-border/50 px-2 pb-3 pt-1">
+          <p className="text-sm font-semibold tracking-wide text-sidebar-foreground">Shop Controls</p>
           <Button
             type="button"
             variant="ghost"
@@ -154,10 +160,14 @@ export function ShopSidebar({
         ) : (
           <>
             <SidebarGroup>
-              <SidebarGroupLabel>Filters</SidebarGroupLabel>
+              <SidebarGroupLabel className="mt-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                Filters
+              </SidebarGroupLabel>
               <SidebarGroupContent className="space-y-3 px-2">
                 <div className="space-y-1">
-                  <label className="text-xs text-muted-foreground">Brand</label>
+                  <label className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                    Brand
+                  </label>
                   <Dropdown
                     value={brandPickerValue}
                     onChange={(value) => {
@@ -190,7 +200,9 @@ export function ShopSidebar({
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs text-muted-foreground">Category</label>
+                  <label className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                    Category
+                  </label>
                   <Dropdown
                     value={categoryPickerValue}
                     onChange={(value) => {
@@ -223,7 +235,9 @@ export function ShopSidebar({
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs text-muted-foreground">Flavour</label>
+                  <label className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                    Flavour
+                  </label>
                   <Dropdown
                     value={flavourPickerValue}
                     onChange={(value) => {
@@ -265,13 +279,11 @@ export function ShopSidebar({
                       onFeaturedOnlyChange(!featuredOnly)
                       onResetPage()
                     }}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      featuredOnly ? "bg-cyan-500" : "bg-muted"
-                    }`}
+                    className={switchClass(featuredOnly)}
                   >
                     <span
-                      className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
-                        featuredOnly ? "translate-x-5" : "translate-x-0.5"
+                      className={`inline-block h-4 w-4 transform rounded-sm bg-background shadow-sm transition-transform ${
+                        featuredOnly ? "translate-x-[1.15rem]" : "translate-x-1"
                       }`}
                     />
                     <span className="sr-only">Toggle featured only</span>
@@ -297,13 +309,11 @@ export function ShopSidebar({
                       onBestsellerOnlyChange(!bestsellerOnly)
                       onResetPage()
                     }}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      bestsellerOnly ? "bg-cyan-500" : "bg-muted"
-                    }`}
+                    className={switchClass(bestsellerOnly)}
                   >
                     <span
-                      className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
-                        bestsellerOnly ? "translate-x-5" : "translate-x-0.5"
+                      className={`inline-block h-4 w-4 transform rounded-sm bg-background shadow-sm transition-transform ${
+                        bestsellerOnly ? "translate-x-[1.15rem]" : "translate-x-1"
                       }`}
                     />
                     <span className="sr-only">Toggle bestseller only</span>
@@ -329,13 +339,11 @@ export function ShopSidebar({
                       onDealOfTheDayOnlyChange(!dealOfTheDayOnly)
                       onResetPage()
                     }}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      dealOfTheDayOnly ? "bg-cyan-500" : "bg-muted"
-                    }`}
+                    className={switchClass(dealOfTheDayOnly)}
                   >
                     <span
-                      className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
-                        dealOfTheDayOnly ? "translate-x-5" : "translate-x-0.5"
+                      className={`inline-block h-4 w-4 transform rounded-sm bg-background shadow-sm transition-transform ${
+                        dealOfTheDayOnly ? "translate-x-[1.15rem]" : "translate-x-1"
                       }`}
                     />
                     <span className="sr-only">Toggle deal of the day only</span>
@@ -361,13 +369,11 @@ export function ShopSidebar({
                       onComboOnlyChange(!comboOnly)
                       onResetPage()
                     }}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      comboOnly ? "bg-cyan-500" : "bg-muted"
-                    }`}
+                    className={switchClass(comboOnly)}
                   >
                     <span
-                      className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
-                        comboOnly ? "translate-x-5" : "translate-x-0.5"
+                      className={`inline-block h-4 w-4 transform rounded-sm bg-background shadow-sm transition-transform ${
+                        comboOnly ? "translate-x-[1.15rem]" : "translate-x-1"
                       }`}
                     />
                     <span className="sr-only">Toggle combo only</span>
@@ -386,7 +392,9 @@ export function ShopSidebar({
             </SidebarGroup>
 
             <SidebarGroup>
-              <SidebarGroupLabel>Sort</SidebarGroupLabel>
+              <SidebarGroupLabel className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                Sort
+              </SidebarGroupLabel>
               <SidebarGroupContent className="space-y-2 px-2">
                 <Dropdown
                   value={sortBy}
@@ -422,7 +430,7 @@ export function ShopSidebar({
                   variant="default"
                   size="lg"
                   onClick={onResetFilters}
-                  className="w-full"
+                  className="w-full rounded-md"
                 >
                   Clear Filters
                 </Button>

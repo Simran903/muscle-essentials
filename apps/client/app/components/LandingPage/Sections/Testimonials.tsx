@@ -96,19 +96,19 @@ function TestimonialCard({
   return (
     <article
       className={cn(
-        "flex h-full min-h-48 w-[min(20rem,calc(100vw-4rem))] shrink-0 flex-col justify-between gap-5 rounded-2xl border border-border bg-card p-5 shadow-sm sm:min-h-52 sm:w-80 sm:p-6",
-        "dark:border-white/10 dark:bg-zinc-900/70",
+        "flex h-full min-h-48 w-[min(20rem,calc(100vw-4rem))] shrink-0 flex-col justify-between gap-5 rounded-2xl border border-border/50 bg-card/90 p-5 shadow-none sm:min-h-52 sm:w-80 sm:p-6",
+        "dark:border-white/8 dark:bg-card/70",
         className
       )}
     >
       <p className="line-clamp-4 text-sm leading-relaxed text-foreground sm:text-base">{quote}</p>
-      <div className="flex items-center gap-3 border-t border-border/60 pt-4 dark:border-white/10">
+      <div className="flex items-center gap-3 border-t border-border/45 pt-4 dark:border-white/10">
         <Image
           src={avatarSrc}
           alt={`Portrait of ${name}`}
           width={40}
           height={40}
-          className="size-10 shrink-0 rounded-full object-cover ring-2 ring-border/80 dark:ring-white/10"
+          className="size-10 shrink-0 rounded-full object-cover ring-2 ring-cyan-500/15 dark:ring-cyan-400/25"
         />
         <div className="min-w-0">
           <p className="truncate font-semibold text-foreground">{name}</p>
@@ -166,9 +166,9 @@ function TestimonialMarqueeRow({
 export const TestimonialsSection = () => {
   return (
     <section id="testimonials" className="w-full overflow-hidden">
-      <div className="mx-auto w-full max-w-360 px-4">
+      <div className="mx-auto w-full max-w-360 px-5 sm:px-8">
         <SectionHeading
-          title="WHAT THEY'RE SAYING OUT THERE"
+          title="What customers say"
           description="Everyone refuels with our stack — except the people who don&apos;t. (We&apos;re still convinced they&apos;ll come around.)"
         />
       </div>

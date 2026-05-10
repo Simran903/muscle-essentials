@@ -158,16 +158,16 @@ export function Card({
         onCardClick()
       }}
       className={cn(
-        "flex w-full max-w-[20rem] flex-col overflow-hidden rounded-3xl border border-border bg-card text-card-foreground shadow-sm",
+        "flex w-full max-w-[20rem] flex-col overflow-hidden rounded-xl border border-border/60 bg-card text-card-foreground shadow-none",
         onCardClick
-          ? "cursor-pointer transition hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+          ? "cursor-pointer transition-[border-color,background-color] duration-200 hover:border-border/80 hover:bg-muted/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35"
           : "",
         className
       )}
     >
       <div className="relative">
-        <div className="overflow-hidden rounded-2xl">
-          {!imageLoaded && <Skeleton className="h-64 w-full rounded-2xl" />}
+        <div className="overflow-hidden rounded-t-xl bg-muted/25">
+          {!imageLoaded && <Skeleton className="h-64 w-full rounded-none" />}
           <Image
             src={imageSrc}
             alt={imageAlt}
@@ -184,25 +184,27 @@ export function Card({
         
       </div>
 
-      <div className="flex flex-1 flex-col space-y-3 p-5">
+      <div className="flex flex-1 flex-col space-y-3 p-4 sm:p-5">
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1 rounded-md bg-cyan-500 px-2 py-1 text-xs font-semibold text-white">
+          <span className="inline-flex items-center gap-1 rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground">
             {rating.toFixed(1)}
-            <Star className="size-3 fill-current" />
+            <Star className="size-3 fill-muted-foreground/25 text-muted-foreground/70" />
           </span>
         </div>
 
         {subtitle ? (
-          <p className="text-sm text-zinc-500">{subtitle}</p>
+          <p className="text-sm text-muted-foreground">{subtitle}</p>
         ) : null}
 
-        <h3 className="line-clamp-2 text-base font-medium leading-6 sm:text-lg">{title}</h3>
+        <h3 className="line-clamp-2 text-base font-semibold leading-snug tracking-tight sm:text-[1.05rem]">
+          {title}
+        </h3>
 
         <div className="flex flex-wrap items-baseline gap-2">
           {priceFrom ? (
-            <span className="text-sm font-semibold text-muted-foreground">From</span>
+            <span className="text-sm font-medium text-muted-foreground">From</span>
           ) : null}
-          <span className="text-2xl font-bold sm:text-3xl">{formatPrice(price)}</span>
+          <span className="text-xl font-semibold tracking-tight sm:text-2xl">{formatPrice(price)}</span>
           {originalPrice ? (
             <span className="text-base text-muted-foreground line-through sm:text-lg">
               {formatPrice(originalPrice)}
@@ -215,7 +217,7 @@ export function Card({
             type="button"
             variant="outline"
             size="lg"
-            className="w-full cursor-pointer"
+            className="w-full cursor-pointer rounded-md border-border/70"
             onClick={onCardClick}
             disabled={!onCardClick}
           >
@@ -225,7 +227,7 @@ export function Card({
             type="button"
             variant="default"
             size="lg"
-            className="w-full cursor-pointer"
+            className="w-full cursor-pointer rounded-md shadow-none"
             disabled={
               outOfStock || isAdding || (!onAddToCart && !canUseCartApi)
             }

@@ -14,7 +14,7 @@ export function Pill({ label, onRemove, className }: PillProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full border border-border bg-muted/60 px-2.5 py-1 text-xs font-medium text-foreground",
+        "inline-flex items-center gap-1 rounded-md border border-border/60 bg-muted/25 px-2.5 py-1 text-xs font-medium text-foreground",
         className
       )}
     >
@@ -23,7 +23,7 @@ export function Pill({ label, onRemove, className }: PillProps) {
         <button
           type="button"
           onClick={onRemove}
-          className="inline-flex size-4 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          className="inline-flex size-4 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           aria-label={`Remove ${label}`}
         >
           <X className="size-3" />
