@@ -1,8 +1,19 @@
 import rateLimit from "express-rate-limit";
 
+import { getEnv } from "../config/env.js";
+
+/** Generous in development (admin UI + hot reload); tighter in production. */
+function apiMaxRequests(): number {
+  try {
+    return getEnv().NODE_ENV === "development" ? 2_000 : 600;
+  } catch {
+    return 600;
+  }
+}
+
 export const apiRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 300,
+  max: apiMaxRequests(),
   standardHeaders: true,
   legacyHeaders: false,
   message: {

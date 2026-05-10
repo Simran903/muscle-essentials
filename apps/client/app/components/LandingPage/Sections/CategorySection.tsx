@@ -148,7 +148,7 @@ function CategoryTileCard({ tile }: { tile: CategoryTile }) {
     <a
       href="#shop"
       className={cn(
-        "group rounded-2xl border border-border/50 bg-card/70 p-2 shadow-none transition-[border-color,background-color] duration-200 hover:border-cyan-500/30 hover:bg-cyan-500/[0.04] dark:hover:border-cyan-400/35 dark:hover:bg-cyan-400/[0.06]",
+        "group rounded-2xl border border-border/50 bg-card/70 p-2 shadow-none transition-[border-color,background-color] duration-200 hover:border-cyan-500/30 hover:bg-cyan-500/4 dark:hover:border-cyan-400/35 dark:hover:bg-cyan-400/6",
       )}
       aria-label={tile.title}
     >

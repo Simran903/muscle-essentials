@@ -1,8 +1,84 @@
+import { randomBytes } from "node:crypto";
+
 import { prisma, Prisma, type ReviewStatus } from "database";
 import { interactiveTransactionOptions } from "../config/transaction.js";
 import { AppError } from "../utils/appError.js";
 import { serializeDecimal } from "../utils/serialize.js";
 import { destroyAsset } from "./upload.service.js";
+
+function slugifySegment(value: string, fallback: string): string {
+  const base = value
+    .trim()
+    .toLowerCase()
+    .replace(/['"]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+  return base.length > 0 ? base : fallback;
+}
+
+function slugifyProductTitle(title: string): string {
+  return slugifySegment(title, "product");
+}
+
+async function allocateUniqueProductSlug(title: string): Promise<string> {
+  const base = slugifyProductTitle(title);
+  for (let n = 0; n < 1000; n += 1) {
+    const candidate = n === 0 ? base : `${base}-${n}`;
+    const taken = await prisma.product.findUnique({
+      where: { slug: candidate },
+      select: { id: true },
+    });
+    if (!taken) {
+      return candidate;
+    }
+  }
+  throw new AppError("Could not allocate a unique slug", 500);
+}
+
+async function allocateUniqueProductSku(): Promise<string> {
+  for (let attempt = 0; attempt < 50; attempt += 1) {
+    const sku = `ME-${randomBytes(4).toString("hex").toUpperCase()}`;
+    const taken = await prisma.product.findUnique({
+      where: { sku },
+      select: { id: true },
+    });
+    if (!taken) {
+      return sku;
+    }
+  }
+  throw new AppError("Could not allocate a unique SKU", 500);
+}
+
+async function allocateUniqueBrandSlug(name: string): Promise<string> {
+  const base = slugifySegment(name, "brand");
+  for (let n = 0; n < 1000; n += 1) {
+    const candidate = n === 0 ? base : `${base}-${n}`;
+    const taken = await prisma.brand.findUnique({
+      where: { slug: candidate },
+      select: { id: true },
+    });
+    if (!taken) {
+      return candidate;
+    }
+  }
+  throw new AppError("Could not allocate a unique brand slug", 500);
+}
+
+async function allocateUniqueCategorySlug(name: string): Promise<string> {
+  const base = slugifySegment(name, "category");
+  for (let n = 0; n < 1000; n += 1) {
+    const candidate = n === 0 ? base : `${base}-${n}`;
+    const taken = await prisma.category.findUnique({
+      where: { slug: candidate },
+      select: { id: true },
+    });
+    if (!taken) {
+      return candidate;
+    }
+  }
+  throw new AppError("Could not allocate a unique category slug", 500);
+}
 
 const defaultTake = 20;
 const maxTake = 100;
@@ -84,6 +160,71 @@ type AdminProductRow = Prisma.ProductGetPayload<{
   };
 }>;
 
+function toAdminProductItem(p: AdminProductRow) {
+  const minSell =
+    p.sizes.length > 0
+      ? p.sizes.reduce(
+          (acc: Prisma.Decimal, s: AdminProductRow["sizes"][number]) =>
+            s.price.lt(acc) ? s.price : acc,
+          p.sizes[0]!.price,
+        )
+      : new Prisma.Decimal(0);
+  return {
+    id: p.id,
+    title: p.title,
+    slug: p.slug,
+    sku: p.sku,
+    shortDesc: p.shortDesc,
+    description: p.description,
+    currency: p.currency,
+    flavours: p.flavours.map((f: AdminProductRow["flavours"][number]) => ({
+      id: f.id,
+      label: f.label,
+      sortOrder: f.sortOrder,
+    })),
+    fromPrice: serializeDecimal(minSell),
+    stockQuantity: p.stockQuantity,
+    isActive: p.isActive,
+    isFeatured: p.isFeatured,
+    isBestseller: p.isBestseller,
+    isDealoftheDay: p.isDealoftheDay,
+    categoryId: p.categoryId,
+    brand: p.brand
+      ? { id: p.brand.id, name: p.brand.name, slug: p.brand.slug }
+      : null,
+    category: p.category
+      ? { id: p.category.id, name: p.category.name, slug: p.category.slug }
+      : null,
+    sizes: p.sizes.map((size: AdminProductRow["sizes"][number]) => ({
+      id: size.id,
+      label: size.label,
+      sortOrder: size.sortOrder,
+      price: serializeDecimal(size.price),
+      costPrice: serializeDecimal(size.costPrice),
+    })),
+    variantSpotlights: p.variantSpotlights.map(
+      (v: AdminProductRow["variantSpotlights"][number]) => ({
+        id: v.id,
+        flavourLabel: v.flavourLabel,
+        sizeLabel: v.sizeLabel,
+        isFeatured: v.isFeatured,
+        isBestseller: v.isBestseller,
+        isDealoftheDay: v.isDealoftheDay,
+      }),
+    ),
+  };
+}
+
+const adminProductInclude = {
+  brand: true,
+  category: true,
+  sizes: { orderBy: { sortOrder: "asc" as const } },
+  flavours: { orderBy: { sortOrder: "asc" as const } },
+  variantSpotlights: {
+    orderBy: [{ flavourLabel: "asc" as const }, { sizeLabel: "asc" as const }],
+  },
+} satisfies Prisma.ProductInclude;
+
 type AdminOrderListRow = Prisma.OrderGetPayload<{
   include: { user: { select: { id: true; email: true } } };
 }>;
@@ -134,78 +275,29 @@ export async function adminListProducts(page?: number, limit?: number) {
       orderBy: { createdAt: "desc" },
       skip,
       take,
-      include: {
-        brand: true,
-        category: true,
-        sizes: { orderBy: { sortOrder: "asc" } },
-        flavours: { orderBy: { sortOrder: "asc" } },
-        variantSpotlights: {
-          orderBy: [{ flavourLabel: "asc" }, { sizeLabel: "asc" }],
-        },
-      },
+      include: adminProductInclude,
     }),
     prisma.product.count(),
   ]);
   return {
-    items: items.map((p: AdminProductRow) => {
-      const minSell =
-        p.sizes.length > 0
-          ? p.sizes.reduce(
-              (acc: Prisma.Decimal, s: AdminProductRow["sizes"][number]) =>
-                s.price.lt(acc) ? s.price : acc,
-              p.sizes[0]!.price,
-            )
-          : new Prisma.Decimal(0);
-      return {
-        id: p.id,
-        title: p.title,
-        slug: p.slug,
-        sku: p.sku,
-        flavours: p.flavours.map((f: AdminProductRow["flavours"][number]) => ({
-          id: f.id,
-          label: f.label,
-          sortOrder: f.sortOrder,
-        })),
-        fromPrice: serializeDecimal(minSell),
-        stockQuantity: p.stockQuantity,
-        isActive: p.isActive,
-        isFeatured: p.isFeatured,
-        isBestseller: p.isBestseller,
-        isDealoftheDay: p.isDealoftheDay,
-        categoryId: p.categoryId,
-        brand: p.brand
-          ? { id: p.brand.id, name: p.brand.name, slug: p.brand.slug }
-          : null,
-        category: p.category
-          ? { id: p.category.id, name: p.category.name, slug: p.category.slug }
-          : null,
-        sizes: p.sizes.map((size: AdminProductRow["sizes"][number]) => ({
-          id: size.id,
-          label: size.label,
-          sortOrder: size.sortOrder,
-          price: serializeDecimal(size.price),
-          costPrice: serializeDecimal(size.costPrice),
-        })),
-        variantSpotlights: p.variantSpotlights.map(
-          (v: AdminProductRow["variantSpotlights"][number]) => ({
-            id: v.id,
-            flavourLabel: v.flavourLabel,
-            sizeLabel: v.sizeLabel,
-            isFeatured: v.isFeatured,
-            isBestseller: v.isBestseller,
-            isDealoftheDay: v.isDealoftheDay,
-          }),
-        ),
-      };
-    }),
+    items: items.map((p: AdminProductRow) => toAdminProductItem(p)),
     pagination: { page: pageN, limit: take, total, totalPages: Math.ceil(total / take) },
   };
 }
 
+export async function adminGetProduct(id: string) {
+  const p = await prisma.product.findUnique({
+    where: { id },
+    include: adminProductInclude,
+  });
+  if (!p) {
+    throw new AppError("Product not found", 404);
+  }
+  return toAdminProductItem(p);
+}
+
 export async function adminCreateProduct(data: {
   title: string;
-  slug: string;
-  sku: string;
   brandId: string;
   categoryId?: string | null;
   shortDesc: string;
@@ -237,11 +329,15 @@ export async function adminCreateProduct(data: {
   if (sizeRows.length === 0) {
     throw new AppError("At least one size with price is required", 400);
   }
+  const [slug, sku] = await Promise.all([
+    allocateUniqueProductSlug(data.title),
+    allocateUniqueProductSku(),
+  ]);
   return prisma.product.create({
     data: {
       title: data.title,
-      slug: data.slug,
-      sku: data.sku,
+      slug,
+      sku,
       brandId,
       categoryId,
       shortDesc: data.shortDesc,
@@ -274,8 +370,6 @@ export async function adminUpdateProduct(
   id: string,
   data: Partial<{
     title: string;
-    slug: string;
-    sku: string;
     brandId: string;
     categoryId: string | null;
     shortDesc: string;
@@ -296,8 +390,6 @@ export async function adminUpdateProduct(
   }
   const update: Prisma.ProductUpdateInput = {};
   if (data.title !== undefined) update.title = data.title;
-  if (data.slug !== undefined) update.slug = data.slug;
-  if (data.sku !== undefined) update.sku = data.sku;
   if (data.brandId !== undefined) {
     const bid = data.brandId.trim();
     if (!bid) {
@@ -630,14 +722,14 @@ export async function adminDeleteProductImage(
 
 export async function adminCreateBrand(data: {
   name: string;
-  slug: string;
   description?: string | null;
   isActive?: boolean;
 }) {
+  const slug = await allocateUniqueBrandSlug(data.name);
   return prisma.brand.create({
     data: {
       name: data.name,
-      slug: data.slug,
+      slug,
       description: data.description ?? null,
       isActive: data.isActive ?? true,
     },
@@ -648,7 +740,6 @@ export async function adminUpdateBrand(
   id: string,
   data: Partial<{
     name: string;
-    slug: string;
     description: string | null;
     isActive: boolean;
   }>,
@@ -659,7 +750,6 @@ export async function adminUpdateBrand(
   }
   const update: Prisma.BrandUpdateInput = {};
   if (data.name !== undefined) update.name = data.name;
-  if (data.slug !== undefined) update.slug = data.slug;
   if (data.description !== undefined) update.description = data.description;
   if (data.isActive !== undefined) update.isActive = data.isActive;
   return prisma.brand.update({ where: { id }, data: update });
@@ -719,13 +809,13 @@ export async function adminListCategories(page?: number, limit?: number) {
 
 export async function adminCreateCategory(data: {
   name: string;
-  slug: string;
   isActive?: boolean;
 }) {
+  const slug = await allocateUniqueCategorySlug(data.name);
   return prisma.category.create({
     data: {
       name: data.name,
-      slug: data.slug,
+      slug,
       isActive: data.isActive ?? true,
     },
   });
@@ -735,7 +825,6 @@ export async function adminUpdateCategory(
   id: string,
   data: Partial<{
     name: string;
-    slug: string;
     isActive: boolean;
   }>,
 ) {
@@ -746,7 +835,6 @@ export async function adminUpdateCategory(
 
   const update: Prisma.CategoryUpdateInput = {};
   if (data.name !== undefined) update.name = data.name;
-  if (data.slug !== undefined) update.slug = data.slug;
   if (data.isActive !== undefined) update.isActive = data.isActive;
   return prisma.category.update({ where: { id }, data: update });
 }

@@ -4,6 +4,7 @@ import {
   adminGetCategories,
   adminGetOrderById,
   adminGetOrders,
+  adminGetProductDetail,
   adminGetProductImages,
   adminGetProducts,
   adminGetReviews,
@@ -45,6 +46,7 @@ r.delete("/admin/categories/:id", ...admin, adminRemoveCategory);
 
 r.get("/admin/products", ...admin, adminGetProducts);
 r.post("/admin/products", ...admin, adminPostProduct);
+r.get("/admin/products/:id", ...admin, adminGetProductDetail);
 r.patch("/admin/products/:id", ...admin, adminPatchProduct);
 r.put("/admin/products/:id/variant-spotlights", ...admin, adminPutProductVariantSpotlights);
 r.delete("/admin/products/:id", ...admin, adminRemoveProduct);

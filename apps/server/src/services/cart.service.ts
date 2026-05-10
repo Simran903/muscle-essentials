@@ -134,7 +134,12 @@ export async function addCartItem(
   const size = options.selectedSizeLabel.trim();
 
   const product = await prisma.product.findFirst({
-    where: { id: productId, isActive: true },
+    where: {
+      id: productId,
+      isActive: true,
+      brand: { isActive: true },
+      OR: [{ categoryId: null }, { category: { isActive: true } }],
+    },
   });
   if (!product) {
     throw new AppError("Product not found", 404);
@@ -244,12 +249,15 @@ export async function updateCartItem(
   }
   const item = await prisma.cartItem.findUnique({
     where: { id: itemId },
-    include: { cart: true, product: true },
+    include: { cart: true, product: { include: { brand: true, category: true } } },
   });
   if (!item || item.cart.userId !== userId || item.cart.status !== "ACTIVE") {
     throw new AppError("Cart item not found", 404);
   }
-  if (!item.product.isActive) {
+  const catOk =
+    item.product.categoryId == null ||
+    (item.product.category != null && item.product.category.isActive);
+  if (!item.product.isActive || !item.product.brand.isActive || !catOk) {
     throw new AppError("Product unavailable", 400);
   }
   if (item.product.stockQuantity < quantity) {

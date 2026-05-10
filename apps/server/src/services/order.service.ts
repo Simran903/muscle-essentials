@@ -51,7 +51,7 @@ export async function createOrderFromCart(
   const full = await prisma.cart.findUnique({
     where: { id: cart.id },
     include: {
-      items: { include: { product: true } },
+      items: { include: { product: { include: { brand: true, category: true } } } },
     },
   });
   if (!full || full.items.length === 0) {
@@ -59,7 +59,10 @@ export async function createOrderFromCart(
   }
 
   for (const line of full.items) {
-    if (!line.product.isActive) {
+    const categoryOk =
+      line.product.categoryId == null ||
+      (line.product.category != null && line.product.category.isActive);
+    if (!line.product.isActive || !line.product.brand.isActive || !categoryOk) {
       throw new AppError(
         `Product ${line.product.title} is no longer available`,
         400,

@@ -1,6 +1,6 @@
 import axios, { isAxiosError } from "axios"
 
-const API_ORIGIN = process.env.NEXT_PUBLIC_API_ORIGIN ?? "http://localhost:5000"
+export const API_ORIGIN = process.env.NEXT_PUBLIC_API_ORIGIN ?? "http://localhost:5000"
 
 const api = axios.create({
   baseURL: API_ORIGIN,
@@ -10,9 +10,10 @@ const api = axios.create({
   },
 })
 
-type ApiEnvelope<T> = {
+export type ApiEnvelope<T> = {
   success?: boolean
   message?: string
+  error?: string
   data?: T
 }
 
@@ -146,8 +147,30 @@ function toRequestError(e: unknown, fallback: string): Error {
   return new Error(envelopeMessage(e, fallback))
 }
 
-function bearerHeaders(accessToken: string) {
+export function bearerHeaders(accessToken: string) {
   return { Authorization: `Bearer ${accessToken}` }
+}
+
+export type AuthUser = {
+  id: string
+  email: string | null
+  name: string | null
+  phone: string | null
+  role: string
+  status: string
+  lastLoginAt: string | null
+  createdAt: string
+}
+
+export async function fetchAuthUser(accessToken: string): Promise<AuthUser | null> {
+  try {
+    const { data: body } = await api.get<ApiEnvelope<{ user: AuthUser }>>("/api/auth/me", {
+      headers: bearerHeaders(accessToken),
+    })
+    return body.data?.user ?? null
+  } catch {
+    return null
+  }
 }
 
 export type CartProductSummary = {

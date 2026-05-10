@@ -16,6 +16,13 @@ const productInclude = {
   },
 } satisfies Prisma.ProductInclude;
 
+/** Active product, active brand, and uncategorized or active primary category. */
+const activeCatalogProduct: Prisma.ProductWhereInput = {
+  isActive: true,
+  brand: { isActive: true },
+  OR: [{ categoryId: null }, { category: { isActive: true } }],
+};
+
 type ProductFull = Prisma.ProductGetPayload<{ include: typeof productInclude }>;
 
 function sizeSellRange(sizes: ProductFull["sizes"]) {
@@ -103,7 +110,11 @@ export async function listProducts(params: {
   const take = Math.min(maxTake, Math.max(1, params.limit ?? defaultTake));
   const skip = (page - 1) * take;
 
-  const clauses: Prisma.ProductWhereInput[] = [{ isActive: true }];
+  /**
+   * Consumer catalog: active product, active brand, and if the product has a primary category
+   * then that category must be active (uncategorized products still show).
+   */
+  const clauses: Prisma.ProductWhereInput[] = [activeCatalogProduct];
   if (params.featured === true) {
     clauses.push({
       OR: [
@@ -156,7 +167,7 @@ export async function listProducts(params: {
 
 export async function getProductBySlug(slug: string) {
   const p = await prisma.product.findFirst({
-    where: { slug, isActive: true },
+    where: { slug, ...activeCatalogProduct },
     include: productInclude,
   });
   if (!p) {
@@ -195,11 +206,15 @@ export async function searchProducts(q: string, page?: number, limit?: number) {
   const skip = (pageN - 1) * take;
 
   const where: Prisma.ProductWhereInput = {
-    isActive: true,
-    OR: [
-      { title: { contains: term, mode: "insensitive" } },
-      { slug: { contains: term, mode: "insensitive" } },
-      { sku: { contains: term, mode: "insensitive" } },
+    AND: [
+      activeCatalogProduct,
+      {
+        OR: [
+          { title: { contains: term, mode: "insensitive" } },
+          { slug: { contains: term, mode: "insensitive" } },
+          { sku: { contains: term, mode: "insensitive" } },
+        ],
+      },
     ],
   };
 
@@ -227,7 +242,7 @@ export async function searchProducts(q: string, page?: number, limit?: number) {
 
 export async function getProductIdBySlug(slug: string): Promise<string> {
   const p = await prisma.product.findFirst({
-    where: { slug, isActive: true },
+    where: { slug, ...activeCatalogProduct },
     select: { id: true },
   });
   if (!p) {
@@ -235,8 +250,6 @@ export async function getProductIdBySlug(slug: string): Promise<string> {
   }
   return p.id;
 }
-
-const activeCatalogProduct = { isActive: true } as const;
 
 export type ShopFilters = {
   brands: { slug: string; name: string }[];

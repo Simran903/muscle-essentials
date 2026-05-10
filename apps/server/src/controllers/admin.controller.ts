@@ -11,6 +11,7 @@ import {
   adminDeleteProduct,
   adminDeleteProductImage,
   adminGetOrder,
+  adminGetProduct,
   adminListBrands,
   adminListCategories,
   adminListOrders,
@@ -74,6 +75,15 @@ export async function adminGetProducts(
   sendSuccess(res, data, "");
 }
 
+export async function adminGetProductDetail(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { id } = z.object({ id: z.string().min(1) }).parse(req.params);
+  const product = await adminGetProduct(id);
+  sendSuccess(res, { product }, "");
+}
+
 const sizeTier = z.object({
   label: z.string().trim().min(1).max(100),
   price: z.string().min(1),
@@ -82,8 +92,6 @@ const sizeTier = z.object({
 
 const createProductBody = z.object({
   title: z.string().min(1),
-  slug: z.string().min(1),
-  sku: z.string().min(1),
   brandId: z.string().min(1),
   categoryId: z.string().optional().nullable(),
   shortDesc: z.string(),
@@ -232,7 +240,6 @@ export async function adminRemoveProductImage(
 
 const createBrandBody = z.object({
   name: z.string().min(1),
-  slug: z.string().min(1),
   description: z.string().max(5000).optional().nullable(),
   isActive: z.boolean().optional(),
 });
@@ -246,7 +253,11 @@ export async function adminPostBrand(
   sendSuccess(res, { brand }, "Brand created");
 }
 
-const patchBrandBody = createBrandBody.partial();
+const patchBrandBody = z.object({
+  name: z.string().min(1).optional(),
+  description: z.string().max(5000).optional().nullable(),
+  isActive: z.boolean().optional(),
+});
 
 export async function adminPatchBrand(
   req: Request,
@@ -291,7 +302,10 @@ export async function adminPostCategory(
   sendSuccess(res, { category }, "Category created");
 }
 
-const patchCategoryBody = createCategoryBody.partial();
+const patchCategoryBody = z.object({
+  name: z.string().min(1).optional(),
+  isActive: z.boolean().optional(),
+});
 
 export async function adminPatchCategory(
   req: Request,

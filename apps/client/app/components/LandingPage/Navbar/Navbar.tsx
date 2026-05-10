@@ -13,7 +13,7 @@ import {
   getAccessToken,
   setAccessToken,
 } from "@/lib/auth-storage"
-import { fetchCart, getMe, refreshSession, verifyDid } from "@/lib/api"
+import { fetchAuthUser, fetchCart, getMe, refreshSession, verifyDid } from "@/lib/api"
 import { Button } from "@/app/components/ui/button"
 import {
   NavigationMenu,
@@ -26,6 +26,9 @@ const HIDE_NAVBAR_CLASS = "image-viewer-open"
 
 function useAuthStatus() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false)
+  const [isAdmin, setIsAdmin] = React.useState(false)
+  /** Avoid calling /auth/me + /auth/me profile on every poll (was tripping API rate limits). */
+  const profileFetchedForToken = React.useRef<string | null>(null)
 
   const checkLoginStatus = React.useCallback(async () => {
     const token = getAccessToken()
@@ -34,20 +37,38 @@ function useAuthStatus() {
       const isValidSession = await getMe(token)
       if (isValidSession) {
         setIsLoggedIn(true)
+        const active = getAccessToken()
+        if (!active) {
+          profileFetchedForToken.current = null
+          setIsAdmin(false)
+          return
+        }
+        if (active !== profileFetchedForToken.current) {
+          profileFetchedForToken.current = active
+          const user = await fetchAuthUser(active)
+          setIsAdmin(user?.role === "ADMIN")
+        }
         return
       }
 
       const rotatedToken = await refreshSession()
       if (rotatedToken) {
         setAccessToken(rotatedToken)
+        profileFetchedForToken.current = rotatedToken
         setIsLoggedIn(true)
+        const user = await fetchAuthUser(rotatedToken)
+        setIsAdmin(user?.role === "ADMIN")
         return
       }
 
       clearAccessToken()
+      profileFetchedForToken.current = null
       setIsLoggedIn(false)
+      setIsAdmin(false)
     } catch {
+      profileFetchedForToken.current = null
       setIsLoggedIn(false)
+      setIsAdmin(false)
     }
   }, [])
 
@@ -71,11 +92,15 @@ function useAuthStatus() {
   const onLoginSuccess = React.useCallback((accessToken: string | null) => {
     if (accessToken) {
       setAccessToken(accessToken)
+      profileFetchedForToken.current = accessToken
     }
     setIsLoggedIn(true)
+    if (accessToken) {
+      void fetchAuthUser(accessToken).then((u) => setIsAdmin(u?.role === "ADMIN"))
+    }
   }, [])
 
-  return { isLoggedIn, onLoginSuccess }
+  return { isLoggedIn, isAdmin, onLoginSuccess }
 }
 
 export function Navbar() {
@@ -86,7 +111,7 @@ export function Navbar() {
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const [isNavbarHidden, setIsNavbarHidden] = React.useState(false)
   const [cartItemCountWhenLoggedIn, setCartItemCountWhenLoggedIn] = React.useState(0)
-  const { isLoggedIn, onLoginSuccess } = useAuthStatus()
+  const { isLoggedIn, isAdmin, onLoginSuccess } = useAuthStatus()
   const cartItemCount = isLoggedIn ? cartItemCountWhenLoggedIn : 0
 
   React.useEffect(() => {
@@ -240,6 +265,16 @@ export function Navbar() {
                 </Link>
               </Button>
             </NavigationMenuItem>
+            {isLoggedIn && isAdmin ? (
+              <NavigationMenuItem>
+                <Link
+                  href="/admin"
+                  className="inline-flex h-9 items-center rounded-md px-3.5 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
+                >
+                  Admin
+                </Link>
+              </NavigationMenuItem>
+            ) : null}
             {!isLoggedIn ? (
               <NavigationMenuItem>
                 <Button asChild size="lg" variant="default" className="cursor-pointer rounded-md px-5 shadow-none">
