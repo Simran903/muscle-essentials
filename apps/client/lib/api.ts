@@ -42,13 +42,16 @@ export type ProductItem = {
   shortDesc: string
   description: string
   flavours: { id: string; label: string; sortOrder: number }[]
+  /** Lowest size-tier price (listings, cards, sort). */
   price: number | string
+  /** Present when size tiers have different selling prices. */
+  maxPrice?: number | string
   currency: string
   stockQuantity: number
   isFeatured: boolean
   isBestseller: boolean
   isDealoftheDay: boolean
-  sizes: { id: string; label: string; sortOrder: number }[]
+  sizes: { id: string; label: string; sortOrder: number; price: number | string }[]
   brand: { id: string; name: string; slug: string }
   category: { id: string; name: string; slug: string }
   images: { id: string; url: string; altText: string | null; sortOrder: number; isPrimary: boolean }[]

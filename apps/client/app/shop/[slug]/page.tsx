@@ -10,14 +10,6 @@ type ProductPageProps = {
   params: Promise<{ slug: string }>
 }
 
-function formatPrice(value: number | string) {
-  return new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 0,
-  }).format(Number(value))
-}
-
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params
 
@@ -109,23 +101,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   {product.shortDesc}
                 </p>
               )}
-            </div>
-
-            <div className="mt-6 rounded-2xl border border-border bg-muted/40 p-4 dark:bg-muted/30">
-              <div className="flex flex-wrap items-end justify-between gap-3">
-                <div>
-                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                    Price
-                  </p>
-                  <p className="mt-1 text-4xl font-bold tracking-tight text-foreground">
-                    {formatPrice(product.price)}
-                  </p>
-                </div>
-
-                <span className="rounded-full border border-border bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground">
-                  Inclusive of taxes
-                </span>
-              </div>
             </div>
 
             <dl className="mt-6">

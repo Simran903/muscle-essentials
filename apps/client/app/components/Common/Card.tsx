@@ -18,6 +18,8 @@ type ProductCardProps = {
   title: string
   subtitle?: string
   price: number
+  /** When size tiers use different prices, show “From” before the listing price. */
+  priceFrom?: boolean
   originalPrice?: number
   rating?: number
   countryCode?: string
@@ -55,6 +57,7 @@ export function Card({
   title,
   subtitle,
   price,
+  priceFrom = false,
   originalPrice,
   rating = 4.2,
   productId,
@@ -195,7 +198,10 @@ export function Card({
 
         <h3 className="line-clamp-2 text-base font-medium leading-6 sm:text-lg">{title}</h3>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-baseline gap-2">
+          {priceFrom ? (
+            <span className="text-sm font-semibold text-muted-foreground">From</span>
+          ) : null}
           <span className="text-2xl font-bold sm:text-3xl">{formatPrice(price)}</span>
           {originalPrice ? (
             <span className="text-base text-muted-foreground line-through sm:text-lg">

@@ -39,6 +39,32 @@ function normalizeOrderedLabels(labels?: string[]): string[] {
   return normalized;
 }
 
+type SizeTierInput = { label: string; price: string; costPrice?: string };
+
+function normalizeSizeTiers(tiers: SizeTierInput[]): {
+  label: string;
+  price: string;
+  costPrice: string;
+}[] {
+  const seen = new Set<string>();
+  const out: { label: string; price: string; costPrice: string }[] = [];
+  for (const t of tiers) {
+    const label = t.label.trim();
+    if (!label) continue;
+    const dedupeKey = label.toLowerCase();
+    if (seen.has(dedupeKey)) continue;
+    seen.add(dedupeKey);
+    const price = t.price.trim();
+    const costRaw = (t.costPrice ?? "0").trim();
+    out.push({
+      label,
+      price,
+      costPrice: costRaw.length > 0 ? costRaw : "0",
+    });
+  }
+  return out;
+}
+
 export async function adminRequireProduct(productId: string): Promise<void> {
   const p = await prisma.product.findUnique({ where: { id: productId } });
   if (!p) {
@@ -115,35 +141,47 @@ export async function adminListProducts(page?: number, limit?: number) {
     prisma.product.count(),
   ]);
   return {
-    items: items.map((p: AdminProductRow) => ({
-      id: p.id,
-      title: p.title,
-      slug: p.slug,
-      sku: p.sku,
-      flavours: p.flavours.map((f: AdminProductRow["flavours"][number]) => ({
-        id: f.id,
-        label: f.label,
-        sortOrder: f.sortOrder,
-      })),
-      price: serializeDecimal(p.price),
-      stockQuantity: p.stockQuantity,
-      isActive: p.isActive,
-      isFeatured: p.isFeatured,
-      isBestseller: p.isBestseller,
-      isDealoftheDay: p.isDealoftheDay,
-      categoryId: p.categoryId,
-      brand: p.brand
-        ? { id: p.brand.id, name: p.brand.name, slug: p.brand.slug }
-        : null,
-      category: p.category
-        ? { id: p.category.id, name: p.category.name, slug: p.category.slug }
-        : null,
-      sizes: p.sizes.map((size: AdminProductRow["sizes"][number]) => ({
-        id: size.id,
-        label: size.label,
-        sortOrder: size.sortOrder,
-      })),
-    })),
+    items: items.map((p: AdminProductRow) => {
+      const minSell =
+        p.sizes.length > 0
+          ? p.sizes.reduce(
+              (acc: Prisma.Decimal, s: AdminProductRow["sizes"][number]) =>
+                s.price.lt(acc) ? s.price : acc,
+              p.sizes[0]!.price,
+            )
+          : new Prisma.Decimal(0);
+      return {
+        id: p.id,
+        title: p.title,
+        slug: p.slug,
+        sku: p.sku,
+        flavours: p.flavours.map((f: AdminProductRow["flavours"][number]) => ({
+          id: f.id,
+          label: f.label,
+          sortOrder: f.sortOrder,
+        })),
+        fromPrice: serializeDecimal(minSell),
+        stockQuantity: p.stockQuantity,
+        isActive: p.isActive,
+        isFeatured: p.isFeatured,
+        isBestseller: p.isBestseller,
+        isDealoftheDay: p.isDealoftheDay,
+        categoryId: p.categoryId,
+        brand: p.brand
+          ? { id: p.brand.id, name: p.brand.name, slug: p.brand.slug }
+          : null,
+        category: p.category
+          ? { id: p.category.id, name: p.category.name, slug: p.category.slug }
+          : null,
+        sizes: p.sizes.map((size: AdminProductRow["sizes"][number]) => ({
+          id: size.id,
+          label: size.label,
+          sortOrder: size.sortOrder,
+          price: serializeDecimal(size.price),
+          costPrice: serializeDecimal(size.costPrice),
+        })),
+      };
+    }),
     pagination: { page: pageN, limit: take, total, totalPages: Math.ceil(total / take) },
   };
 }
@@ -152,14 +190,12 @@ export async function adminCreateProduct(data: {
   title: string;
   slug: string;
   sku: string;
-  price: string;
   brandId: string;
   categoryId?: string | null;
   shortDesc: string;
   description: string;
   flavours?: string[];
-  sizes?: string[];
-  costPrice: string;
+  sizes: SizeTierInput[];
   stockQuantity: number;
   currency: string;
   isActive: boolean;
@@ -181,12 +217,15 @@ export async function adminCreateProduct(data: {
       throw new AppError("Category not found", 404);
     }
   }
+  const sizeRows = normalizeSizeTiers(data.sizes);
+  if (sizeRows.length === 0) {
+    throw new AppError("At least one size with price is required", 400);
+  }
   return prisma.product.create({
     data: {
       title: data.title,
       slug: data.slug,
       sku: data.sku,
-      price: new Prisma.Decimal(data.price),
       brandId,
       categoryId,
       shortDesc: data.shortDesc,
@@ -198,12 +237,13 @@ export async function adminCreateProduct(data: {
         })),
       },
       sizes: {
-        create: normalizeOrderedLabels(data.sizes).map((label, index) => ({
-          label,
+        create: sizeRows.map((row, index) => ({
+          label: row.label,
           sortOrder: index,
+          price: new Prisma.Decimal(row.price),
+          costPrice: new Prisma.Decimal(row.costPrice),
         })),
       },
-      costPrice: new Prisma.Decimal(data.costPrice),
       stockQuantity: data.stockQuantity,
       currency: data.currency,
       isActive: data.isActive,
@@ -220,14 +260,12 @@ export async function adminUpdateProduct(
     title: string;
     slug: string;
     sku: string;
-    price: string;
     brandId: string;
     categoryId: string | null;
     shortDesc: string;
     description: string;
     flavours: string[];
-    sizes: string[];
-    costPrice: string;
+    sizes: SizeTierInput[];
     currency: string;
     stockQuantity: number;
     isActive: boolean;
@@ -244,7 +282,6 @@ export async function adminUpdateProduct(
   if (data.title !== undefined) update.title = data.title;
   if (data.slug !== undefined) update.slug = data.slug;
   if (data.sku !== undefined) update.sku = data.sku;
-  if (data.price !== undefined) update.price = new Prisma.Decimal(data.price);
   if (data.brandId !== undefined) {
     const bid = data.brandId.trim();
     if (!bid) {
@@ -280,17 +317,19 @@ export async function adminUpdateProduct(
     };
   }
   if (data.sizes !== undefined) {
-    const normalizedSizes = normalizeOrderedLabels(data.sizes);
+    const sizeRows = normalizeSizeTiers(data.sizes);
+    if (sizeRows.length === 0) {
+      throw new AppError("At least one size with price is required", 400);
+    }
     update.sizes = {
       deleteMany: {},
-      create: normalizedSizes.map((label, index) => ({
-        label,
+      create: sizeRows.map((row, index) => ({
+        label: row.label,
         sortOrder: index,
+        price: new Prisma.Decimal(row.price),
+        costPrice: new Prisma.Decimal(row.costPrice),
       })),
     };
-  }
-  if (data.costPrice !== undefined) {
-    update.costPrice = new Prisma.Decimal(data.costPrice);
   }
   if (data.currency !== undefined) update.currency = data.currency;
   if (data.stockQuantity !== undefined) update.stockQuantity = data.stockQuantity;

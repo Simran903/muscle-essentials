@@ -9,10 +9,17 @@ import { Button } from "@/app/components/ui/button"
 import { cn } from "@/lib/utils"
 import { addProductToCart } from "@/lib/cart-client"
 
-export type PurchaseVariantOption = {
+export type PurchaseFlavourOption = {
   id: string
   label: string
   sortOrder: number
+}
+
+export type PurchaseSizeOption = {
+  id: string
+  label: string
+  sortOrder: number
+  price: number | string
 }
 
 const MAX_QUANTITY_PER_ADD = 5
@@ -20,10 +27,18 @@ const MAX_QUANTITY_PER_ADD = 5
 type ProductPurchasePanelProps = {
   productId: string
   productTitle: string
-  flavours: PurchaseVariantOption[]
-  sizes: PurchaseVariantOption[]
+  flavours: PurchaseFlavourOption[]
+  sizes: PurchaseSizeOption[]
   isInStock: boolean
   stockQuantity: number
+}
+
+function formatInr(value: number | string) {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(Number(value))
 }
 
 function sortOptions<T extends { sortOrder: number; label: string }>(items: T[]): T[] {
@@ -64,7 +79,21 @@ export function ProductPurchasePanel({
   const canPurchase = isInStock && flavourOk && sizeOk
 
   const flavourLabel = flavourList.find((f) => f.id === flavourId)?.label
-  const sizeLabel = sizeList.find((s) => s.id === sizeId)?.label
+  const selectedSize = sizeList.find((s) => s.id === sizeId)
+  const sizeLabel = selectedSize?.label
+
+  const displayUnitPrice = React.useMemo(() => {
+    if (sizeList.length === 0) return null
+    if (selectedSize) return selectedSize.price
+    const prices = sizeList.map((s) => Number(s.price))
+    return Math.min(...prices)
+  }, [sizeList, selectedSize])
+
+  const showFromPrefix =
+    sizeList.length > 1 &&
+    selectedSize == null &&
+    displayUnitPrice != null &&
+    new Set(sizeList.map((s) => Number(s.price))).size > 1
 
   const announceSelection = () => {
     const bits = [flavourLabel, sizeLabel].filter(Boolean)
@@ -137,6 +166,31 @@ export function ProductPurchasePanel({
 
   return (
     <div className="mt-6 space-y-6">
+      {displayUnitPrice != null ? (
+        <div className="rounded-2xl border border-border bg-muted/40 p-4 dark:bg-muted/30">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Price
+              </p>
+              <p className="mt-1 text-4xl font-bold tracking-tight text-foreground">
+                {showFromPrefix ? (
+                  <>
+                    <span className="text-2xl font-semibold text-muted-foreground">From </span>
+                    {formatInr(displayUnitPrice)}
+                  </>
+                ) : (
+                  formatInr(displayUnitPrice)
+                )}
+              </p>
+            </div>
+            <span className="rounded-full border border-border bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground">
+              Inclusive of taxes
+            </span>
+          </div>
+        </div>
+      ) : null}
+
       {flavourList.length > 0 ? (
         <div className="space-y-2">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -182,7 +236,10 @@ export function ProductPurchasePanel({
                 className={optionButtonClass(sizeId === s.id)}
                 aria-pressed={sizeId === s.id}
               >
-                {s.label}
+                <span className="block">{s.label}</span>
+                <span className="mt-0.5 block text-[11px] font-normal tabular-nums text-muted-foreground">
+                  {formatInr(s.price)}
+                </span>
               </button>
             ))}
           </div>

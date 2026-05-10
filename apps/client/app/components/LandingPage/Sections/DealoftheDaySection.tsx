@@ -49,6 +49,10 @@ export const DealoftheDaySection = ({ products }: DealoftheDaySectionProps) => {
                   title={product.title}
                   subtitle={product.brand?.name ?? "Muscle Essentials"}
                   price={Number(product.price)}
+                  priceFrom={
+                    product.maxPrice != null &&
+                    Number(product.maxPrice) > Number(product.price)
+                  }
                   productId={product.id}
                   productSlug={product.slug}
                   flavourOptionCount={product.flavours?.length ?? 0}

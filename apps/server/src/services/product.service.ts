@@ -15,12 +15,26 @@ const productInclude = {
 
 type ProductFull = Prisma.ProductGetPayload<{ include: typeof productInclude }>;
 
+function sizeSellRange(sizes: ProductFull["sizes"]) {
+  if (sizes.length === 0) {
+    return { min: new Prisma.Decimal(0), max: new Prisma.Decimal(0) };
+  }
+  let min = sizes[0]!.price;
+  let max = sizes[0]!.price;
+  for (const s of sizes) {
+    if (s.price.lt(min)) min = s.price;
+    if (s.price.gt(max)) max = s.price;
+  }
+  return { min, max };
+}
+
 function mapProduct(p: ProductFull) {
   const flavours = p.flavours.map((f: ProductFull["flavours"][number]) => ({
     id: f.id,
     label: f.label,
     sortOrder: f.sortOrder,
   }));
+  const { min: fromPrice, max: toPrice } = sizeSellRange(p.sizes);
   return {
     id: p.id,
     title: p.title,
@@ -31,7 +45,10 @@ function mapProduct(p: ProductFull) {
     flavour: flavours.map((f: (typeof flavours)[number]) => f.label).join(", "),
     flavours,
     sku: p.sku,
-    price: serializeDecimal(p.price),
+    /** Lowest size tier price (for listings, sort, cards). */
+    price: serializeDecimal(fromPrice),
+    /** When tiers differ, highest price (optional “from / range” UX). */
+    maxPrice: toPrice.eq(fromPrice) ? undefined : serializeDecimal(toPrice),
     currency: p.currency,
     stockQuantity: p.stockQuantity,
     isActive: p.isActive,
@@ -56,6 +73,7 @@ function mapProduct(p: ProductFull) {
       id: size.id,
       label: size.label,
       sortOrder: size.sortOrder,
+      price: serializeDecimal(size.price),
     })),
   };
 }

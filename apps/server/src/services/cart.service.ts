@@ -166,6 +166,7 @@ export async function addCartItem(
       throw new AppError("Invalid flavour selection", 400);
     }
   }
+  let sizeTier = null as { price: Prisma.Decimal } | null;
   if (size.length > 0) {
     const row = await prisma.productSize.findFirst({
       where: { productId, label: size },
@@ -173,6 +174,7 @@ export async function addCartItem(
     if (!row) {
       throw new AppError("Invalid size selection", 400);
     }
+    sizeTier = row;
   }
 
   const cart = await getOrCreateActiveCart(userId);
@@ -193,7 +195,14 @@ export async function addCartItem(
     throw new AppError("Insufficient stock", 400);
   }
 
-  const unitPrice = product.price;
+  const fallbackTier = await prisma.productSize.findFirst({
+    where: { productId },
+    orderBy: { sortOrder: "asc" },
+  });
+  const unitPrice = sizeTier?.price ?? fallbackTier?.price;
+  if (!unitPrice) {
+    throw new AppError("Product has no price tier", 500);
+  }
   const lineTotal = unitPrice.mul(newQty);
 
   await prisma.cartItem.upsert({
@@ -246,12 +255,23 @@ export async function updateCartItem(
   if (item.product.stockQuantity < quantity) {
     throw new AppError("Insufficient stock", 400);
   }
-  const lineTotal = item.product.price.mul(quantity);
+  const sizeTier = await prisma.productSize.findFirst({
+    where: { productId: item.productId, label: item.selectedSizeLabel.trim() },
+  });
+  const fallbackTier = await prisma.productSize.findFirst({
+    where: { productId: item.productId },
+    orderBy: { sortOrder: "asc" },
+  });
+  const unitPrice = sizeTier?.price ?? fallbackTier?.price;
+  if (!unitPrice) {
+    throw new AppError("Product has no price tier", 500);
+  }
+  const lineTotal = unitPrice.mul(quantity);
   await prisma.cartItem.update({
     where: { id: itemId },
     data: {
       quantity,
-      unitPrice: item.product.price,
+      unitPrice,
       lineTotal,
     },
   });

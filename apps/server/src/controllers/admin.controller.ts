@@ -73,18 +73,22 @@ export async function adminGetProducts(
   sendSuccess(res, data, "");
 }
 
+const sizeTier = z.object({
+  label: z.string().trim().min(1).max(100),
+  price: z.string().min(1),
+  costPrice: z.string().min(1).optional(),
+});
+
 const createProductBody = z.object({
   title: z.string().min(1),
   slug: z.string().min(1),
   sku: z.string().min(1),
-  price: z.string().min(1),
   brandId: z.string().min(1),
   categoryId: z.string().optional().nullable(),
   shortDesc: z.string(),
   description: z.string(),
   flavours: z.array(z.string().trim().min(1).max(100)).max(50).optional(),
-  sizes: z.array(z.string().trim().min(1).max(100)).max(50).optional(),
-  costPrice: z.string().min(1),
+  sizes: z.array(sizeTier).min(1),
   stockQuantity: z.coerce.number().int().min(0),
   currency: z.string().min(1),
   isActive: z.boolean(),
@@ -102,7 +106,9 @@ export async function adminPostProduct(
   sendSuccess(res, { product }, "Product created");
 }
 
-const patchProductBody = createProductBody.partial();
+const patchProductBody = createProductBody.partial().extend({
+  sizes: z.array(sizeTier).min(1).optional(),
+});
 
 export async function adminPatchProduct(
   req: Request,
