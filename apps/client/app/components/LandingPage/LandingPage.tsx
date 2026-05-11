@@ -134,6 +134,7 @@ export function LandingMainSkeleton() {
 
 const LandingPage = () => {
   const [landingProducts, setLandingProducts] = React.useState<ProductItem[]>([])
+  const [productsLoading, setProductsLoading] = React.useState(true)
 
   React.useEffect(() => {
     window.dispatchEvent(new Event("auth:force-check"))
@@ -148,6 +149,8 @@ const LandingPage = () => {
         if (!cancelled) setLandingProducts(response.items)
       } catch {
         if (!cancelled) setLandingProducts([])
+      } finally {
+        if (!cancelled) setProductsLoading(false)
       }
     }
 
@@ -190,7 +193,7 @@ const LandingPage = () => {
           transition={{ duration: 0.55, delay: 0.06, ease: "easeOut" }}
           viewport={{ once: true, amount: 0.2 }}
         >
-          <DealoftheDaySection products={dealOfTheDayProducts} />
+          <DealoftheDaySection products={dealOfTheDayProducts} isLoading={productsLoading} />
         </motion.div>
         <motion.div
           className="py-16 md:py-20"
@@ -199,7 +202,7 @@ const LandingPage = () => {
           transition={{ duration: 0.55, delay: 0.08, ease: "easeOut" }}
           viewport={{ once: true, amount: 0.2 }}
         >
-          <BestsellersSection products={bestSellerProducts} />
+          <BestsellersSection products={bestSellerProducts} isLoading={productsLoading} />
         </motion.div>
         <motion.div
           className="py-16 md:py-20"
@@ -208,7 +211,7 @@ const LandingPage = () => {
           transition={{ duration: 0.55, delay: 0.1, ease: "easeOut" }}
           viewport={{ once: true, amount: 0.2 }}
         >
-          <FeaturedSection products={featuredProducts} />
+          <FeaturedSection products={featuredProducts} isLoading={productsLoading} />
         </motion.div>
         <motion.div
           className="py-16 md:py-20"

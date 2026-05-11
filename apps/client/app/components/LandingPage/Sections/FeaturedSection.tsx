@@ -15,11 +15,14 @@ import {
   CarouselPrevious,
 } from "@/app/components/ui/carousel"
 
+import { ProductCarouselSkeleton } from "../ProductCarouselSkeleton"
+
 type FeaturedSectionProps = {
   products: ProductItem[]
+  isLoading?: boolean
 }
 
-export const FeaturedSection = ({ products }: FeaturedSectionProps) => {
+export const FeaturedSection = ({ products, isLoading = false }: FeaturedSectionProps) => {
   const router = useRouter()
 
   return (
@@ -34,41 +37,47 @@ export const FeaturedSection = ({ products }: FeaturedSectionProps) => {
         </Button>
       </div>
       <div className="mt-6">
-        <Carousel opts={{ align: "start", loop: true }} className="w-full">
-          <CarouselContent>
-            {products.map((product) => (
-              <CarouselItem
-                key={product.id}
-                className="basis-[85%] sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
-              >
-                <Card
-                  imageSrc={product.images.find((image) => image.isPrimary)?.url ?? product.images[0]?.url ?? "/images/placeholder.jpg"}
-                  imageAlt={product.images.find((image) => image.isPrimary)?.altText ?? product.title}
-                  title={product.title}
-                  subtitle={product.brand?.name ?? "Muscle Essentials"}
-                  price={Number(product.price)}
-                  priceFrom={
-                    product.maxPrice != null &&
-                    Number(product.maxPrice) > Number(product.price)
-                  }
-                  productId={product.id}
-                  productSlug={product.slug}
-                  flavourOptionCount={product.flavours?.length ?? 0}
-                  sizeOptionCount={product.sizes?.length ?? 0}
-                  outOfStock={product.stockQuantity <= 0}
-                  defaultFlavourLabel={
-                    product.flavours?.length === 1 ? product.flavours[0]!.label : undefined
-                  }
-                  defaultSizeLabel={product.sizes?.length === 1 ? product.sizes[0]!.label : undefined}
-                  onCardClick={() => router.push(`/shop/${product.slug}`)}
-                  className="max-w-none rounded-2xl"
-                />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
+        {isLoading ? (
+          <ProductCarouselSkeleton />
+        ) : (
+          <Carousel opts={{ align: "start", loop: true }} className="w-full">
+            <CarouselContent>
+              {products.map((product) => (
+                <CarouselItem
+                  key={product.id}
+                  className="basis-[85%] sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+                >
+                  <Card
+                    imageSrc={product.images.find((image) => image.isPrimary)?.url ?? product.images[0]?.url ?? "/images/placeholder.jpg"}
+                    imageAlt={product.images.find((image) => image.isPrimary)?.altText ?? product.title}
+                    title={product.title}
+                    subtitle={product.brand?.name ?? "Muscle Essentials"}
+                    price={Number(product.price)}
+                    priceFrom={
+                      product.maxPrice != null &&
+                      Number(product.maxPrice) > Number(product.price)
+                    }
+                    productId={product.id}
+                    productSlug={product.slug}
+                    flavourOptionCount={product.flavours?.length ?? 0}
+                    sizeOptionCount={product.sizes?.length ?? 0}
+                    flavourLabels={product.flavours?.map((f) => f.label)}
+                    sizeLabels={product.sizes?.map((s) => s.label)}
+                    outOfStock={product.stockQuantity <= 0}
+                    defaultFlavourLabel={
+                      product.flavours?.length === 1 ? product.flavours[0]!.label : undefined
+                    }
+                    defaultSizeLabel={product.sizes?.length === 1 ? product.sizes[0]!.label : undefined}
+                    onCardClick={() => router.push(`/shop/${product.slug}`)}
+                    className="max-w-none rounded-2xl"
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        )}
       </div>
     </section>
   )

@@ -184,30 +184,6 @@ export function ProductPurchasePanel({
 
   return (
     <div className="mt-6 space-y-6">
-      {displayUnitPrice != null ? (
-        <div className="rounded-xl border border-border/60 bg-muted/20 p-4 dark:bg-muted/15">
-          <div className="flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <p className="text-xs font-medium tracking-wide text-muted-foreground">
-                Price
-              </p>
-              <p className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
-                {showFromPrefix ? (
-                  <>
-                    <span className="text-xl font-medium text-muted-foreground">From </span>
-                    {formatInr(displayUnitPrice)}
-                  </>
-                ) : (
-                  formatInr(displayUnitPrice)
-                )}
-              </p>
-            </div>
-            <span className="rounded-md border border-border/60 bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground">
-              Inclusive of taxes
-            </span>
-          </div>
-        </div>
-      ) : null}
 
       {flavourList.length > 0 ? (
         <div className="space-y-2">
@@ -300,6 +276,31 @@ export function ProductPurchasePanel({
             >
               <Plus className="size-4" />
             </Button>
+          </div>
+        </div>
+      ) : null}
+
+      {displayUnitPrice != null ? (
+        <div className="rounded-xl border border-border/60 bg-muted/20 p-4 dark:bg-muted/15">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-xs font-medium tracking-wide text-muted-foreground">
+                Price
+              </p>
+              <p className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
+                {showFromPrefix ? (
+                  <>
+                    <span className="text-xl font-medium text-muted-foreground">From </span>
+                    {formatInr(displayUnitPrice)}
+                  </>
+                ) : (
+                  formatInr(displayUnitPrice)
+                )}
+              </p>
+            </div>
+            <span className="rounded-md border border-border/60 bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground">
+              Inclusive of taxes
+            </span>
           </div>
         </div>
       ) : null}

@@ -78,23 +78,36 @@ export default function AdminReviewsPage() {
                   <th className={adminTh}>User</th>
                   <th className={adminTh}>Rating</th>
                   <th className={adminTh}>Status</th>
-                  <th className={adminTh}>Excerpt</th>
+                  <th className={adminTh}>Review</th>
                   <th className={adminTh} />
                 </tr>
               </thead>
               <tbody>
                 {items.map((r) => (
                   <tr key={r.id}>
-                    <td className={adminTd}>
+                    <td className={`${adminTd} align-top`}>
                       <span className="font-medium text-foreground">{r.product.title}</span>
                     </td>
-                    <td className={adminTd}>{r.user.email ?? r.user.id}</td>
-                    <td className={adminTd}>{r.rating}</td>
-                    <td className={adminTd}>{r.status}</td>
-                    <td className={`${adminTd} max-w-[200px] truncate`}>
-                      {r.body ?? r.title ?? "—"}
+                    <td className={`${adminTd} align-top`}>{r.user.email ?? r.user.id}</td>
+                    <td className={`${adminTd} align-top tabular-nums`}>{r.rating}</td>
+                    <td className={`${adminTd} align-top`}>{r.status}</td>
+                    <td className={`${adminTd} min-w-[24rem] max-w-160 align-top`}>
+                      {r.title || r.body ? (
+                        <div className="space-y-1">
+                          {r.title ? (
+                            <p className="font-medium text-foreground">{r.title}</p>
+                          ) : null}
+                          {r.body ? (
+                            <p className="whitespace-pre-line wrap-break-word text-sm leading-6 text-muted-foreground">
+                              {r.body}
+                            </p>
+                          ) : null}
+                        </div>
+                      ) : (
+                        "—"
+                      )}
                     </td>
-                    <td className={adminTd}>
+                    <td className={`${adminTd} align-top`}>
                       {r.status === "PENDING" ? (
                         <div className="flex flex-wrap gap-2">
                           <Button

@@ -31,6 +31,10 @@ type ProductCardProps = {
   flavourOptionCount?: number
   /** From listing data: number of size options (0 = none). */
   sizeOptionCount?: number
+  /** Labels for available flavours. When provided, rendered as pills and used to derive the count. */
+  flavourLabels?: string[]
+  /** Labels for available sizes. When provided, rendered as pills and used to derive the count. */
+  sizeLabels?: string[]
   /** When true, Add to cart is disabled. */
   outOfStock?: boolean
   /** Sent with add-to-cart when product has a single flavour (e.g. from listing data). */
@@ -70,6 +74,8 @@ export function Card({
   productSlug,
   flavourOptionCount,
   sizeOptionCount,
+  flavourLabels,
+  sizeLabels,
   outOfStock = false,
   defaultFlavourLabel,
   defaultSizeLabel,
@@ -85,11 +91,21 @@ export function Card({
 
   const canUseCartApi = Boolean(productId || productSlug)
 
+  const effectiveFlavourCount = flavourLabels?.length ?? flavourOptionCount
+  const effectiveSizeCount = sizeLabels?.length ?? sizeOptionCount
+
   const listingNeedsVariantChoice =
     productId != null &&
-    flavourOptionCount !== undefined &&
-    sizeOptionCount !== undefined &&
-    (flavourOptionCount > 1 || sizeOptionCount > 1)
+    effectiveFlavourCount !== undefined &&
+    effectiveSizeCount !== undefined &&
+    (effectiveFlavourCount > 1 || effectiveSizeCount > 1)
+
+  const MAX_VISIBLE_PILLS = 3
+  const visibleFlavours = (flavourLabels ?? []).slice(0, MAX_VISIBLE_PILLS)
+  const flavourOverflow = (flavourLabels?.length ?? 0) - visibleFlavours.length
+  const visibleSizes = (sizeLabels ?? []).slice(0, MAX_VISIBLE_PILLS)
+  const sizeOverflow = (sizeLabels?.length ?? 0) - visibleSizes.length
+  const hasOptionPills = visibleFlavours.length > 0 || visibleSizes.length > 0
 
   const handleAddToCart = async (event: React.MouseEvent) => {
     event.stopPropagation()
@@ -237,6 +253,40 @@ export function Card({
         <h3 className="line-clamp-2 text-base font-semibold leading-snug tracking-tight sm:text-[1.05rem]">
           {title}
         </h3>
+
+        {hasOptionPills ? (
+          <ul
+            aria-label="Available flavours and sizes"
+            className="flex flex-wrap gap-1.5"
+          >
+            {visibleFlavours.map((label) => (
+              <li
+                key={`fl-${label}`}
+                className="inline-flex items-center rounded-full border border-border/60 bg-muted/40 px-2 py-0.5 text-[0.7rem] font-medium text-muted-foreground"
+              >
+                {label}
+              </li>
+            ))}
+            {flavourOverflow > 0 ? (
+              <li className="inline-flex items-center rounded-full border border-border/60 bg-muted/40 px-2 py-0.5 text-[0.7rem] font-medium text-muted-foreground">
+                +{flavourOverflow}
+              </li>
+            ) : null}
+            {visibleSizes.map((label) => (
+              <li
+                key={`sz-${label}`}
+                className="inline-flex items-center rounded-full border border-border/70 bg-foreground/5 px-2 py-0.5 text-[0.7rem] font-medium tabular-nums text-foreground/80 dark:bg-foreground/10"
+              >
+                {label}
+              </li>
+            ))}
+            {sizeOverflow > 0 ? (
+              <li className="inline-flex items-center rounded-full border border-border/70 bg-foreground/5 px-2 py-0.5 text-[0.7rem] font-medium text-foreground/80 dark:bg-foreground/10">
+                +{sizeOverflow}
+              </li>
+            ) : null}
+          </ul>
+        ) : null}
 
         <div className="flex flex-wrap items-baseline gap-2">
           {priceFrom ? (

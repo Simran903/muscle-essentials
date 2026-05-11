@@ -35,6 +35,19 @@ type ProductBySlugResponse = {
   product: ProductItem
 }
 
+export type ProductReviewItem = {
+  id: string
+  rating: number
+  title: string | null
+  body: string | null
+  createdAt: string
+  user: { id: string; name: string | null }
+}
+
+type ProductReviewsResponse = {
+  reviews: ProductReviewItem[]
+}
+
 export type ProductVariantSpotlight = {
   flavourLabel: string
   sizeLabel: string
@@ -381,12 +394,66 @@ export async function searchProducts(params: {
 
 export async function getProductBySlug(slug: string): Promise<ProductItem> {
   try {
-    const { data: body } = await api.get<ApiEnvelope<ProductBySlugResponse>>(`/api/products/${slug}`)
+    const { data: body } = await api.get<ApiEnvelope<ProductBySlugResponse>>(
+      `/api/products/${encodeURIComponent(slug)}`,
+    )
     if (!body.data?.product) {
       throw new Error(body.message ?? "Unable to fetch product details.")
     }
     return body.data.product
   } catch (e) {
     throw toRequestError(e, "Unable to fetch product details.")
+  }
+}
+
+/** Approved reviews for PDP; returns an empty list if the request fails. */
+export async function getProductReviews(slug: string): Promise<ProductReviewItem[]> {
+  try {
+    const { data: body } = await api.get<ApiEnvelope<ProductReviewsResponse>>(
+      `/api/products/${encodeURIComponent(slug)}/reviews`,
+    )
+    return body.data?.reviews ?? []
+  } catch {
+    return []
+  }
+}
+
+export type SubmitReviewInput = {
+  rating: number
+  title?: string
+  body?: string
+  orderId?: string
+}
+
+export type SubmitReviewResult =
+  | { ok: true }
+  | { ok: false; reason: "auth" | "duplicate" | "error"; message?: string }
+
+/** POSTs a review for the given product slug. Returns a structured outcome instead of throwing. */
+export async function submitProductReview(
+  accessToken: string,
+  slug: string,
+  input: SubmitReviewInput,
+): Promise<SubmitReviewResult> {
+  try {
+    await api.post<ApiEnvelope<{ review: unknown }>>(
+      `/api/products/${encodeURIComponent(slug)}/reviews`,
+      input,
+      { headers: bearerHeaders(accessToken) },
+    )
+    return { ok: true }
+  } catch (e) {
+    if (isAxiosError(e)) {
+      const status = e.response?.status
+      const message = envelopeMessage(e, "Unable to submit review.")
+      if (status === 401 || status === 403) return { ok: false, reason: "auth", message }
+      if (status === 409) return { ok: false, reason: "duplicate", message }
+      return { ok: false, reason: "error", message }
+    }
+    return {
+      ok: false,
+      reason: "error",
+      message: e instanceof Error ? e.message : "Unable to submit review.",
+    }
   }
 }

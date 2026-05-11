@@ -357,19 +357,15 @@ export default function ShopPage() {
                       imageSrc={item.product.images.find((image) => image.isPrimary)?.url ?? item.product.images[0]?.url ?? "/images/placeholder.jpg"}
                       imageAlt={item.product.images.find((image) => image.isPrimary)?.altText ?? item.product.title}
                       title={item.product.title}
-                      subtitle={[
-                        item.product.brand?.name ?? "Muscle Essentials",
-                        item.flavourLabel ? `Flavour: ${item.flavourLabel}` : null,
-                        item.sizeLabel ? `Size: ${item.sizeLabel}` : null,
-                      ]
-                        .filter(Boolean)
-                        .join(" · ")}
+                      subtitle={item.product.brand?.name ?? "Muscle Essentials"}
                       price={item.price}
                       priceFrom={false}
                       productId={item.product.id}
                       productSlug={item.product.slug}
                       flavourOptionCount={item.flavourLabel ? 1 : 0}
                       sizeOptionCount={item.sizeLabel ? 1 : 0}
+                      flavourLabels={item.flavourLabel ? [item.flavourLabel] : undefined}
+                      sizeLabels={item.sizeLabel ? [item.sizeLabel] : undefined}
                       outOfStock={item.product.stockQuantity <= 0}
                       defaultFlavourLabel={item.flavourLabel}
                       defaultSizeLabel={item.sizeLabel}

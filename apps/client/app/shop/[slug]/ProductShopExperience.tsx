@@ -6,13 +6,16 @@ import { ChevronRight, PackageCheck, ShieldCheck, Truck } from "lucide-react"
 
 import { ProductGallery } from "@/app/components/Shop/ProductGallery"
 import { ProductPurchasePanel } from "@/app/components/Shop/ProductPurchasePanel"
-import { effectiveVariantFlags, type ProductItem } from "@/lib/api"
+import { effectiveVariantFlags, type ProductItem, type ProductReviewItem } from "@/lib/api"
+
+import { ProductReviewsSection } from "../../components/Shop/ProductReviewsSection"
 
 type ProductShopExperienceProps = {
   product: ProductItem
+  reviews: ProductReviewItem[]
 }
 
-export function ProductShopExperience({ product }: ProductShopExperienceProps) {
+export function ProductShopExperience({ product, reviews }: ProductShopExperienceProps) {
   const images = React.useMemo(
     () => [...product.images].sort((a, b) => a.sortOrder - b.sortOrder),
     [product.images],
@@ -113,17 +116,6 @@ export function ProductShopExperience({ product }: ProductShopExperienceProps) {
               )}
             </div>
 
-            <dl className="mt-6">
-              <div className="rounded-2xl border border-border/50 bg-muted/20 p-4 dark:bg-muted/25">
-                <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  Category
-                </dt>
-                <dd className="mt-1 font-medium text-foreground">
-                  {product.category?.name ?? "Supplements"}
-                </dd>
-              </div>
-            </dl>
-
             <ProductPurchasePanel
               productId={product.id}
               productTitle={product.title}
@@ -171,6 +163,8 @@ export function ProductShopExperience({ product }: ProductShopExperienceProps) {
           </div>
         </section>
       )}
+
+      <ProductReviewsSection productSlug={product.slug} reviews={reviews} />
     </main>
   )
 }

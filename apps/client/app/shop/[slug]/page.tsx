@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation"
 
-import { getProductBySlug } from "@/lib/api"
+import { getProductBySlug, getProductReviews } from "@/lib/api"
 
 import { ProductShopExperience } from "./ProductShopExperience"
 
@@ -11,11 +11,14 @@ type ProductPageProps = {
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params
 
-  const product = await getProductBySlug(slug).catch(() => null)
+  const [product, reviews] = await Promise.all([
+    getProductBySlug(slug).catch(() => null),
+    getProductReviews(slug),
+  ])
 
   if (!product) {
     notFound()
   }
 
-  return <ProductShopExperience product={product} />
+  return <ProductShopExperience product={product} reviews={reviews} />
 }
