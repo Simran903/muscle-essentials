@@ -40,6 +40,12 @@ export type ProductReviewItem = {
   rating: number
   title: string | null
   body: string | null
+  /** The variant entity the reviewer purchased. */
+  variantId: string
+  /** Label snapshot from the variant; empty when the product has no flavours. */
+  flavourLabel: string
+  /** Label snapshot from the variant; empty when the product has no sizes. */
+  sizeLabel: string
   createdAt: string
   user: { id: string; name: string | null }
 }
@@ -48,7 +54,15 @@ type ProductReviewsResponse = {
   reviews: ProductReviewItem[]
 }
 
+export type ProductVariant = {
+  id: string
+  flavourLabel: string
+  sizeLabel: string
+  isActive: boolean
+}
+
 export type ProductVariantSpotlight = {
+  variantId: string
   flavourLabel: string
   sizeLabel: string
   isFeatured: boolean
@@ -73,12 +87,38 @@ export type ProductItem = {
   isFeatured: boolean
   isBestseller: boolean
   isDealoftheDay: boolean
-  /** Per (flavour, size) merchandising flags; flavourLabel is "" when the product has no flavours. */
+  /** Canonical purchasable variants; labels are mirrors of `flavours`/`sizes`. */
+  variants?: ProductVariant[]
+  /** Per-variant merchandising overrides; keyed by `variantId`. */
   variantSpotlights?: ProductVariantSpotlight[]
   sizes: { id: string; label: string; sortOrder: number; price: number | string }[]
   brand: { id: string; name: string; slug: string }
   category: { id: string; name: string; slug: string }
   images: { id: string; url: string; altText: string | null; sortOrder: number; isPrimary: boolean }[]
+}
+
+/**
+ * Resolves a `(flavour, size)` label tuple to a `variantId` for a product.
+ * Returns `null` when no matching active variant exists yet (eg. the user
+ * hasn't completed selection on a multi-variant product).
+ */
+export function resolveVariantId(
+  product: Pick<ProductItem, "variants" | "flavours" | "sizes">,
+  flavourLabel: string | null | undefined,
+  sizeLabel: string | null | undefined,
+): string | null {
+  const variants = product.variants ?? []
+  if (variants.length === 0) return null
+  const hasFlavours = (product.flavours?.length ?? 0) > 0
+  const hasSizes = (product.sizes?.length ?? 0) > 0
+  const fl = hasFlavours ? (flavourLabel ?? "").trim() : ""
+  const sz = hasSizes ? (sizeLabel ?? "").trim() : ""
+  if (hasFlavours && !fl) return null
+  if (hasSizes && !sz) return null
+  const match = variants.find(
+    (v) => v.flavourLabel === fl && v.sizeLabel === sz && v.isActive,
+  )
+  return match?.id ?? null
 }
 
 function normalizeSpotlightFlavour(
@@ -90,15 +130,23 @@ function normalizeSpotlightFlavour(
 }
 
 export function getVariantSpotlightRow(
-  product: Pick<ProductItem, "variantSpotlights" | "flavours">,
+  product: Pick<ProductItem, "variantSpotlights" | "flavours" | "variants" | "sizes">,
   flavourLabel: string | null | undefined,
   sizeLabel: string | null | undefined,
 ): ProductVariantSpotlight | undefined {
   const spotlights = product.variantSpotlights ?? []
   if (!spotlights.length) return undefined
+  const variantId = resolveVariantId(product, flavourLabel, sizeLabel)
+  if (variantId) {
+    const byId = spotlights.find((s) => s.variantId === variantId)
+    if (byId) return byId
+  }
   const sz = (sizeLabel ?? "").trim()
   if (!sz) return undefined
-  const fl = normalizeSpotlightFlavour(flavourLabel, (product.flavours?.length ?? 0) > 0)
+  const fl = normalizeSpotlightFlavour(
+    flavourLabel,
+    (product.flavours?.length ?? 0) > 0,
+  )
   return spotlights.find((s) => s.sizeLabel === sz && s.flavourLabel === fl)
 }
 
@@ -201,6 +249,9 @@ export type CartProductSummary = {
 export type CartLineItem = {
   id: string
   quantity: number
+  /** Variant entity this line is bound to. */
+  variantId: string
+  /** Display label sourced from the variant (kept in sync with catalog renames). */
   selectedFlavourLabel: string
   selectedSizeLabel: string
   unitPrice: number | string
@@ -237,8 +288,11 @@ export async function addToCart(
   payload: {
     productId: string
     quantity: number
-    selectedFlavourLabel: string
-    selectedSizeLabel: string
+    /** Preferred: resolved variant id from the PDP variant picker. */
+    variantId?: string
+    /** Legacy: variant labels; the server resolves them to a variantId. */
+    selectedFlavourLabel?: string
+    selectedSizeLabel?: string
   },
 ): Promise<Cart> {
   try {
@@ -406,11 +460,19 @@ export async function getProductBySlug(slug: string): Promise<ProductItem> {
   }
 }
 
-/** Approved reviews for PDP; returns an empty list if the request fails. */
-export async function getProductReviews(slug: string): Promise<ProductReviewItem[]> {
+/**
+ * Approved reviews for the PDP. When `variantId` is supplied the list is
+ * narrowed to that specific variant; otherwise all approved reviews for the
+ * product are returned.
+ */
+export async function getProductReviews(
+  slug: string,
+  options: { variantId?: string } = {},
+): Promise<ProductReviewItem[]> {
   try {
     const { data: body } = await api.get<ApiEnvelope<ProductReviewsResponse>>(
       `/api/products/${encodeURIComponent(slug)}/reviews`,
+      { params: queryParams({ variantId: options.variantId }) },
     )
     return body.data?.reviews ?? []
   } catch {
@@ -422,12 +484,21 @@ export type SubmitReviewInput = {
   rating: number
   title?: string
   body?: string
+  /** Preferred: resolved variant id from the PDP variant picker. */
+  variantId?: string
+  /** Legacy fallback: labels resolved server-side when `variantId` is absent. */
+  flavourLabel?: string
+  sizeLabel?: string
   orderId?: string
 }
 
 export type SubmitReviewResult =
   | { ok: true }
-  | { ok: false; reason: "auth" | "duplicate" | "error"; message?: string }
+  | {
+      ok: false
+      reason: "auth" | "duplicate" | "not-purchased" | "validation" | "error"
+      message?: string
+    }
 
 /** POSTs a review for the given product slug. Returns a structured outcome instead of throwing. */
 export async function submitProductReview(
@@ -446,8 +517,10 @@ export async function submitProductReview(
     if (isAxiosError(e)) {
       const status = e.response?.status
       const message = envelopeMessage(e, "Unable to submit review.")
-      if (status === 401 || status === 403) return { ok: false, reason: "auth", message }
+      if (status === 401) return { ok: false, reason: "auth", message }
+      if (status === 403) return { ok: false, reason: "not-purchased", message }
       if (status === 409) return { ok: false, reason: "duplicate", message }
+      if (status === 400) return { ok: false, reason: "validation", message }
       return { ok: false, reason: "error", message }
     }
     return {

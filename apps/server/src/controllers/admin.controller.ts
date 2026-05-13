@@ -129,13 +129,20 @@ export async function adminPatchProduct(
   sendSuccess(res, { product }, "Product updated");
 }
 
-const variantSpotlightRow = z.object({
-  flavourLabel: z.string(),
-  sizeLabel: z.string().trim().min(1).max(100),
-  isFeatured: z.boolean(),
-  isBestseller: z.boolean(),
-  isDealoftheDay: z.boolean(),
-});
+const variantSpotlightRow = z
+  .object({
+    variantId: z.string().min(1).optional(),
+    flavourLabel: z.string().optional(),
+    sizeLabel: z.string().max(100).optional(),
+    isFeatured: z.boolean(),
+    isBestseller: z.boolean(),
+    isDealoftheDay: z.boolean(),
+  })
+  .refine(
+    (r) =>
+      r.variantId != null || (r.flavourLabel != null && r.sizeLabel != null),
+    { message: "Provide variantId or both flavour/size labels." },
+  );
 
 const putVariantSpotlightsBody = z.object({
   spotlights: z.array(variantSpotlightRow).max(200),

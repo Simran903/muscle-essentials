@@ -82,8 +82,17 @@ export type AdminCategory = {
   productCount: number
 }
 
+export type AdminProductVariant = {
+  id: string
+  flavourLabel: string
+  sizeLabel: string
+  isActive: boolean
+}
+
 export type AdminVariantSpotlight = {
   id: string
+  variantId: string
+  /** Label snapshot from the variant for display in admin tables. */
   flavourLabel: string
   sizeLabel: string
   isFeatured: boolean
@@ -110,6 +119,7 @@ export type AdminProduct = {
   brand: { id: string; name: string; slug: string } | null
   category: { id: string; name: string; slug: string } | null
   sizes: { id: string; label: string; sortOrder: number; price: number | string; costPrice: number | string }[]
+  variants: AdminProductVariant[]
   variantSpotlights: AdminVariantSpotlight[]
 }
 
@@ -148,11 +158,15 @@ export type AdminUser = {
 export type AdminReview = {
   id: string
   productId: string
+  variantId: string
   userId: string
   orderId: string | null
   rating: number
   title: string | null
   body: string | null
+  /** Display labels sourced from the variant relation; safe across renames. */
+  flavourLabel: string
+  sizeLabel: string
   status: string
   adminNote: string | null
   createdAt: string
@@ -249,8 +263,11 @@ export async function adminDeactivateProduct(id: string) {
 }
 
 export type VariantSpotlightInput = {
-  flavourLabel: string
-  sizeLabel: string
+  /** Preferred: refer to an existing variant by id. */
+  variantId?: string
+  /** Legacy: refer to a variant by its label tuple. */
+  flavourLabel?: string
+  sizeLabel?: string
   isFeatured: boolean
   isBestseller: boolean
   isDealoftheDay: boolean

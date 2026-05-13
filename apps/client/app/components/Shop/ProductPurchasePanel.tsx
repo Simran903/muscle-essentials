@@ -22,6 +22,13 @@ export type PurchaseSizeOption = {
   price: number | string
 }
 
+export type PurchaseVariant = {
+  id: string
+  flavourLabel: string
+  sizeLabel: string
+  isActive: boolean
+}
+
 const MAX_QUANTITY_PER_ADD = 5
 
 type ProductPurchasePanelProps = {
@@ -29,10 +36,15 @@ type ProductPurchasePanelProps = {
   productTitle: string
   flavours: PurchaseFlavourOption[]
   sizes: PurchaseSizeOption[]
+  variants: PurchaseVariant[]
   isInStock: boolean
   stockQuantity: number
-  /** Called when flavour/size are resolved enough to map variant-level merchandising. */
-  onResolvedSelection?: (selection: { flavourLabel: string; sizeLabel: string }) => void
+  /** Called when the selection has been resolved to a concrete variant id. */
+  onResolvedSelection?: (selection: {
+    variantId: string | null
+    flavourLabel: string
+    sizeLabel: string
+  }) => void
 }
 
 function formatInr(value: number | string) {
@@ -52,6 +64,7 @@ export function ProductPurchasePanel({
   productTitle,
   flavours,
   sizes,
+  variants,
   isInStock,
   stockQuantity,
   onResolvedSelection,
@@ -85,19 +98,39 @@ export function ProductPurchasePanel({
   const selectedSize = sizeList.find((s) => s.id === sizeId)
   const sizeLabel = selectedSize?.label
 
+  const resolvedFlavour = flavourList.length > 0 ? (flavourLabel ?? "") : ""
+  const resolvedSize = sizeList.length > 0 ? (sizeLabel ?? "") : ""
+
+  const selectedVariantId = React.useMemo(() => {
+    if (flavourList.length > 0 && !resolvedFlavour) return null
+    if (sizeList.length > 0 && !resolvedSize) return null
+    const match = variants.find(
+      (v) =>
+        v.isActive &&
+        v.flavourLabel === resolvedFlavour &&
+        v.sizeLabel === resolvedSize,
+    )
+    return match?.id ?? null
+  }, [variants, flavourList.length, sizeList.length, resolvedFlavour, resolvedSize])
+
   React.useEffect(() => {
     if (!onResolvedSelection) return
     if (flavourList.length > 0 && flavourLabel == null) return
     if (sizeList.length > 0 && sizeLabel == null) return
-    const fl = flavourList.length > 0 ? (flavourLabel ?? "") : ""
-    const sz = sizeList.length > 0 ? (sizeLabel ?? "") : ""
-    onResolvedSelection({ flavourLabel: fl, sizeLabel: sz })
+    onResolvedSelection({
+      variantId: selectedVariantId,
+      flavourLabel: resolvedFlavour,
+      sizeLabel: resolvedSize,
+    })
   }, [
     onResolvedSelection,
     flavourList.length,
     sizeList.length,
     flavourLabel,
     sizeLabel,
+    selectedVariantId,
+    resolvedFlavour,
+    resolvedSize,
   ])
 
   const displayUnitPrice = React.useMemo(() => {
@@ -136,8 +169,9 @@ export function ProductPurchasePanel({
     setIsCartBusy(true)
     try {
       const result = await addProductToCart(productId, q, {
-        selectedFlavourLabel: flavourList.length > 0 ? (flavourLabel ?? "") : "",
-        selectedSizeLabel: sizeList.length > 0 ? (sizeLabel ?? "") : "",
+        variantId: selectedVariantId ?? undefined,
+        selectedFlavourLabel: resolvedFlavour,
+        selectedSizeLabel: resolvedSize,
       })
       if (result.ok) return true
       if (result.reason === "auth") {

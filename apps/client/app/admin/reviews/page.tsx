@@ -83,10 +83,17 @@ export default function AdminReviewsPage() {
                 </tr>
               </thead>
               <tbody>
-                {items.map((r) => (
+                {items.map((r) => {
+                  const variantBits = [r.flavourLabel, r.sizeLabel].filter(Boolean)
+                  return (
                   <tr key={r.id}>
                     <td className={`${adminTd} align-top`}>
                       <span className="font-medium text-foreground">{r.product.title}</span>
+                      {variantBits.length > 0 ? (
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {variantBits.join(" · ")}
+                        </p>
+                      ) : null}
                     </td>
                     <td className={`${adminTd} align-top`}>{r.user.email ?? r.user.id}</td>
                     <td className={`${adminTd} align-top tabular-nums`}>{r.rating}</td>
@@ -134,7 +141,8 @@ export default function AdminReviewsPage() {
                       )}
                     </td>
                   </tr>
-                ))}
+                  )
+                })}
               </tbody>
             </table>
           </div>

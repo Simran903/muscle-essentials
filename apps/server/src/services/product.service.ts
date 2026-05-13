@@ -11,8 +11,15 @@ const productInclude = {
   images: { orderBy: { sortOrder: "asc" as const } },
   sizes: { orderBy: { sortOrder: "asc" as const } },
   flavours: { orderBy: { sortOrder: "asc" as const } },
+  variants: {
+    where: { isActive: true },
+    orderBy: [
+      { flavourLabel: "asc" as const },
+      { sizeLabel: "asc" as const },
+    ],
+  },
   variantSpotlights: {
-    orderBy: [{ flavourLabel: "asc" as const }, { sizeLabel: "asc" as const }],
+    include: { variant: true },
   },
 } satisfies Prisma.ProductInclude;
 
@@ -85,10 +92,19 @@ function mapProduct(p: ProductFull) {
       sortOrder: size.sortOrder,
       price: serializeDecimal(size.price),
     })),
-    variantSpotlights: (p.variantSpotlights ?? []).map(
-      (v: ProductFull["variantSpotlights"][number]) => ({
+    variants: (p.variants ?? []).map(
+      (v: ProductFull["variants"][number]) => ({
+        id: v.id,
         flavourLabel: v.flavourLabel,
         sizeLabel: v.sizeLabel,
+        isActive: v.isActive,
+      }),
+    ),
+    variantSpotlights: (p.variantSpotlights ?? []).map(
+      (v: ProductFull["variantSpotlights"][number]) => ({
+        variantId: v.variantId,
+        flavourLabel: v.variant.flavourLabel,
+        sizeLabel: v.variant.sizeLabel,
         isFeatured: v.isFeatured,
         isBestseller: v.isBestseller,
         isDealoftheDay: v.isDealoftheDay,
@@ -249,6 +265,139 @@ export async function getProductIdBySlug(slug: string): Promise<string> {
     throw new AppError("Product not found", 404);
   }
   return p.id;
+}
+
+/**
+ * Resolves a product's `(flavour, size)` tuple to an existing active variant.
+ * Throws when the tuple doesn't match a known variant or doesn't fit the
+ * product's flavour/size requirements.
+ */
+export async function resolveVariant(
+  productId: string,
+  flavourLabel: string,
+  sizeLabel: string,
+) {
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+    select: {
+      flavours: { select: { id: true }, take: 1 },
+      sizes: { select: { id: true }, take: 1 },
+    },
+  });
+  if (!product) {
+    throw new AppError("Product not found", 404);
+  }
+  const hasFlavours = product.flavours.length > 0;
+  const hasSizes = product.sizes.length > 0;
+  if (hasFlavours && !flavourLabel) {
+    throw new AppError("Flavour is required for this product", 400);
+  }
+  if (!hasFlavours && flavourLabel) {
+    throw new AppError("This product has no flavours", 400);
+  }
+  if (hasSizes && !sizeLabel) {
+    throw new AppError("Size is required for this product", 400);
+  }
+  if (!hasSizes && sizeLabel) {
+    throw new AppError("This product has no sizes", 400);
+  }
+
+  const variant = await prisma.productVariant.findUnique({
+    where: {
+      productId_flavourLabel_sizeLabel: { productId, flavourLabel, sizeLabel },
+    },
+  });
+  if (!variant || !variant.isActive) {
+    throw new AppError("Invalid variant selection", 400);
+  }
+  return variant;
+}
+
+/**
+ * Ensures `ProductVariant` rows mirror the current (flavour × size) catalog
+ * for a product. Missing tuples are upserted to active; variants not in the
+ * desired set are marked inactive (we never hard-delete since order rows
+ * reference them historically).
+ */
+type DbClient = Prisma.TransactionClient | typeof prisma;
+type ExistingVariantRow = {
+  id: string;
+  flavourLabel: string;
+  sizeLabel: string;
+  isActive: boolean;
+};
+
+export async function reconcileProductVariants(
+  client: DbClient,
+  productId: string,
+): Promise<void> {
+  const [flavours, sizes, existing] = (await Promise.all([
+    client.productFlavour.findMany({
+      where: { productId },
+      select: { label: true },
+    }),
+    client.productSize.findMany({
+      where: { productId },
+      select: { label: true },
+    }),
+    client.productVariant.findMany({
+      where: { productId },
+      select: { id: true, flavourLabel: true, sizeLabel: true, isActive: true },
+    }),
+  ])) as [{ label: string }[], { label: string }[], ExistingVariantRow[]];
+
+  const flavourLabels =
+    flavours.length > 0 ? flavours.map((f: { label: string }) => f.label) : [""];
+  const sizeLabels =
+    sizes.length > 0 ? sizes.map((s: { label: string }) => s.label) : [""];
+
+  const desired = new Set<string>();
+  const desiredRows: { flavourLabel: string; sizeLabel: string }[] = [];
+  for (const fl of flavourLabels) {
+    for (const sz of sizeLabels) {
+      desired.add(`${fl}\u0000${sz}`);
+      desiredRows.push({ flavourLabel: fl, sizeLabel: sz });
+    }
+  }
+
+  const existingKeys = new Set(
+    existing.map((v: ExistingVariantRow) => `${v.flavourLabel}\u0000${v.sizeLabel}`),
+  );
+
+  const toCreate = desiredRows.filter(
+    (r) => !existingKeys.has(`${r.flavourLabel}\u0000${r.sizeLabel}`),
+  );
+  if (toCreate.length > 0) {
+    await client.productVariant.createMany({
+      data: toCreate.map((r) => ({
+        productId,
+        flavourLabel: r.flavourLabel,
+        sizeLabel: r.sizeLabel,
+      })),
+      skipDuplicates: true,
+    });
+  }
+
+  const toDeactivate = existing.filter(
+    (v: ExistingVariantRow) =>
+      v.isActive && !desired.has(`${v.flavourLabel}\u0000${v.sizeLabel}`),
+  );
+  const toActivate = existing.filter(
+    (v: ExistingVariantRow) =>
+      !v.isActive && desired.has(`${v.flavourLabel}\u0000${v.sizeLabel}`),
+  );
+  if (toDeactivate.length > 0) {
+    await client.productVariant.updateMany({
+      where: { id: { in: toDeactivate.map((v: ExistingVariantRow) => v.id) } },
+      data: { isActive: false },
+    });
+  }
+  if (toActivate.length > 0) {
+    await client.productVariant.updateMany({
+      where: { id: { in: toActivate.map((v: ExistingVariantRow) => v.id) } },
+      data: { isActive: true },
+    });
+  }
 }
 
 export type ShopFilters = {

@@ -8,9 +8,12 @@ export type AddToCartResult =
 export async function addProductToCart(
   productId: string,
   quantity = 1,
-  variants: {
-    selectedFlavourLabel: string
-    selectedSizeLabel: string
+  variant: {
+    /** Preferred: resolved variant id from the PDP variant picker. */
+    variantId?: string
+    /** Legacy: variant labels; server resolves them to a variantId. */
+    selectedFlavourLabel?: string
+    selectedSizeLabel?: string
   },
 ): Promise<AddToCartResult> {
   const token = getAccessToken()
@@ -21,8 +24,9 @@ export async function addProductToCart(
     await addToCart(token, {
       productId,
       quantity,
-      selectedFlavourLabel: variants.selectedFlavourLabel,
-      selectedSizeLabel: variants.selectedSizeLabel,
+      variantId: variant.variantId,
+      selectedFlavourLabel: variant.selectedFlavourLabel,
+      selectedSizeLabel: variant.selectedSizeLabel,
     })
     if (typeof window !== "undefined") {
       window.dispatchEvent(new Event("cart:updated"))

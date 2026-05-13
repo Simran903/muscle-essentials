@@ -6,7 +6,12 @@ import { ChevronRight, PackageCheck, ShieldCheck, Truck } from "lucide-react"
 
 import { ProductGallery } from "@/app/components/Shop/ProductGallery"
 import { ProductPurchasePanel } from "@/app/components/Shop/ProductPurchasePanel"
-import { effectiveVariantFlags, type ProductItem, type ProductReviewItem } from "@/lib/api"
+import {
+  effectiveVariantFlags,
+  resolveVariantId,
+  type ProductItem,
+  type ProductReviewItem,
+} from "@/lib/api"
 
 import { ProductReviewsSection } from "../../components/Shop/ProductReviewsSection"
 
@@ -33,8 +38,27 @@ export function ProductShopExperience({ product, reviews }: ProductShopExperienc
     effectiveVariantFlags(product, presetLabels.flavourLabel, presetLabels.sizeLabel),
   )
 
+  const [selection, setSelection] = React.useState<{
+    variantId: string | null
+    flavourLabel: string
+    sizeLabel: string
+  }>(() => ({
+    variantId: resolveVariantId(
+      product,
+      presetLabels.flavourLabel,
+      presetLabels.sizeLabel,
+    ),
+    flavourLabel: presetLabels.flavourLabel,
+    sizeLabel: presetLabels.sizeLabel,
+  }))
+
   const onResolvedSelection = React.useCallback(
-    (sel: { flavourLabel: string; sizeLabel: string }) => {
+    (sel: {
+      variantId: string | null
+      flavourLabel: string
+      sizeLabel: string
+    }) => {
+      setSelection(sel)
       setMerch(effectiveVariantFlags(product, sel.flavourLabel, sel.sizeLabel))
     },
     [product],
@@ -121,6 +145,7 @@ export function ProductShopExperience({ product, reviews }: ProductShopExperienc
               productTitle={product.title}
               flavours={product.flavours}
               sizes={product.sizes}
+              variants={product.variants ?? []}
               isInStock={isInStock}
               stockQuantity={product.stockQuantity}
               onResolvedSelection={onResolvedSelection}
@@ -164,7 +189,15 @@ export function ProductShopExperience({ product, reviews }: ProductShopExperienc
         </section>
       )}
 
-      <ProductReviewsSection productSlug={product.slug} reviews={reviews} />
+      <ProductReviewsSection
+        productSlug={product.slug}
+        reviews={reviews}
+        productHasFlavours={(product.flavours?.length ?? 0) > 0}
+        productHasSizes={(product.sizes?.length ?? 0) > 0}
+        selectedVariantId={selection.variantId}
+        selectedFlavourLabel={selection.flavourLabel}
+        selectedSizeLabel={selection.sizeLabel}
+      />
     </main>
   )
 }

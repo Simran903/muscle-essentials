@@ -14,12 +14,21 @@ export async function getCart(req: Request, res: Response): Promise<void> {
   sendSuccess(res, { cart }, "");
 }
 
-const addBody = z.object({
-  productId: z.string().min(1),
-  quantity: z.coerce.number().int().min(1).default(1),
-  selectedFlavourLabel: z.string().max(100),
-  selectedSizeLabel: z.string().max(100),
-});
+// Accepts either a resolved variantId (preferred) or the label tuple (legacy).
+const addBody = z
+  .object({
+    productId: z.string().min(1),
+    quantity: z.coerce.number().int().min(1).default(1),
+    variantId: z.string().min(1).optional(),
+    selectedFlavourLabel: z.string().max(100).optional(),
+    selectedSizeLabel: z.string().max(100).optional(),
+  })
+  .refine(
+    (b) =>
+      b.variantId != null ||
+      (b.selectedFlavourLabel != null && b.selectedSizeLabel != null),
+    { message: "Provide either variantId or both flavour/size labels." },
+  );
 
 export async function postAddCartItem(
   req: Request,
@@ -27,10 +36,23 @@ export async function postAddCartItem(
 ): Promise<void> {
   const userId = req.user!.id;
   const body = addBody.parse(req.body);
-  const cart = await addCartItem(userId, body.productId, body.quantity, {
-    selectedFlavourLabel: body.selectedFlavourLabel,
-    selectedSizeLabel: body.selectedSizeLabel,
-  });
+  const cart = await addCartItem(
+    userId,
+    body.variantId
+      ? {
+          kind: "byVariantId",
+          productId: body.productId,
+          variantId: body.variantId,
+          quantity: body.quantity,
+        }
+      : {
+          kind: "byLabels",
+          productId: body.productId,
+          quantity: body.quantity,
+          selectedFlavourLabel: body.selectedFlavourLabel ?? "",
+          selectedSizeLabel: body.selectedSizeLabel ?? "",
+        },
+  );
   sendSuccess(res, { cart }, "Item added");
 }
 

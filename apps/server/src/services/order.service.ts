@@ -51,7 +51,12 @@ export async function createOrderFromCart(
   const full = await prisma.cart.findUnique({
     where: { id: cart.id },
     include: {
-      items: { include: { product: { include: { brand: true, category: true } } } },
+      items: {
+        include: {
+          variant: true,
+          product: { include: { brand: true, category: true } },
+        },
+      },
     },
   });
   if (!full || full.items.length === 0) {
@@ -102,11 +107,14 @@ export async function createOrderFromCart(
         data: {
           orderId: created.id,
           productId: line.productId,
+          variantId: line.variantId,
           productTitle: line.product.title,
           productSku: line.product.sku,
           quantity: line.quantity,
           unitPrice: line.unitPrice,
           lineTotal: line.lineTotal,
+          selectedFlavourLabel: line.variant.flavourLabel,
+          selectedSizeLabel: line.variant.sizeLabel,
         },
       });
       await tx.product.update({
@@ -147,6 +155,8 @@ function mapOrder(o: {
     lineTotal: unknown;
     productTitle: string;
     productSku: string;
+    selectedFlavourLabel: string;
+    selectedSizeLabel: string;
   }[];
 }) {
   return {
@@ -168,6 +178,8 @@ function mapOrder(o: {
       lineTotal: serializeDecimal(i.lineTotal),
       productTitle: i.productTitle,
       productSku: i.productSku,
+      selectedFlavourLabel: i.selectedFlavourLabel,
+      selectedSizeLabel: i.selectedSizeLabel,
     })),
   };
 }

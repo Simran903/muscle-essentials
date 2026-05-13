@@ -1,6 +1,7 @@
 import { prisma, Prisma } from "database";
 import { AppError } from "../utils/appError.js";
 import { serializeDecimal } from "../utils/serialize.js";
+import { resolveVariant } from "./product.service.js";
 
 async function recalcCartTotals(cartId: string): Promise<void> {
   const items = await prisma.cartItem.findMany({ where: { cartId } });
@@ -39,6 +40,7 @@ type CartWithItems = Prisma.CartGetPayload<{
   include: {
     items: {
       include: {
+        variant: true;
         product: {
           select: {
             id: true;
@@ -66,6 +68,7 @@ export async function getCartForUser(userId: string) {
     include: {
       items: {
         include: {
+          variant: true,
           product: {
             select: {
               id: true,
@@ -99,8 +102,11 @@ export async function getCartForUser(userId: string) {
       return {
         id: i.id,
         quantity: i.quantity,
-        selectedFlavourLabel: i.selectedFlavourLabel,
-        selectedSizeLabel: i.selectedSizeLabel,
+        variantId: i.variantId,
+        // Labels are surfaced from the variant relation so renames flow through
+        // automatically without rewriting historical cart rows.
+        selectedFlavourLabel: i.variant.flavourLabel,
+        selectedSizeLabel: i.variant.sizeLabel,
         unitPrice: serializeDecimal(i.unitPrice),
         lineTotal: serializeDecimal(i.lineTotal),
         product: {
@@ -118,24 +124,34 @@ export async function getCartForUser(userId: string) {
   };
 }
 
-export async function addCartItem(
-  userId: string,
-  productId: string,
-  quantity: number,
-  options: {
-    selectedFlavourLabel: string;
-    selectedSizeLabel: string;
-  },
-) {
-  if (quantity < 1) {
+export type AddCartItemInput =
+  | {
+      kind: "byVariantId";
+      productId: string;
+      variantId: string;
+      quantity: number;
+    }
+  | {
+      kind: "byLabels";
+      productId: string;
+      quantity: number;
+      selectedFlavourLabel: string;
+      selectedSizeLabel: string;
+    };
+
+/**
+ * Adds a line to the user's active cart. Callers can pass either a resolved
+ * `variantId` (preferred) or the label tuple (legacy clients). Labels are
+ * resolved to a variant server-side before any write.
+ */
+export async function addCartItem(userId: string, input: AddCartItemInput) {
+  if (input.quantity < 1) {
     throw new AppError("Invalid quantity", 400);
   }
-  const flavour = options.selectedFlavourLabel.trim();
-  const size = options.selectedSizeLabel.trim();
 
   const product = await prisma.product.findFirst({
     where: {
-      id: productId,
+      id: input.productId,
       isActive: true,
       brand: { isActive: true },
       OR: [{ categoryId: null }, { category: { isActive: true } }],
@@ -145,63 +161,41 @@ export async function addCartItem(
     throw new AppError("Product not found", 404);
   }
 
-  const [flavourCount, sizeCount] = await Promise.all([
-    prisma.productFlavour.count({ where: { productId } }),
-    prisma.productSize.count({ where: { productId } }),
-  ]);
-
-  if (flavourCount > 0 && flavour.length === 0) {
-    throw new AppError("Flavour is required for this product", 400);
-  }
-  if (sizeCount > 0 && size.length === 0) {
-    throw new AppError("Size is required for this product", 400);
-  }
-  if (flavourCount === 0 && flavour.length > 0) {
-    throw new AppError("This product has no flavours", 400);
-  }
-  if (sizeCount === 0 && size.length > 0) {
-    throw new AppError("This product has no sizes", 400);
-  }
-
-  if (flavour.length > 0) {
-    const row = await prisma.productFlavour.findFirst({
-      where: { productId, label: flavour },
-    });
-    if (!row) {
-      throw new AppError("Invalid flavour selection", 400);
-    }
-  }
-  let sizeTier = null as { price: Prisma.Decimal } | null;
-  if (size.length > 0) {
-    const row = await prisma.productSize.findFirst({
-      where: { productId, label: size },
-    });
-    if (!row) {
-      throw new AppError("Invalid size selection", 400);
-    }
-    sizeTier = row;
+  const variant =
+    input.kind === "byVariantId"
+      ? await prisma.productVariant.findFirst({
+          where: { id: input.variantId, productId: input.productId },
+        })
+      : await resolveVariant(
+          input.productId,
+          input.selectedFlavourLabel.trim(),
+          input.selectedSizeLabel.trim(),
+        );
+  if (!variant || !variant.isActive) {
+    throw new AppError("Invalid variant selection", 400);
   }
 
   const cart = await getOrCreateActiveCart(userId);
 
   const existing = await prisma.cartItem.findUnique({
-    where: {
-      cartId_productId_selectedFlavourLabel_selectedSizeLabel: {
-        cartId: cart.id,
-        productId,
-        selectedFlavourLabel: flavour,
-        selectedSizeLabel: size,
-      },
-    },
+    where: { cartId_variantId: { cartId: cart.id, variantId: variant.id } },
   });
 
-  const newQty = (existing?.quantity ?? 0) + quantity;
+  const newQty = (existing?.quantity ?? 0) + input.quantity;
   if (newQty > product.stockQuantity) {
     throw new AppError("Insufficient stock", 400);
   }
 
+  // Resolve price tier from ProductSize matching the variant's size label.
+  // Falls back to the first tier when the product has no sizes (single-tier).
+  const sizeTier =
+    variant.sizeLabel.length > 0
+      ? await prisma.productSize.findFirst({
+          where: { productId: input.productId, label: variant.sizeLabel },
+        })
+      : null;
   const fallbackTier = await prisma.productSize.findFirst({
-    where: { productId },
+    where: { productId: input.productId },
     orderBy: { sortOrder: "asc" },
   });
   const unitPrice = sizeTier?.price ?? fallbackTier?.price;
@@ -211,19 +205,11 @@ export async function addCartItem(
   const lineTotal = unitPrice.mul(newQty);
 
   await prisma.cartItem.upsert({
-    where: {
-      cartId_productId_selectedFlavourLabel_selectedSizeLabel: {
-        cartId: cart.id,
-        productId,
-        selectedFlavourLabel: flavour,
-        selectedSizeLabel: size,
-      },
-    },
+    where: { cartId_variantId: { cartId: cart.id, variantId: variant.id } },
     create: {
       cartId: cart.id,
-      productId,
-      selectedFlavourLabel: flavour,
-      selectedSizeLabel: size,
+      productId: input.productId,
+      variantId: variant.id,
       quantity: newQty,
       unitPrice,
       lineTotal,
@@ -249,7 +235,11 @@ export async function updateCartItem(
   }
   const item = await prisma.cartItem.findUnique({
     where: { id: itemId },
-    include: { cart: true, product: { include: { brand: true, category: true } } },
+    include: {
+      cart: true,
+      variant: true,
+      product: { include: { brand: true, category: true } },
+    },
   });
   if (!item || item.cart.userId !== userId || item.cart.status !== "ACTIVE") {
     throw new AppError("Cart item not found", 404);
@@ -263,9 +253,12 @@ export async function updateCartItem(
   if (item.product.stockQuantity < quantity) {
     throw new AppError("Insufficient stock", 400);
   }
-  const sizeTier = await prisma.productSize.findFirst({
-    where: { productId: item.productId, label: item.selectedSizeLabel.trim() },
-  });
+  const sizeTier =
+    item.variant.sizeLabel.length > 0
+      ? await prisma.productSize.findFirst({
+          where: { productId: item.productId, label: item.variant.sizeLabel },
+        })
+      : null;
   const fallbackTier = await prisma.productSize.findFirst({
     where: { productId: item.productId },
     orderBy: { sortOrder: "asc" },

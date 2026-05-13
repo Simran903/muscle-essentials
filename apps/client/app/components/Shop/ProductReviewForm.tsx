@@ -15,6 +15,16 @@ const TITLE_MAX = 200
 
 type ProductReviewFormProps = {
   productSlug: string
+  /** True when the product has flavours and the reviewer must scope to one. */
+  requiresFlavour?: boolean
+  /** True when the product has sizes and the reviewer must scope to one. */
+  requiresSize?: boolean
+  /** Variant id resolved by the PDP picker, or null while the user is still choosing. */
+  variantId?: string | null
+  /** Currently selected flavour from the purchase panel (empty until picked). */
+  flavourLabel?: string
+  /** Currently selected size from the purchase panel (empty until picked). */
+  sizeLabel?: string
   /** Called after a successful submission so the parent can collapse the form, etc. */
   onSubmitted?: () => void
   onCancel?: () => void
@@ -72,6 +82,11 @@ function StarPicker({
 
 export function ProductReviewForm({
   productSlug,
+  requiresFlavour = false,
+  requiresSize = false,
+  variantId = null,
+  flavourLabel = "",
+  sizeLabel = "",
   onSubmitted,
   onCancel,
 }: ProductReviewFormProps) {
@@ -83,7 +98,18 @@ export function ProductReviewForm({
   const [submitting, setSubmitting] = React.useState(false)
   const [submitted, setSubmitted] = React.useState(false)
   const [duplicate, setDuplicate] = React.useState(false)
+  const [notPurchased, setNotPurchased] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
+
+  const flavourOk = !requiresFlavour || flavourLabel.length > 0
+  const sizeOk = !requiresSize || sizeLabel.length > 0
+  const productHasVariants = requiresFlavour || requiresSize
+  // For multi-variant products we require the PDP to have resolved a concrete
+  // variant id before allowing submission; for single-variant products labels
+  // can be empty and the server resolves the lone variant for us.
+  const variantOk = flavourOk && sizeOk && (!productHasVariants || variantId != null)
+  const variantBits = [flavourLabel, sizeLabel].filter(Boolean)
+  const variantSummary = variantBits.join(" · ")
 
   React.useEffect(() => {
     const sync = () => {
@@ -94,6 +120,19 @@ export function ProductReviewForm({
     window.addEventListener("auth:force-check", sync)
     return () => window.removeEventListener("auth:force-check", sync)
   }, [])
+
+  // Reset variant-scoped feedback when the user changes the selected variant.
+  // Using the "adjust state during render" pattern from the React docs instead
+  // of an effect avoids an extra render and the no-setState-in-effect warning.
+  const currentVariantKey = variantId ?? `${flavourLabel}//${sizeLabel}`
+  const [trackedVariant, setTrackedVariant] = React.useState(currentVariantKey)
+  if (trackedVariant !== currentVariantKey) {
+    setTrackedVariant(currentVariantKey)
+    setDuplicate(false)
+    setNotPurchased(false)
+    setError(null)
+    setSubmitted(false)
+  }
 
   if (!authChecked) {
     return (
@@ -141,7 +180,8 @@ export function ProductReviewForm({
   const bodyRemaining = BODY_MAX - trimmedBody.length
   const titleTooLong = trimmedTitle.length > TITLE_MAX
   const bodyTooLong = trimmedBody.length > BODY_MAX
-  const canSubmit = rating > 0 && !titleTooLong && !bodyTooLong && !submitting
+  const canSubmit =
+    rating > 0 && variantOk && !titleTooLong && !bodyTooLong && !submitting
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -149,6 +189,7 @@ export function ProductReviewForm({
     setSubmitting(true)
     setError(null)
     setDuplicate(false)
+    setNotPurchased(false)
     try {
       const active = getAccessToken()
       if (!active) {
@@ -159,6 +200,9 @@ export function ProductReviewForm({
         rating,
         title: trimmedTitle.length > 0 ? trimmedTitle : undefined,
         body: trimmedBody.length > 0 ? trimmedBody : undefined,
+        variantId: variantId ?? undefined,
+        flavourLabel: requiresFlavour ? flavourLabel : undefined,
+        sizeLabel: requiresSize ? sizeLabel : undefined,
       })
       if (result.ok) {
         setSubmitted(true)
@@ -178,6 +222,10 @@ export function ProductReviewForm({
         setDuplicate(true)
         return
       }
+      if (result.reason === "not-purchased") {
+        setNotPurchased(true)
+        return
+      }
       setError(result.message ?? "Unable to submit review. Please try again.")
     } finally {
       setSubmitting(false)
@@ -188,9 +236,31 @@ export function ProductReviewForm({
     return (
       <div className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-amber-500/35 bg-amber-500/10 p-5 text-amber-950 dark:border-amber-400/35 dark:bg-amber-400/10 dark:text-amber-100">
         <div className="space-y-1">
-          <p className="text-sm font-semibold">You&apos;ve already reviewed this product</p>
+          <p className="text-sm font-semibold">
+            You&apos;ve already reviewed {variantSummary ? `${variantSummary}` : "this variant"}
+          </p>
           <p className="text-sm opacity-90">
-            Each customer can only post one review per product. Reach out to support if you&apos;d like to update yours.
+            Each customer can post one review per variant. Switch to a different flavour or size above to review another, or contact support to update an existing review.
+          </p>
+        </div>
+        {onCancel ? (
+          <Button type="button" variant="ghost" size="sm" onClick={onCancel}>
+            Close
+          </Button>
+        ) : null}
+      </div>
+    )
+  }
+
+  if (notPurchased) {
+    return (
+      <div className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-amber-500/35 bg-amber-500/10 p-5 text-amber-950 dark:border-amber-400/35 dark:bg-amber-400/10 dark:text-amber-100">
+        <div className="space-y-1">
+          <p className="text-sm font-semibold">
+            Purchase {variantSummary ? variantSummary : "this variant"} to leave a review
+          </p>
+          <p className="text-sm opacity-90">
+            Reviews are limited to verified buyers. Once your order for this exact flavour and size is placed, you&apos;ll be able to share your experience.
           </p>
         </div>
         {onCancel ? (
@@ -208,6 +278,25 @@ export function ProductReviewForm({
       className="space-y-5 rounded-xl border border-border/50 bg-card/60 p-5 sm:p-6"
       noValidate
     >
+      {requiresFlavour || requiresSize ? (
+        variantOk ? (
+          <div className="rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+            Reviewing{" "}
+            <span className="font-medium text-foreground">{variantSummary}</span>
+          </div>
+        ) : (
+          <div
+            role="alert"
+            className="rounded-lg border border-amber-500/35 bg-amber-500/10 px-3 py-2 text-sm text-amber-950 dark:border-amber-400/35 dark:bg-amber-400/10 dark:text-amber-100"
+          >
+            Choose a {requiresFlavour && !flavourOk ? "flavour" : null}
+            {requiresFlavour && !flavourOk && requiresSize && !sizeOk ? " and " : null}
+            {requiresSize && !sizeOk ? "size" : null}{" "}
+            above before writing a review.
+          </div>
+        )
+      ) : null}
+
       <div className="space-y-2">
         <p className="text-sm font-semibold text-foreground">Your rating</p>
         <StarPicker value={rating} onChange={setRating} />
@@ -216,6 +305,7 @@ export function ProductReviewForm({
       <div className="space-y-2">
         <label htmlFor="review-title" className="text-sm font-semibold text-foreground">
           Headline
+          <span className="ml-1 font-normal text-muted-foreground">(optional)</span>
         </label>
         <InputField
           id="review-title"
@@ -231,6 +321,7 @@ export function ProductReviewForm({
       <div className="space-y-2">
         <label htmlFor="review-body" className="text-sm font-semibold text-foreground">
           What stood out?
+          <span className="ml-1 font-normal text-muted-foreground">(optional)</span>
         </label>
         <textarea
           id="review-body"

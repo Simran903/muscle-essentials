@@ -166,6 +166,7 @@ model Product {
   images          ProductImage[]
   sizes           ProductSize[]
   flavours        ProductFlavour[]
+  variants        ProductVariant[]
   variantSpotlights ProductVariantSpotlight[]
   bulletPoints    ProductBulletPoint[]
   cartItems       CartItem[]
@@ -177,6 +178,35 @@ model Product {
   @@index([isFeatured, isActive])
   @@index([isBestseller, isActive])
   @@index([isDealoftheDay, isActive])
+}
+
+/**
+ * Canonical (flavour × size) combination of a product. One row per purchasable
+ * variant; both labels are empty strings when the product has no flavours
+ * and/or sizes. Cart, order, review and merchandising rows reference this
+ * variant by id so renames don't orphan historical data.
+ */
+model ProductVariant {
+  id           String   @id @default(cuid())
+  productId    String
+  /** Mirrors a `ProductFlavour.label`; empty when the product has no flavours. */
+  flavourLabel String   @default("")
+  /** Mirrors a `ProductSize.label`; empty when the product has no sizes. */
+  sizeLabel    String   @default("")
+  /** Inactive when the flavour/size has been removed from the catalog but
+   *  historical orders still reference it. */
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  cartItems    CartItem[]
+  orderItems   OrderItem[]
+  reviews      Review[]
+  spotlight    ProductVariantSpotlight?
+
+  @@unique([productId, flavourLabel, sizeLabel])
+  @@index([productId, isActive])
 }
 
 model ProductSize {
@@ -209,22 +239,19 @@ model ProductFlavour {
   @@unique([productId, label])
 }
 
-/** Admin merchandising flags for a specific flavour + size variant of a product. */
+/** Admin merchandising flags for a specific variant of a product. */
 model ProductVariantSpotlight {
   id             String   @id @default(cuid())
   productId      String
-  /** Matches `ProductFlavour.label`; empty string when the product has no flavours. */
-  flavourLabel   String   @default("")
-  /** Matches `ProductSize.label`. */
-  sizeLabel      String
+  variantId      String   @unique
   isFeatured     Boolean  @default(false)
   isBestseller   Boolean  @default(false)
   isDealoftheDay Boolean  @default(false)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
-  product        Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product        Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variant        ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
 
-  @@unique([productId, flavourLabel, sizeLabel])
   @@index([productId])
 }
 
@@ -301,21 +328,22 @@ model Cart {
 }
 
 model CartItem {
-  id                     String   @id @default(cuid())
-  cartId                 String
-  productId              String
-  quantity               Int      @default(1)
-  unitPrice              Decimal  @db.Decimal(10, 2)
-  lineTotal              Decimal  @db.Decimal(10, 2)
-  selectedFlavourLabel   String   @default("")
-  selectedSizeLabel      String   @default("")
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
-  cart                   Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  product                Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  id        String   @id @default(cuid())
+  cartId    String
+  productId String
+  variantId String
+  quantity  Int      @default(1)
+  unitPrice Decimal  @db.Decimal(10, 2)
+  lineTotal Decimal  @db.Decimal(10, 2)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cart      Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product        @relation(fields: [productId], references: [id], onDelete: Restrict)
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
 
-  @@unique([cartId, productId, selectedFlavourLabel, selectedSizeLabel])
+  @@unique([cartId, variantId])
   @@index([productId])
+  @@index([variantId])
 }
 
 model Order {
@@ -353,25 +381,33 @@ model Order {
 }
 
 model OrderItem {
-  id           String   @id @default(cuid())
-  orderId      String
-  productId    String
-  productTitle String
-  productSku   String
-  quantity     Int
-  unitPrice    Decimal  @db.Decimal(10, 2)
-  lineTotal    Decimal  @db.Decimal(10, 2)
-  createdAt    DateTime @default(now())
-  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product      Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  id                   String   @id @default(cuid())
+  orderId              String
+  productId            String
+  variantId            String
+  productTitle         String
+  productSku           String
+  quantity             Int
+  unitPrice            Decimal  @db.Decimal(10, 2)
+  lineTotal            Decimal  @db.Decimal(10, 2)
+  /** Snapshot of the flavour at checkout time; preserved across catalog renames. */
+  selectedFlavourLabel String   @default("")
+  /** Snapshot of the size at checkout time; preserved across catalog renames. */
+  selectedSizeLabel    String   @default("")
+  createdAt            DateTime @default(now())
+  order                Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product              Product        @relation(fields: [productId], references: [id], onDelete: Restrict)
+  variant              ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
 
   @@index([orderId])
   @@index([productId])
+  @@index([variantId])
 }
 
 model Review {
   id             String              @id @default(cuid())
   productId      String
+  variantId      String
   userId         String
   orderId        String?
   rating         Int
@@ -384,13 +420,15 @@ model Review {
   approvedAt     DateTime?
   rejectedAt     DateTime?
   product        Product             @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variant        ProductVariant      @relation(fields: [variantId], references: [id], onDelete: Cascade)
   user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   order          Order?              @relation(fields: [orderId], references: [id], onDelete: SetNull)
   moderations    ReviewModeration[]
 
-  @@unique([productId, userId])
+  @@unique([variantId, userId])
   @@index([status, createdAt])
   @@index([productId, status, createdAt])
+  @@index([variantId, status, createdAt])
 }
 
 model ReviewModeration {
