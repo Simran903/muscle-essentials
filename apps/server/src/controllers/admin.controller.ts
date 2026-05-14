@@ -56,6 +56,7 @@ const paymentStatus = z.enum([
 const userRole = z.enum(["CUSTOMER", "ADMIN"]);
 const userStatus = z.enum(["ACTIVE", "SUSPENDED"]);
 const reviewStatus = z.enum(["PENDING", "APPROVED", "REJECTED"]);
+const productDietType = z.enum(["VEG", "NON_VEG"]);
 
 export async function adminGetBrands(
   req: Request,
@@ -104,6 +105,7 @@ const createProductBody = z.object({
   isFeatured: z.boolean(),
   isBestseller: z.boolean(),
   isDealoftheDay: z.boolean(),
+  dietType: productDietType,
 });
 
 export async function adminPostProduct(

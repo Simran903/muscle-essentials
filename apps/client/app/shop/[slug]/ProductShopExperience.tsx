@@ -6,6 +6,7 @@ import { ChevronRight, PackageCheck, ShieldCheck, Truck } from "lucide-react"
 
 import { ProductGallery } from "@/app/components/Shop/ProductGallery"
 import { ProductPurchasePanel } from "@/app/components/Shop/ProductPurchasePanel"
+import { DietTypeSymbol } from "@/app/components/Common/DietTypeSymbol"
 import {
   effectiveVariantFlags,
   resolveVariantId,
@@ -111,6 +112,11 @@ export function ProductShopExperience({ product, reviews }: ProductShopExperienc
                   Bestseller
                 </span>
               )}
+
+              <span className="inline-flex items-center gap-2 rounded-md border border-border/60 bg-muted/25 px-3 py-1.5 text-xs font-semibold text-foreground">
+                <DietTypeSymbol dietType={product.dietType} size={22} />
+                {product.dietType === "VEG" ? "Vegetarian" : "Non-vegetarian"}
+              </span>
 
               <span
                 className={`inline-flex items-center gap-2 rounded-md px-3 py-1 text-xs font-semibold ${

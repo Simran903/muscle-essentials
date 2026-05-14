@@ -67,6 +67,11 @@ enum ReviewStatus {
   REJECTED
 }
 
+enum ProductDietType {
+  VEG
+  NON_VEG
+}
+
 model User {
   id                String            @id @default(cuid())
   email             String            @unique
@@ -159,6 +164,7 @@ model Product {
   isFeatured      Boolean           @default(false)
   isBestseller    Boolean           @default(false)
   isDealoftheDay  Boolean           @default(false)
+  dietType        ProductDietType   @default(VEG)
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   brand           Brand             @relation(fields: [brandId], references: [id], onDelete: Restrict)

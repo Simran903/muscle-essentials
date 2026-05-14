@@ -7,8 +7,9 @@ import React from "react"
 
 import { Button } from "@/app/components/ui/button"
 import { Skeleton } from "@/app/components/ui/skeleton"
+import { DietTypeSymbol } from "@/app/components/Common/DietTypeSymbol"
 import { cn } from "@/lib/utils"
-import { getProductBySlug } from "@/lib/api"
+import { getProductBySlug, type ProductDietType } from "@/lib/api"
 import { addProductToCart } from "@/lib/cart-client"
 import { toast } from "sonner"
 
@@ -51,6 +52,8 @@ type ProductCardProps = {
     isBestseller?: boolean
     isDealoftheDay?: boolean
   }
+  /** Veg (green) / non-veg (red) indicator on the product image. */
+  dietType?: ProductDietType
 }
 
 function formatPrice(value: number) {
@@ -83,6 +86,7 @@ export function Card({
   onCardClick,
   className,
   merchBadges,
+  dietType,
 }: ProductCardProps) {
   const router = useRouter()
   const [imageLoaded, setImageLoaded] = React.useState(false)
@@ -214,6 +218,14 @@ export function Card({
             onLoad={() => setImageLoaded(true)}
             onError={() => setImageLoaded(true)}
           />
+          {dietType ? (
+            <span
+              className="pointer-events-none absolute right-2 top-2 z-6 drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"
+              title={dietType === "VEG" ? "Vegetarian" : "Non-vegetarian"}
+            >
+              <DietTypeSymbol dietType={dietType} size={20} />
+            </span>
+          ) : null}
           {(merchBadges?.isFeatured ||
             merchBadges?.isBestseller ||
             merchBadges?.isDealoftheDay) && (

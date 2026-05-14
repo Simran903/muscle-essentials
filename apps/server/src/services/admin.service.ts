@@ -193,6 +193,7 @@ function toAdminProductItem(p: AdminProductRow) {
     isFeatured: p.isFeatured,
     isBestseller: p.isBestseller,
     isDealoftheDay: p.isDealoftheDay,
+    dietType: p.dietType,
     categoryId: p.categoryId,
     brand: p.brand
       ? { id: p.brand.id, name: p.brand.name, slug: p.brand.slug }
@@ -331,6 +332,7 @@ export async function adminCreateProduct(data: {
   isFeatured: boolean;
   isBestseller: boolean;
   isDealoftheDay: boolean;
+  dietType: "VEG" | "NON_VEG";
 }) {
   const brandId = data.brandId.trim();
   if (!brandId) {
@@ -383,6 +385,7 @@ export async function adminCreateProduct(data: {
       isFeatured: data.isFeatured,
       isBestseller: data.isBestseller,
       isDealoftheDay: data.isDealoftheDay,
+      dietType: data.dietType,
     },
   });
   await reconcileProductVariants(prisma, product.id);
@@ -405,6 +408,7 @@ export async function adminUpdateProduct(
     isFeatured: boolean;
     isBestseller: boolean;
     isDealoftheDay: boolean;
+    dietType: "VEG" | "NON_VEG";
   }>,
 ) {
   const existing = await prisma.product.findUnique({ where: { id } });
@@ -468,6 +472,7 @@ export async function adminUpdateProduct(
   if (data.isFeatured !== undefined) update.isFeatured = data.isFeatured;
   if (data.isBestseller !== undefined) update.isBestseller = data.isBestseller;
   if (data.isDealoftheDay !== undefined) update.isDealoftheDay = data.isDealoftheDay;
+  if (data.dietType !== undefined) update.dietType = data.dietType;
 
   if (data.flavours !== undefined || data.sizes !== undefined) {
     await prisma.productVariantSpotlight.deleteMany({ where: { productId: id } });

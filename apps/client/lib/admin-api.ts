@@ -1,7 +1,9 @@
 import axios, { isAxiosError } from "axios"
 
-import { API_ORIGIN, bearerHeaders, type ApiEnvelope } from "./api"
+import { API_ORIGIN, bearerHeaders, type ApiEnvelope, type ProductDietType } from "./api"
 import { getAccessToken } from "./auth-storage"
+
+export type { ProductDietType }
 
 const adminApi = axios.create({
   baseURL: API_ORIGIN,
@@ -115,6 +117,7 @@ export type AdminProduct = {
   isFeatured: boolean
   isBestseller: boolean
   isDealoftheDay: boolean
+  dietType: ProductDietType
   categoryId: string | null
   brand: { id: string; name: string; slug: string } | null
   category: { id: string; name: string; slug: string } | null
@@ -248,6 +251,7 @@ export type AdminProductPayload = {
   isFeatured: boolean
   isBestseller: boolean
   isDealoftheDay: boolean
+  dietType: ProductDietType
 }
 
 export async function adminCreateProduct(body: AdminProductPayload) {

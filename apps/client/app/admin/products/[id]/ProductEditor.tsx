@@ -19,6 +19,7 @@ import {
   type AdminCategory,
   type AdminProduct,
   type VariantSpotlightInput,
+  type ProductDietType,
 } from "@/lib/admin-api"
 
 import { adminCard, adminInput, adminLabel } from "../../admin-styles"
@@ -75,6 +76,7 @@ export function ProductEditor({ productId }: { productId: string }) {
   const [isFeatured, setIsFeatured] = React.useState(false)
   const [isBestseller, setIsBestseller] = React.useState(false)
   const [isDealoftheDay, setIsDealoftheDay] = React.useState(false)
+  const [dietType, setDietType] = React.useState<ProductDietType>("NON_VEG")
 
   const [spotlightMap, setSpotlightMap] = React.useState<Map<string, VariantSpotlightInput>>(new Map())
 
@@ -108,6 +110,7 @@ export function ProductEditor({ productId }: { productId: string }) {
       setIsFeatured(p.isFeatured)
       setIsBestseller(p.isBestseller)
       setIsDealoftheDay(p.isDealoftheDay)
+      setDietType(p.dietType)
       setSpotlightMap(buildSpotlightMap(p))
     } catch (e) {
       toast.error(toAdminError(e, "Could not load product.").message)
@@ -170,6 +173,7 @@ export function ProductEditor({ productId }: { productId: string }) {
         isFeatured,
         isBestseller,
         isDealoftheDay,
+        dietType,
       })
       toast.success("Product saved.")
       await loadProduct()
@@ -418,6 +422,21 @@ export function ProductEditor({ productId }: { productId: string }) {
               onChange={(e) => setStockQuantity(Number(e.target.value))}
             />
           </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className={adminLabel} htmlFor="diet-type">
+            Diet type
+          </label>
+          <select
+            id="diet-type"
+            className={adminInput}
+            value={dietType}
+            onChange={(e) => setDietType(e.target.value as ProductDietType)}
+          >
+            <option value="VEG">Vegetarian</option>
+            <option value="NON_VEG">Non-vegetarian</option>
+          </select>
         </div>
 
         <div className="flex flex-wrap gap-6">

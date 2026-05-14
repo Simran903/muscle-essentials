@@ -72,6 +72,7 @@ export const BestsellersSection = ({ products, isLoading = false }: BestsellersS
                     defaultSizeLabel={product.sizes?.length === 1 ? product.sizes[0]!.label : undefined}
                     onCardClick={() => router.push(`/shop/${product.slug}`)}
                     className="max-w-none rounded-2xl"
+                    dietType={product.dietType}
                   />
                 </CarouselItem>
               ))}

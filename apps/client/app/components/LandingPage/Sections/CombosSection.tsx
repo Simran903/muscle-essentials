@@ -90,6 +90,7 @@ export const CombosSection = () => {
                   productSlug={product.slug}
                   onCardClick={() => router.push(`/shop/${product.slug}`)}
                   className="max-w-none rounded-2xl"
+                  dietType="NON_VEG"
                 />
               </CarouselItem>
             ))}

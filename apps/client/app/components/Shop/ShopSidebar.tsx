@@ -20,6 +20,8 @@ export const BRAND_PICKER_DEFAULT = "Select brand"
 export const CATEGORY_PICKER_DEFAULT = "Select category"
 export const FLAVOUR_PICKER_DEFAULT = "Select flavour"
 
+export type ShopDietFilter = "all" | "VEG" | "NON_VEG"
+
 export type ShopSortBy =
   | "default"
   | "title-asc"
@@ -56,6 +58,8 @@ export type ShopSidebarProps = {
   onDealOfTheDayOnlyChange: (value: boolean) => void
   comboOnly: boolean
   onComboOnlyChange: (value: boolean) => void
+  dietFilter: ShopDietFilter
+  onDietFilterChange: (value: ShopDietFilter) => void
   sortBy: ShopSortBy
   onSortByChange: (value: ShopSortBy) => void
   onResetFilters: () => void
@@ -87,6 +91,8 @@ export function ShopSidebar({
   onDealOfTheDayOnlyChange,
   comboOnly,
   onComboOnlyChange,
+  dietFilter,
+  onDietFilterChange,
   sortBy,
   onSortByChange,
   onResetFilters,
@@ -133,6 +139,15 @@ export function ShopSidebar({
       ),
     [flavourOptions, selectedFlavours]
   )
+
+  const dietFilterLabel = React.useMemo(() => {
+    const labels: Record<ShopDietFilter, string> = {
+      all: "Any diet",
+      VEG: "Vegetarian",
+      NON_VEG: "Non-vegetarian",
+    }
+    return labels[dietFilter]
+  }, [dietFilter])
 
   return (
     <Sidebar variant="inset" collapsible="offcanvas">
@@ -265,6 +280,35 @@ export function ShopSidebar({
                           }}
                         />
                       ))}
+                    </div>
+                  ) : null}
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                    Diet type
+                  </label>
+                  <Dropdown
+                    value={dietFilter}
+                    onChange={(value) => {
+                      onDietFilterChange(value as ShopDietFilter)
+                      onResetPage()
+                    }}
+                    options={[
+                      { value: "all", label: "Any diet" },
+                      { value: "VEG", label: "Vegetarian" },
+                      { value: "NON_VEG", label: "Non-vegetarian" },
+                    ]}
+                  />
+                  {dietFilter !== "all" ? (
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      <Pill
+                        label={dietFilterLabel}
+                        onRemove={() => {
+                          onDietFilterChange("all")
+                          onResetPage()
+                        }}
+                      />
                     </div>
                   ) : null}
                 </div>

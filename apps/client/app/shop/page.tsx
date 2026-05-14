@@ -1,7 +1,7 @@
 "use client"
 
-import React from "react"
-import { useRouter } from "next/navigation"
+import React, { Suspense } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { Card } from "@/app/components/Common/Card"
 import { Pagination } from "@/app/components/Common/Pagination"
@@ -22,6 +22,7 @@ import {
   CATEGORY_PICKER_DEFAULT,
   FLAVOUR_PICKER_DEFAULT,
   ShopSidebar,
+  type ShopDietFilter,
   type ShopSortBy,
 } from "../components/Shop/ShopSidebar"
 
@@ -36,7 +37,22 @@ type ShopVariantItem = {
 }
 
 export default function ShopPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-svh items-center justify-center bg-background">
+          <p className="text-sm text-muted-foreground">Loading shop…</p>
+        </div>
+      }
+    >
+      <ShopPageContent />
+    </Suspense>
+  )
+}
+
+function ShopPageContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [page, setPage] = React.useState(1)
   const [isLoading, setIsLoading] = React.useState(true)
   const [data, setData] = React.useState<ProductListResponse | null>(null)
@@ -59,6 +75,7 @@ export default function ShopPage() {
   const [bestsellerOnlyUser, setBestsellerOnlyUser] = React.useState<boolean | undefined>(undefined)
   const [dealOfTheDayOnlyUser, setDealOfTheDayOnlyUser] = React.useState<boolean | undefined>(undefined)
   const [comboOnlyUser, setComboOnlyUser] = React.useState<boolean | undefined>(undefined)
+  const [dietFilter, setDietFilter] = React.useState<ShopDietFilter>("all")
   const [queryFlags, setQueryFlags] = React.useState({
     featured: false,
     bestseller: false,
@@ -68,23 +85,39 @@ export default function ShopPage() {
   const [sortBy, setSortBy] = React.useState<ShopSortBy>("default")
 
   React.useEffect(() => {
-    const readQueryFlags = () => {
-      const params = new URLSearchParams(window.location.search)
-      setQueryFlags({
-        featured: isQueryFlagEnabled(params.get("featured")),
-        bestseller: isQueryFlagEnabled(params.get("bestseller")),
-        deal: isQueryFlagEnabled(params.get("deal")),
-        combo: isQueryFlagEnabled(params.get("combo")),
-      })
+    setQueryFlags({
+      featured: isQueryFlagEnabled(searchParams.get("featured")),
+      bestseller: isQueryFlagEnabled(searchParams.get("bestseller")),
+      deal: isQueryFlagEnabled(searchParams.get("deal")),
+      combo: isQueryFlagEnabled(searchParams.get("combo")),
+    })
+  }, [searchParams])
+
+  React.useEffect(() => {
+    const brandsReady = brandOptions.some((o) => o.value !== BRAND_PICKER_DEFAULT)
+    const catsReady = categoryOptions.some((o) => o.value !== CATEGORY_PICKER_DEFAULT)
+    if (!brandsReady && !catsReady) return
+
+    const allowedBrands = new Set(
+      brandOptions.filter((o) => o.value !== BRAND_PICKER_DEFAULT).map((o) => o.value),
+    )
+    const allowedCats = new Set(
+      categoryOptions.filter((o) => o.value !== CATEGORY_PICKER_DEFAULT).map((o) => o.value),
+    )
+
+    const parseSlugs = (raw: string | null, allowed: Set<string>) => {
+      if (!raw?.trim()) return []
+      return raw
+        .split(",")
+        .map((s) => s.trim())
+        .filter((s) => allowed.has(s))
     }
 
-    readQueryFlags()
-    window.addEventListener("popstate", readQueryFlags)
-
-    return () => {
-      window.removeEventListener("popstate", readQueryFlags)
-    }
-  }, [])
+    setSelectedBrandSlugs(parseSlugs(searchParams.get("brand") ?? searchParams.get("brands"), allowedBrands))
+    setSelectedCategorySlugs(
+      parseSlugs(searchParams.get("category") ?? searchParams.get("categories"), allowedCats),
+    )
+  }, [searchParams, brandOptions, categoryOptions])
 
   const featuredOnlyFromQuery = queryFlags.featured
   const bestsellerOnlyFromQuery = queryFlags.bestseller
@@ -109,6 +142,7 @@ export default function ShopPage() {
     setBestsellerOnlyUser(false)
     setDealOfTheDayOnlyUser(false)
     setComboOnlyUser(false)
+    setDietFilter("all")
     setSortBy("default")
     setPage(1)
   }, [])
@@ -200,11 +234,16 @@ export default function ShopPage() {
             (item.flavours ?? []).some((f) => selectedFlavours.includes(f.label)),
           )
 
+    const dietFiltered =
+      dietFilter === "all"
+        ? flavourFiltered
+        : flavourFiltered.filter((item) => item.dietType === dietFilter)
+
     const comboFiltered = comboOnly
-      ? flavourFiltered.filter((item) =>
+      ? dietFiltered.filter((item) =>
           `${item.title} ${item.shortDesc ?? ""} ${item.flavours?.map((f) => f.label).join(" ")}`.toLowerCase().includes("combo")
         )
-      : flavourFiltered
+      : dietFiltered
 
     const expanded = comboFiltered.flatMap((product) => {
       const flavourOptions = (product.flavours ?? []).length ? product.flavours : [null]
@@ -258,6 +297,7 @@ export default function ShopPage() {
     featuredOnly,
     dealOfTheDayOnly,
     comboOnly,
+    dietFilter,
   ])
 
   const hasClientFilters =
@@ -268,6 +308,7 @@ export default function ShopPage() {
     bestsellerOnly ||
     dealOfTheDayOnly ||
     comboOnly ||
+    dietFilter !== "all" ||
     sortBy !== "default"
   const hasPrev = hasClientFilters ? false : (data?.pagination.page ?? 1) > 1
   const hasNext = hasClientFilters
@@ -304,6 +345,8 @@ export default function ShopPage() {
         onDealOfTheDayOnlyChange={setDealOfTheDayOnlyUser}
         comboOnly={comboOnly}
         onComboOnlyChange={setComboOnlyUser}
+        dietFilter={dietFilter}
+        onDietFilterChange={setDietFilter}
         sortBy={sortBy}
         onSortByChange={setSortBy}
         onResetFilters={resetFilters}
@@ -376,6 +419,7 @@ export default function ShopPage() {
                         item.flavourLabel,
                         item.sizeLabel,
                       )}
+                      dietType={item.product.dietType}
                     />
                   </div>
                 ))}

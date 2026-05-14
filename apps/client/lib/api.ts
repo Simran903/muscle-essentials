@@ -35,6 +35,8 @@ type ProductBySlugResponse = {
   product: ProductItem
 }
 
+export type ProductDietType = "VEG" | "NON_VEG"
+
 export type ProductReviewItem = {
   id: string
   rating: number
@@ -87,6 +89,8 @@ export type ProductItem = {
   isFeatured: boolean
   isBestseller: boolean
   isDealoftheDay: boolean
+  /** Veg vs non-veg classification (store policy / regulatory labeling). */
+  dietType: ProductDietType
   /** Canonical purchasable variants; labels are mirrors of `flavours`/`sizes`. */
   variants?: ProductVariant[]
   /** Per-variant merchandising overrides; keyed by `variantId`. */

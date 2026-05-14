@@ -29,6 +29,10 @@ import {
 import { getAccessToken } from "@/lib/auth-storage"
 import { cn } from "@/lib/utils"
 
+/** Clears fixed mobile tab bar in Navbar (`md:hidden`) + iOS home indicator. */
+const MOBILE_TAB_BAR_BOTTOM =
+  "max-md:pb-[max(7rem,calc(4.75rem+env(safe-area-inset-bottom,0px)))]"
+
 function formatInr(value: number | string) {
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
@@ -59,104 +63,119 @@ function CartLineRow({
   return (
     <li
       className={cn(
-        "flex gap-4 rounded-2xl border border-border/50 bg-card/80 p-4 shadow-none backdrop-blur-sm sm:p-5",
-        inactive && "opacity-80",
+        "relative overflow-hidden rounded-2xl border border-border/60 bg-card/90 shadow-sm ring-1 ring-border/15 backdrop-blur-sm transition-shadow hover:shadow-md",
+        inactive && "opacity-75",
       )}
     >
-      <Link
-        href={`/shop/${item.product.slug}`}
-        className="relative flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-border/50 bg-muted/35 sm:size-28"
-        aria-label={`View ${item.product.title}`}
-      >
-        {thumbUrl ? (
-          <Image
-            src={thumbUrl}
-            alt={thumbAlt}
-            fill
-            sizes="(max-width: 640px) 96px, 112px"
-            className="object-cover"
-          />
-        ) : (
-          <Package className="size-10 text-muted-foreground/70 sm:size-12" strokeWidth={1.25} aria-hidden />
-        )}
-      </Link>
+      <div className="flex gap-3 p-3.5 sm:gap-4 sm:p-5">
+        <Link
+          href={`/shop/${item.product.slug}`}
+          className="relative flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border/50 bg-muted/40 sm:size-29 sm:rounded-2xl"
+          aria-label={`View ${item.product.title}`}
+        >
+          {thumbUrl ? (
+            <Image
+              src={thumbUrl}
+              alt={thumbAlt}
+              fill
+              sizes="(max-width: 640px) 80px, 116px"
+              className="object-cover"
+            />
+          ) : (
+            <Package className="size-9 text-muted-foreground/65 sm:size-11" strokeWidth={1.25} aria-hidden />
+          )}
+        </Link>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-        <div className="min-w-0 flex-1 space-y-1">
-          <Link
-            href={`/shop/${item.product.slug}`}
-            className="line-clamp-2 text-base font-semibold leading-snug text-foreground underline-offset-2 transition-opacity hover:opacity-80"
-          >
-            {item.product.title}
-          </Link>
-          {item.selectedFlavourLabel !== "" || item.selectedSizeLabel !== "" ? (
-            <div className="flex flex-wrap gap-2 pt-1">
-              {item.selectedFlavourLabel !== "" ? (
-                <span className="inline-flex items-center rounded-full border border-border bg-muted/50 px-2.5 py-0.5 text-xs font-medium text-foreground">
-                  Flavour: {item.selectedFlavourLabel}
-                </span>
-              ) : null}
-              {item.selectedSizeLabel !== "" ? (
-                <span className="inline-flex items-center rounded-full border border-border bg-muted/60 px-2.5 py-0.5 text-xs font-medium text-foreground">
-                  Size: {item.selectedSizeLabel}
-                </span>
+        <div className="flex min-w-0 flex-1 flex-col gap-2.5 sm:gap-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1 space-y-1.5">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                <Link
+                  href={`/shop/${item.product.slug}`}
+                  className="line-clamp-2 min-w-0 text-[15px] font-semibold leading-snug tracking-tight text-foreground underline-offset-2 transition-opacity hover:opacity-80 sm:text-base"
+                >
+                  {item.product.title}
+                </Link>
+                {inactive ? (
+                  <span className="shrink-0 rounded-full border border-amber-500/35 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-800 dark:text-amber-200">
+                    Unavailable
+                  </span>
+                ) : null}
+              </div>
+              {item.selectedFlavourLabel !== "" || item.selectedSizeLabel !== "" ? (
+                <div className="flex flex-wrap gap-1.5">
+                  {item.selectedFlavourLabel !== "" ? (
+                    <span className="inline-flex items-center rounded-md border border-border/60 bg-muted/40 px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+                      {item.selectedFlavourLabel}
+                    </span>
+                  ) : null}
+                  {item.selectedSizeLabel !== "" ? (
+                    <span className="inline-flex items-center rounded-md border border-border/60 bg-muted/40 px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+                      {item.selectedSizeLabel}
+                    </span>
+                  ) : null}
+                </div>
               ) : null}
             </div>
-          ) : null}
-          <p className="text-sm text-muted-foreground mt-2">
-            {formatInr(item.unitPrice)} each
-            {inactive ? (
-              <span className="ml-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-800 dark:text-amber-200">
-                Unavailable
-              </span>
-            ) : null}
-          </p>
-        </div>
 
-        <div className="flex flex-wrap items-center gap-3 sm:flex-nowrap sm:justify-end">
-          <div className="flex h-11 items-center rounded-2xl border border-border/60 bg-background/90 px-0.5 dark:bg-muted/40">
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className="size-9 shrink-0 rounded-xl"
-              disabled={isBusy || inactive || item.quantity <= 1}
-              onClick={() => onSetQty(item, item.quantity - 1)}
-              aria-label="Decrease quantity"
+              className="size-9 shrink-0 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive sm:size-10"
+              disabled={isBusy}
+              onClick={() => onRemove(item.id)}
+              aria-label="Remove from cart"
             >
-              <Minus className="size-4" />
-            </Button>
-            <span className="min-w-[2.5ch] px-2 text-center text-sm font-bold tabular-nums text-foreground">
-              {item.quantity}
-            </span>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="size-9 shrink-0 rounded-xl"
-              disabled={isBusy || inactive || item.quantity >= maxQty}
-              onClick={() => onSetQty(item, item.quantity + 1)}
-              aria-label="Increase quantity"
-            >
-              <Plus className="size-4" />
+              <Trash2 className="size-4" />
             </Button>
           </div>
 
-          <p className="min-w-22 text-right text-lg font-bold tabular-nums text-foreground sm:text-xl">
-            {formatInr(item.lineTotal)}
-          </p>
+          <div className="flex flex-col gap-3 border-t border-border/40 pt-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:pt-3">
+            <p className="text-xs tabular-nums text-muted-foreground sm:text-sm">
+              <span className="text-muted-foreground/80">Each </span>
+              <span className="font-medium text-foreground">{formatInr(item.unitPrice)}</span>
+            </p>
 
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            className="size-11 shrink-0 rounded-2xl border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive"
-            disabled={isBusy}
-            onClick={() => onRemove(item.id)}
-            aria-label="Remove from cart"
-          >
-            <Trash2 className="size-4" />
-          </Button>
+            <div className="flex items-center gap-4 max-sm:justify-between">
+              <div className="flex h-10 items-center rounded-xl border border-border/60 bg-background/80 px-0.5 shadow-sm dark:bg-muted/30">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="size-8 shrink-0 rounded-lg"
+                  disabled={isBusy || inactive || item.quantity <= 1}
+                  onClick={() => onSetQty(item, item.quantity - 1)}
+                  aria-label="Decrease quantity"
+                >
+                  <Minus className="size-3.5" />
+                </Button>
+                <span className="min-w-9 px-1.5 text-center text-sm font-bold tabular-nums text-foreground">
+                  {item.quantity}
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="size-8 shrink-0 rounded-lg"
+                  disabled={isBusy || inactive || item.quantity >= maxQty}
+                  onClick={() => onSetQty(item, item.quantity + 1)}
+                  aria-label="Increase quantity"
+                >
+                  <Plus className="size-3.5" />
+                </Button>
+              </div>
+
+              <div className="text-right">
+                <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                  Line total
+                </p>
+                <p className="text-lg font-bold tabular-nums leading-tight text-foreground sm:text-xl">
+                  {formatInr(item.lineTotal)}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </li>
@@ -175,7 +194,12 @@ function EmptyState({
   children?: React.ReactNode
 }) {
   return (
-    <main className="relative isolate mx-auto flex min-h-[calc(100svh-5rem)] max-w-lg flex-col items-center justify-center px-4 py-16 text-center sm:py-24">
+    <main
+      className={cn(
+        "relative isolate mx-auto flex min-h-[calc(100svh-5rem)] max-w-lg flex-col items-center justify-center px-4 py-16 text-center sm:py-24",
+        MOBILE_TAB_BAR_BOTTOM,
+      )}
+    >
       <div className="mb-6 flex size-20 items-center justify-center rounded-2xl border border-border/50 bg-muted/30 text-muted-foreground">
         <Icon className="size-9" strokeWidth={1.5} aria-hidden />
       </div>
@@ -285,7 +309,12 @@ export default function CartPage() {
 
   if (mode === "loading") {
     return (
-      <main className="relative isolate mx-auto min-h-svh w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-10">
+      <main
+        className={cn(
+          "relative isolate mx-auto min-h-svh w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-10",
+          MOBILE_TAB_BAR_BOTTOM,
+        )}
+      >
         <Skeleton className="mb-6 h-5 w-64 rounded-full" />
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="space-y-2">
@@ -344,7 +373,12 @@ export default function CartPage() {
   const hasDiscount = discount > 0
 
   return (
-    <main className="relative isolate mx-auto min-h-svh w-full max-w-6xl overflow-hidden px-4 py-6 text-foreground sm:px-6 sm:py-8 lg:px-10 lg:py-12">
+    <main
+      className={cn(
+        "relative isolate mx-auto min-h-svh w-full max-w-6xl overflow-hidden px-4 py-6 text-foreground sm:px-6 sm:py-8 lg:px-10 lg:py-12",
+        MOBILE_TAB_BAR_BOTTOM,
+      )}
+    >
       <nav className="mb-8 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
         <Link
           href="/"
