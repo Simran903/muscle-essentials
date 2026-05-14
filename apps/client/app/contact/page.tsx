@@ -24,7 +24,7 @@ const EMAIL_SUBJECT = "Muscle Essentials — Question"
 const GMAIL_COMPOSE_HREF = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CONTACT_EMAIL)}&su=${encodeURIComponent(EMAIL_SUBJECT)}`
 const CONTACT_PHONE_DISPLAY = "+91 92895 11600"
 const CONTACT_PHONE_TEL = `tel:${CONTACT_PHONE_DISPLAY.replace(/\s/g, "")}`
-const INSTAGRAM_PROFILE_URL = "https://www.instagram.com/essentialsmuscle/"
+const INSTAGRAM_PROFILE_URL = "https://www.instagram.com/_muscle_essentials_?igsh=MTRkbXozOGMzZmplcQ%3D%3D&utm_source=qr"
 const INSTAGRAM_QR_SRC = "/contact/instagram-qr.png"
 
 const SectionLabel = ({ children }: { children: React.ReactNode }) => {

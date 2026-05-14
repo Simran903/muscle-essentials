@@ -1,6 +1,8 @@
 import Image from "next/image"
 import Link from "next/link"
-import { GlowHero } from "./GlowHero";
+import { GlowHero } from "./GlowHero"
+
+const fssaiLicenseNo = process.env.NEXT_PUBLIC_FSSAI_LICENSE_NO?.trim()
 
 const linkColumns: { title: string; links: { href: string; label: string }[] }[] = [
   {
@@ -47,7 +49,6 @@ const linkColumns: { title: string; links: { href: string; label: string }[] }[]
       { href: "/#testimonials", label: "Reviews" },
     ],
   },
-  
 ]
 
 function FooterLinkColumn({
@@ -165,6 +166,48 @@ export const Footer = () => {
             </div>
           </div>
         </div>
+
+        <section
+          className="mt-12 rounded-xl border border-border/60 bg-background/60 px-4 py-6 sm:px-6"
+          aria-labelledby="fssai-footer-heading"
+        >
+          <h3
+            id="fssai-footer-heading"
+            className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-cyan-700/80 dark:text-cyan-400/70"
+          >
+            FSSAI details
+          </h3>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            <abbr title="Food Safety and Standards Authority of India" className="no-underline">
+              FSSAI
+            </abbr>{" "}
+            (Food Safety and Standards Authority of India) regulates food safety in India. Muscle
+            Essentials sells food and supplement products in compliance with applicable FSSAI
+            rules; licence and FBO particulars appear on invoices and product labels where
+            required.
+          </p>
+          <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
+            <div>
+              <dt className="font-medium text-foreground">FSSAI licence no.</dt>
+              <dd className="mt-1 text-muted-foreground">
+                {fssaiLicenseNo ? (
+                  <span className="font-mono tabular-nums">{fssaiLicenseNo}</span>
+                ) : (
+                  <>
+                    Available on product labels and invoices. For a copy,{" "}
+                    <a
+                      href="mailto:essentialsmuscle@gmail.com?subject=FSSAI%20licence%20details"
+                      className="text-cyan-700 underline-offset-2 hover:underline dark:text-cyan-400"
+                    >
+                      email us
+                    </a>
+                    .
+                  </>
+                )}
+              </dd>
+            </div>
+          </dl>
+        </section>
 
         <p className="mt-12 text-center text-sm text-muted-foreground">
           © {new Date().getFullYear()} Muscle Essentials. All rights reserved.
