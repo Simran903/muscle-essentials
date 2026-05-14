@@ -107,7 +107,7 @@ function SummaryTile({
 
   return (
     <div className="group relative overflow-hidden rounded-2xl border border-border/50 bg-card/80 p-5 shadow-sm backdrop-blur-sm transition-shadow hover:shadow-md">
-      <div className="pointer-events-none absolute -right-6 -top-6 size-24 rounded-full bg-foreground/[0.03] transition-opacity group-hover:opacity-100" />
+      <div className="pointer-events-none absolute -right-6 -top-6 size-24 rounded-full bg-foreground/3 transition-opacity group-hover:opacity-100" />
       <div className="relative flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -373,11 +373,11 @@ export default function AccountPage() {
 
         {/* Hero */}
         <section className="relative mt-6 overflow-hidden rounded-3xl border border-border/50 bg-card/85 shadow-sm ring-1 ring-border/30 backdrop-blur-md sm:mt-8">
-          <div className="pointer-events-none absolute inset-0 rounded-3xl bg-linear-to-br from-primary/[0.07] via-transparent to-emerald-500/[0.06]" />
+          <div className="pointer-events-none absolute inset-0 rounded-3xl bg-linear-to-br from-primary/[0.07] via-transparent to-emerald-500/6" />
           <div className="relative flex flex-col gap-6 p-6 sm:flex-row sm:items-start sm:justify-between sm:p-8 lg:p-10">
             <div className="flex min-w-0 flex-1 items-start gap-4 sm:gap-5">
               <div
-                className="flex size-16 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-primary to-primary/85 text-lg font-bold tracking-tight text-primary-foreground shadow-md ring-2 ring-primary/20 sm:size-[4.5rem] sm:text-2xl"
+                className="flex size-16 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-primary to-primary/85 text-lg font-bold tracking-tight text-primary-foreground shadow-md ring-2 ring-primary/20 sm:size-18 sm:text-2xl"
                 aria-hidden
               >
                 {initialsFor(user)}
