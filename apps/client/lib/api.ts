@@ -376,6 +376,153 @@ export async function refreshSession(): Promise<string | null> {
   }
 }
 
+/**
+ * Calls the server-side logout to invalidate the refresh session cookie.
+ * Local access-token cleanup is the caller's responsibility (handled via
+ * `clearAccessToken()` from `lib/auth-storage`).
+ */
+export async function logoutSession(): Promise<void> {
+  try {
+    await api.post<ApiEnvelope<unknown>>("/api/auth/logout", {})
+  } catch {
+    // Server-side logout is best-effort; the access token gets cleared
+    // locally regardless so the user is effectively signed out.
+  }
+}
+
+export type AccountOrderItem = {
+  id: string
+  quantity: number
+  unitPrice: number | string
+  lineTotal: number | string
+  productTitle: string
+  productSku: string
+  selectedFlavourLabel: string
+  selectedSizeLabel: string
+}
+
+export type AccountOrder = {
+  id: string
+  orderNumber: string
+  status: string
+  paymentStatus: string
+  currency: string
+  subtotalAmount: number | string
+  shippingAmount: number | string
+  discountAmount: number | string
+  taxAmount: number | string
+  totalAmount: number | string
+  placedAt: string
+  items: AccountOrderItem[]
+}
+
+export type AccountAddress = {
+  id: string
+  label: string | null
+  fullName: string
+  line1: string
+  line2: string | null
+  city: string
+  state: string | null
+  postalCode: string
+  countryCode: string
+  phone: string | null
+  type: "SHIPPING" | "BILLING" | null
+  isDefault: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export async function getAccountOrders(accessToken: string): Promise<AccountOrder[]> {
+  try {
+    const { data: body } = await api.get<ApiEnvelope<{ orders: AccountOrder[] }>>(
+      "/api/account/orders",
+      { headers: bearerHeaders(accessToken) },
+    )
+    return body.data?.orders ?? []
+  } catch {
+    return []
+  }
+}
+
+export async function getAccountAddresses(
+  accessToken: string,
+): Promise<AccountAddress[]> {
+  try {
+    const { data: body } = await api.get<
+      ApiEnvelope<{ addresses: AccountAddress[] }>
+    >("/api/account/addresses", { headers: bearerHeaders(accessToken) })
+    return body.data?.addresses ?? []
+  } catch {
+    return []
+  }
+}
+
+export type AddressInput = {
+  label?: string | null
+  fullName: string
+  line1: string
+  line2?: string | null
+  city: string
+  state?: string | null
+  postalCode: string
+  countryCode: string
+  phone?: string | null
+  type?: "SHIPPING" | "BILLING" | null
+  isDefault?: boolean
+}
+
+export async function createAccountAddress(
+  accessToken: string,
+  input: AddressInput,
+): Promise<AccountAddress> {
+  try {
+    const { data: body } = await api.post<
+      ApiEnvelope<{ address: AccountAddress }>
+    >("/api/account/addresses", input, { headers: bearerHeaders(accessToken) })
+    if (!body.data?.address) {
+      throw new Error(body.message ?? "Unable to save address.")
+    }
+    return body.data.address
+  } catch (e) {
+    throw toRequestError(e, "Unable to save address.")
+  }
+}
+
+export async function updateAccountAddress(
+  accessToken: string,
+  id: string,
+  input: Partial<AddressInput>,
+): Promise<AccountAddress> {
+  try {
+    const { data: body } = await api.patch<
+      ApiEnvelope<{ address: AccountAddress }>
+    >(`/api/account/addresses/${encodeURIComponent(id)}`, input, {
+      headers: bearerHeaders(accessToken),
+    })
+    if (!body.data?.address) {
+      throw new Error(body.message ?? "Unable to update address.")
+    }
+    return body.data.address
+  } catch (e) {
+    throw toRequestError(e, "Unable to update address.")
+  }
+}
+
+export async function deleteAccountAddress(
+  accessToken: string,
+  id: string,
+): Promise<void> {
+  try {
+    await api.delete<ApiEnvelope<unknown>>(
+      `/api/account/addresses/${encodeURIComponent(id)}`,
+      { headers: bearerHeaders(accessToken) },
+    )
+  } catch (e) {
+    throw toRequestError(e, "Unable to delete address.")
+  }
+}
+
 function queryParams(record: Record<string, string | number | boolean | undefined>) {
   return Object.fromEntries(
     Object.entries(record).filter(([, v]) => v !== undefined && v !== ""),

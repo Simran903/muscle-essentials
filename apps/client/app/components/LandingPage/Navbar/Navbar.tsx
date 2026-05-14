@@ -275,7 +275,21 @@ export function Navbar() {
                 </Link>
               </NavigationMenuItem>
             ) : null}
-            {!isLoggedIn ? (
+            {isLoggedIn ? (
+              <NavigationMenuItem>
+                <Button
+                  asChild
+                  variant="outline"
+                  size="icon"
+                  className="rounded-md border-border/60"
+                  aria-label="Account"
+                >
+                  <Link href="/account">
+                    <User className="size-4" />
+                  </Link>
+                </Button>
+              </NavigationMenuItem>
+            ) : (
               <NavigationMenuItem>
                 <Button asChild size="lg" variant="default" className="cursor-pointer rounded-md px-5 shadow-none">
                   <button type="button" onClick={openLoginDialog}>
@@ -283,7 +297,7 @@ export function Navbar() {
                   </button>
                 </Button>
               </NavigationMenuItem>
-            ) : null}
+            )}
           </NavigationMenuList>
         </NavigationMenu>
       </header>
@@ -310,7 +324,15 @@ export function Navbar() {
               </span>
             ) : null}
           </Link>
-          {!isLoggedIn ? (
+          {isLoggedIn ? (
+            <Link
+              href="/account"
+              className="flex flex-col items-center gap-1 px-2 py-1 text-[11px] font-medium text-muted-foreground"
+            >
+              <User className="size-4" />
+              Account
+            </Link>
+          ) : (
             <button
               type="button"
               onClick={openLoginDialog}
@@ -319,7 +341,7 @@ export function Navbar() {
               <User className="size-4" />
               Login
             </button>
-          ) : null}
+          )}
         </div>
       </nav>
 

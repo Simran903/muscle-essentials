@@ -285,7 +285,7 @@ export default function CartPage() {
 
   if (mode === "loading") {
     return (
-      <main className="relative isolate mx-auto min-h-svh w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+      <main className="relative isolate mx-auto min-h-svh w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-10">
         <Skeleton className="mb-6 h-5 w-64 rounded-full" />
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="space-y-2">
@@ -344,7 +344,7 @@ export default function CartPage() {
   const hasDiscount = discount > 0
 
   return (
-    <main className="relative isolate mx-auto min-h-svh w-full max-w-7xl overflow-hidden px-4 py-6 text-foreground sm:px-6 sm:py-8 lg:px-10 lg:py-12">
+    <main className="relative isolate mx-auto min-h-svh w-full max-w-6xl overflow-hidden px-4 py-6 text-foreground sm:px-6 sm:py-8 lg:px-10 lg:py-12">
       <nav className="mb-8 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
         <Link
           href="/"

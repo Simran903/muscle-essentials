@@ -1,0 +1,175 @@
+import type { AccountOrder } from "@/lib/api"
+
+/** Set `NEXT_PUBLIC_ACCOUNT_MOCK_ORDERS=1` in `.env.local`, or flip this to `true` locally, to preview orders when the API returns none (never commit `true`). */
+export const ACCOUNT_PAGE_USE_MOCK_ORDERS = false
+
+export const MOCK_ACCOUNT_ORDERS: AccountOrder[] = [
+  {
+    id: "mock-order-1",
+    orderNumber: "10482",
+    status: "DELIVERED",
+    paymentStatus: "PAID",
+    currency: "INR",
+    subtotalAmount: 4499,
+    shippingAmount: 0,
+    discountAmount: 200,
+    taxAmount: 0,
+    totalAmount: 4299,
+    placedAt: new Date(Date.now() - 2 * 86400000).toISOString(),
+    items: [
+      {
+        id: "mock-oi-1a",
+        quantity: 1,
+        unitPrice: 4299,
+        lineTotal: 4299,
+        productTitle: "Whey Protein Isolate",
+        productSku: "WPI-2KG",
+        selectedFlavourLabel: "Chocolate",
+        selectedSizeLabel: "2 kg",
+      },
+    ],
+  },
+  {
+    id: "mock-order-2",
+    orderNumber: "10471",
+    status: "SHIPPED",
+    paymentStatus: "PAID",
+    currency: "INR",
+    subtotalAmount: 3198,
+    shippingAmount: 99,
+    discountAmount: 0,
+    taxAmount: 0,
+    totalAmount: 3297,
+    placedAt: new Date(Date.now() - 5 * 86400000).toISOString(),
+    items: [
+      {
+        id: "mock-oi-2a",
+        quantity: 2,
+        unitPrice: 1299,
+        lineTotal: 2598,
+        productTitle: "Creatine Monohydrate",
+        productSku: "CRE-300",
+        selectedFlavourLabel: "Unflavoured",
+        selectedSizeLabel: "300 g",
+      },
+      {
+        id: "mock-oi-2b",
+        quantity: 1,
+        unitPrice: 600,
+        lineTotal: 600,
+        productTitle: "Electrolyte mix",
+        productSku: "ELX-30",
+        selectedFlavourLabel: "Lemon",
+        selectedSizeLabel: "30 servings",
+      },
+    ],
+  },
+  {
+    id: "mock-order-3",
+    orderNumber: "10455",
+    status: "PROCESSING",
+    paymentStatus: "PAID",
+    currency: "INR",
+    subtotalAmount: 1899,
+    shippingAmount: 0,
+    discountAmount: 0,
+    taxAmount: 0,
+    totalAmount: 1899,
+    placedAt: new Date(Date.now() - 9 * 86400000).toISOString(),
+    items: [
+      {
+        id: "mock-oi-3a",
+        quantity: 1,
+        unitPrice: 1899,
+        lineTotal: 1899,
+        productTitle: "Pre-workout",
+        productSku: "PRE-40",
+        selectedFlavourLabel: "Green apple",
+        selectedSizeLabel: "40 servings",
+      },
+    ],
+  },
+  {
+    id: "mock-order-4",
+    orderNumber: "10398",
+    status: "PLACED",
+    paymentStatus: "PENDING",
+    currency: "INR",
+    subtotalAmount: 5499,
+    shippingAmount: 0,
+    discountAmount: 500,
+    taxAmount: 0,
+    totalAmount: 4999,
+    placedAt: new Date(Date.now() - 24 * 86400000).toISOString(),
+    items: [
+      {
+        id: "mock-oi-4a",
+        quantity: 1,
+        unitPrice: 4999,
+        lineTotal: 4999,
+        productTitle: "Mass gainer blend",
+        productSku: "MSG-3KG",
+        selectedFlavourLabel: "Vanilla",
+        selectedSizeLabel: "3 kg",
+      },
+    ],
+  },
+  {
+    id: "mock-order-5",
+    orderNumber: "10312",
+    status: "DELIVERED",
+    paymentStatus: "PAID",
+    currency: "INR",
+    subtotalAmount: 999,
+    shippingAmount: 0,
+    discountAmount: 0,
+    taxAmount: 0,
+    totalAmount: 999,
+    placedAt: new Date(Date.now() - 40 * 86400000).toISOString(),
+    items: [
+      {
+        id: "mock-oi-5a",
+        quantity: 1,
+        unitPrice: 999,
+        lineTotal: 999,
+        productTitle: "BCAA powder",
+        productSku: "BCA-250",
+        selectedFlavourLabel: "Mango",
+        selectedSizeLabel: "250 g",
+      },
+    ],
+  },
+  {
+    id: "mock-order-6",
+    orderNumber: "10288",
+    status: "CANCELLED",
+    paymentStatus: "REFUNDED",
+    currency: "INR",
+    subtotalAmount: 2199,
+    shippingAmount: 0,
+    discountAmount: 0,
+    taxAmount: 0,
+    totalAmount: 2199,
+    placedAt: new Date(Date.now() - 55 * 86400000).toISOString(),
+    items: [
+      {
+        id: "mock-oi-6a",
+        quantity: 1,
+        unitPrice: 2199,
+        lineTotal: 2199,
+        productTitle: "Omega-3 capsules",
+        productSku: "OMG-90",
+        selectedFlavourLabel: "—",
+        selectedSizeLabel: "90 softgels",
+      },
+    ],
+  },
+]
+
+export function applyAccountOrderMocks(orders: AccountOrder[]): AccountOrder[] {
+  const useMock =
+    (ACCOUNT_PAGE_USE_MOCK_ORDERS ||
+      process.env.NEXT_PUBLIC_ACCOUNT_MOCK_ORDERS === "1") &&
+    orders.length === 0
+  return useMock ? MOCK_ACCOUNT_ORDERS : orders
+}
