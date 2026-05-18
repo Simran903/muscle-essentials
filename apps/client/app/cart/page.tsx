@@ -379,25 +379,6 @@ export default function CartPage() {
         MOBILE_TAB_BAR_BOTTOM,
       )}
     >
-      <nav className="mb-8 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-        <Link
-          href="/"
-          className="rounded-full px-2.5 py-1 transition-colors hover:bg-muted/80 hover:text-foreground"
-        >
-          Home
-        </Link>
-        <ChevronRight className="size-4 shrink-0 opacity-50" />
-        <Link
-          href="/shop"
-          className="rounded-full px-2.5 py-1 transition-colors hover:bg-muted/80 hover:text-foreground"
-        >
-          Shop
-        </Link>
-        <ChevronRight className="size-4 shrink-0 opacity-50" />
-        <span className="line-clamp-1 rounded-full border border-border/50 bg-card/80 px-3 py-1 text-foreground shadow-none">
-          Cart
-        </span>
-      </nav>
 
       <header className="mb-10 flex flex-col gap-4 border-b border-border/50 pb-10 sm:flex-row sm:items-end sm:justify-between">
         <div>

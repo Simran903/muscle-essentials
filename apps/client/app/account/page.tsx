@@ -37,9 +37,9 @@ import {
 } from "@/lib/auth-storage"
 import { cn } from "@/lib/utils"
 
-import { AccountAddresses } from "./AccountAddresses"
-import { AccountBackground } from "./AccountBackground"
-import { applyAccountOrderMocks } from "./account-order-mocks"
+import { AccountAddresses } from "../components/Account/AccountAddresses"
+import { AccountBackground } from "../components/Account/AccountBackground"
+import { applyAccountOrderMocks } from "../components/Account/account-order-mocks"
 
 type PageMode = "guest" | "loading" | "ready"
 
@@ -357,19 +357,7 @@ export default function AccountPage() {
     <div className="relative min-h-svh bg-background">
       <AccountBackground />
 
-      <main className="relative isolate mx-auto w-full max-w-6xl px-4 pb-28 pt-8 text-foreground sm:px-6 sm:pb-16 lg:px-10 lg:pt-10">
-        {/* Breadcrumb */}
-        <nav className="flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 transition-colors hover:bg-muted/80 hover:text-foreground"
-          >
-            <Home className="size-3.5" />
-            Home
-          </Link>
-          <ChevronRight className="size-3.5 opacity-50" aria-hidden />
-          <span className="font-medium text-foreground">Account</span>
-        </nav>
+      <main className="relative isolate mx-auto w-full max-w-6xl px-4 pb-28 text-foreground sm:px-6 sm:pb-16 lg:px-10">
 
         {/* Hero */}
         <section className="relative mt-6 overflow-hidden rounded-3xl border border-border/50 bg-card/85 shadow-sm ring-1 ring-border/30 backdrop-blur-md sm:mt-8">

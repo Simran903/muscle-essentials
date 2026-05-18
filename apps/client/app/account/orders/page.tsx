@@ -20,9 +20,9 @@ import {
   setAccessToken,
 } from "@/lib/auth-storage"
 
-import { AccountBackground } from "../AccountBackground"
-import { AccountOrderCard } from "../AccountOrderCard"
-import { applyAccountOrderMocks } from "../account-order-mocks"
+import { AccountBackground } from "../../components/Account/AccountBackground"
+import { AccountOrderCard } from "../../components/Account/AccountOrderCard"
+import { applyAccountOrderMocks } from "../../components/Account/account-order-mocks"
 
 type PageMode = "guest" | "loading" | "ready"
 
@@ -137,27 +137,9 @@ export default function AccountOrdersPage() {
   return (
     <div className="relative min-h-svh bg-background">
       <AccountBackground />
-      <main className="relative isolate mx-auto w-full max-w-6xl px-4 pb-28 pt-8 text-foreground sm:px-6 sm:pb-16 lg:px-10 lg:pt-10">
-        <nav className="flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 transition-colors hover:bg-muted/80 hover:text-foreground"
-          >
-            <Home className="size-3.5" />
-            Home
-          </Link>
-          <ChevronRight className="size-3.5 opacity-50" aria-hidden />
-          <Link
-            href="/account"
-            className="rounded-md px-1.5 py-0.5 transition-colors hover:bg-muted/80 hover:text-foreground"
-          >
-            Account
-          </Link>
-          <ChevronRight className="size-3.5 opacity-50" aria-hidden />
-          <span className="font-medium text-foreground">Orders</span>
-        </nav>
+      <main className="relative isolate mx-auto w-full max-w-6xl px-4 pb-28 text-foreground sm:px-6 sm:pb-16 lg:px-10">
 
-        <header className="mt-8 flex flex-col gap-4 border-b border-border/40 pb-8 sm:flex-row sm:items-end sm:justify-between">
+        <header className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <SectionLabel>Your purchases</SectionLabel>
             <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">

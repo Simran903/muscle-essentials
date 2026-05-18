@@ -17,7 +17,7 @@ import { toast } from "sonner"
 import { Button } from "@/app/components/ui/button"
 import { cn } from "@/lib/utils"
 
-import { AccountBackground } from "../account/AccountBackground"
+import { AccountBackground } from "../components/Account/AccountBackground"
 
 const CONTACT_EMAIL = "essentialsmuscle@gmail.com"
 const EMAIL_SUBJECT = "Muscle Essentials — Question"
@@ -25,7 +25,7 @@ const GMAIL_COMPOSE_HREF = `https://mail.google.com/mail/?view=cm&fs=1&to=${enco
 const CONTACT_PHONE_DISPLAY = "+91 92895 11600"
 const CONTACT_PHONE_TEL = `tel:${CONTACT_PHONE_DISPLAY.replace(/\s/g, "")}`
 const INSTAGRAM_PROFILE_URL = "https://www.instagram.com/_muscle_essentials_?igsh=MTRkbXozOGMzZmplcQ%3D%3D&utm_source=qr"
-const INSTAGRAM_QR_SRC = "/contact/instagram-qr.png"
+const INSTAGRAM_QR_SRC = "/instagram.png"
 
 const SectionLabel = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -108,20 +108,9 @@ const ContactPage = () => {
   return (
     <div className="relative min-h-svh bg-background">
       <AccountBackground />
-      <main className="relative isolate mx-auto w-full max-w-6xl px-4 pb-24 pt-8 text-foreground sm:px-6 sm:pb-16 sm:pt-10 lg:px-10 lg:pt-10">
-        <nav className="flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 transition-colors hover:bg-muted/80 hover:text-foreground"
-          >
-            <Home className="size-3.5" />
-            Home
-          </Link>
-          <ChevronRight className="size-3.5 opacity-50" aria-hidden />
-          <span className="font-medium text-foreground">Contact</span>
-        </nav>
+      <main className="relative isolate mx-auto w-full max-w-6xl px-4 pb-24 text-foreground sm:px-6 sm:pb-16 lg:px-10">
 
-        <header className="mt-8 max-w-2xl border-b border-border/40 pb-10">
+        <header className="mt-8 max-w-2xl pb-10">
           <SectionLabel>We are here to help</SectionLabel>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
             Contact Muscle Essentials
