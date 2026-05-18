@@ -1,31 +1,37 @@
 import Image from "next/image"
 import Link from "next/link"
+import {
+  ArrowUpRight,
+  Mail,
+  PackageCheck,
+  Phone,
+  ShieldCheck,
+  Truck,
+} from "lucide-react"
+
+import { Button } from "@/app/components/ui/button"
+import { cn } from "@/lib/utils"
+
 import { GlowHero } from "./GlowHero"
 
 const fssaiLicenseNo = process.env.NEXT_PUBLIC_FSSAI_LICENSE_NO?.trim()
 
+const CONTACT_EMAIL = "essentialsmuscle@gmail.com"
+const CONTACT_PHONE = "+91 92895 11600"
+const CONTACT_PHONE_TEL = "tel:+919289511600"
+const INSTAGRAM_URL =
+  "https://www.instagram.com/_muscle_essentials_?igsh=MTRkbXozOGMzZmplcQ%3D%3D&utm_source=qr"
+
 const linkColumns: { title: string; links: { href: string; label: string }[] }[] = [
   {
-    title: "Pages",
+    title: "Explore",
     links: [
       { href: "/", label: "Home" },
-      { href: "/shop", label: "Shop" },
+      { href: "/shop", label: "Shop all" },
       { href: "/#deal-of-the-day", label: "Deals" },
       { href: "/#bestsellers", label: "Bestsellers" },
       { href: "/#featured", label: "Featured" },
       { href: "/#categories", label: "Categories" },
-      { href: "/#brands", label: "Brands" },
-      { href: "/#faq", label: "FAQ" },
-      { href: "/contact", label: "Contact" },
-    ],
-  },
-  {
-    title: "Legal",
-    links: [
-      { href: "/legal/terms", label: "Terms of Service" },
-      { href: "/legal/privacy", label: "Privacy Policy" },
-      { href: "/legal/cookies", label: "Cookie Policy" },
-      { href: "/legal/refunds", label: "Refund Policy" },
     ],
   },
   {
@@ -36,20 +42,44 @@ const linkColumns: { title: string; links: { href: string; label: string }[] }[]
       { href: "/shop/pre-workout", label: "Pre-workout" },
       { href: "/shop/gainers", label: "Gainers" },
       { href: "/shop/vitamins", label: "Vitamins" },
-      { href: "/shop/recovery", label: "Recovery" },
       { href: "/shop/combos", label: "Combos" },
     ],
   },
   {
-    title: "Resources",
+    title: "Support",
     links: [
-      { href: "/#faq", label: "Help & FAQ" },
+      { href: "/contact", label: "Contact" },
+      { href: "/#faq", label: "FAQ" },
       { href: "/shipping", label: "Shipping" },
       { href: "/returns", label: "Returns" },
       { href: "/#testimonials", label: "Reviews" },
+      { href: "/account", label: "My account" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { href: "/legal/terms", label: "Terms" },
+      { href: "/legal/privacy", label: "Privacy" },
+      { href: "/legal/cookies", label: "Cookies" },
+      { href: "/legal/refunds", label: "Refunds" },
     ],
   },
 ]
+
+const trustHighlights = [
+  { icon: PackageCheck, label: "Genuine supplements" },
+  { icon: Truck, label: "Pan-India delivery" },
+  { icon: ShieldCheck, label: "FSSAI compliant" },
+] as const
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+      {children}
+    </p>
+  )
+}
 
 function FooterLinkColumn({
   title,
@@ -60,17 +90,17 @@ function FooterLinkColumn({
 }) {
   return (
     <div>
-      <h3 className="mb-4 text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-cyan-700/80 dark:text-cyan-400/70">
-        {title}
-      </h3>
-      <ul className="space-y-2.5">
+      <SectionLabel>{title}</SectionLabel>
+      <ul className="mt-4 space-y-2.5">
         {links.map((item) => (
           <li key={`${title}-${item.href}-${item.label}`}>
             <Link
               href={item.href}
-              className="text-sm text-muted-foreground transition-colors hover:text-cyan-700 dark:hover:text-cyan-300"
+              className="group inline-flex items-center text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
-              {item.label}
+              <span className="border-b border-transparent transition-colors group-hover:border-foreground/30">
+                {item.label}
+              </span>
             </Link>
           </li>
         ))}
@@ -90,91 +120,199 @@ function InstagramIcon({ className }: { className?: string }) {
   )
 }
 
-export const Footer = () => {
+function SocialButton({
+  href,
+  label,
+  children,
+}: {
+  href: string
+  label: string
+  children: React.ReactNode
+}) {
   return (
-    <footer className="relative overflow-hidden border-t border-border/50 bg-muted/20 text-foreground dark:bg-background">
-      <div className="relative z-10 mx-auto w-full max-w-360 px-5 pt-16 sm:px-8 sm:pt-20">
-        <div className="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-3 lg:grid-cols-4 lg:gap-x-12">
-          {linkColumns.map((col) => (
-            <FooterLinkColumn key={col.title} title={col.title} links={col.links} />
-          ))}
+    <a
+      href={href}
+      target={href.startsWith("http") ? "_blank" : undefined}
+      rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+      aria-label={label}
+      className={cn(
+        "inline-flex size-10 items-center justify-center rounded-xl border border-border/60 bg-background/70 text-muted-foreground",
+        "transition-all hover:border-border hover:bg-background hover:text-foreground hover:shadow-sm",
+      )}
+    >
+      {children}
+    </a>
+  )
+}
 
-          <div className="col-span-2 sm:col-span-3 lg:col-span-1 lg:col-start-6">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 text-foreground transition-opacity hover:opacity-80"
-            >
+export const Footer = () => {
+  const year = new Date().getFullYear()
+  const legalLinks = linkColumns.find((c) => c.title === "Legal")?.links ?? []
+
+  return (
+    <footer className="relative overflow-x-clip border-t border-border/50 bg-background text-foreground">
+      <div
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_-30%,oklch(0.92_0.06_198/0.18),transparent)] dark:bg-[radial-gradient(ellipse_90%_60%_at_50%_-30%,oklch(0.32_0.08_210/0.22),transparent)]"
+        aria-hidden
+      />
+
+      <div className="relative z-10 mx-auto w-full max-w-360 px-4 pt-14 sm:px-6 sm:pt-16 lg:px-10 lg:pt-20">
+        <div className="flex flex-col gap-12 lg:flex-row lg:gap-16 xl:gap-20">
+          <div className="lg:max-w-sm lg:shrink-0">
+            <Link href="/" className="inline-flex transition-opacity hover:opacity-85">
               <Image
                 src="/logo-new.png"
-                alt="Muscle Essentials Logo"
-                width={48}
+                alt="Muscle Essentials"
+                width={160}
                 height={48}
-                className="h-10 w-28 object-contain dark:brightness-0 dark:invert"
+                className="h-11 w-auto object-contain dark:brightness-0 dark:invert"
               />
             </Link>
-            
-            <div className="mt-6 flex items-center gap-4">
-              <a
-                href="https://www.instagram.com/_muscle_essentials_?igsh=MTRkbXozOGMzZmplcQ%3D%3D&utm_source=qr"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground transition-colors hover:text-foreground"
-                aria-label="Instagram"
-              >
-                <InstagramIcon className="size-5" />
-              </a>
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
+              Curated protein, pre-workout, and recovery essentials — tested, vetted, and shipped
+              with care across India.
+            </p>
+
+            <ul className="mt-6 space-y-3">
+              <li>
+                <a
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  className="group flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border/50 bg-card/80 text-foreground/80">
+                    <Mail className="size-4" aria-hidden />
+                  </span>
+                  <span className="min-w-0 break-all underline-offset-4 group-hover:underline">
+                    {CONTACT_EMAIL}
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href={CONTACT_PHONE_TEL}
+                  className="group flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border/50 bg-card/80 text-foreground/80">
+                    <Phone className="size-4" aria-hidden />
+                  </span>
+                  <span className="tabular-nums underline-offset-4 group-hover:underline">
+                    {CONTACT_PHONE}
+                  </span>
+                </a>
+              </li>
+            </ul>
+
+            <div className="mt-6 flex flex-wrap items-center gap-2.5">
+              <SocialButton href={INSTAGRAM_URL} label="Instagram">
+                <InstagramIcon className="size-4.5" />
+              </SocialButton>
+              <SocialButton href={`mailto:${CONTACT_EMAIL}`} label="Email">
+                <Mail className="size-4" />
+              </SocialButton>
             </div>
+
+            <div className="mt-8 flex flex-wrap gap-2">
+              <Button asChild size="sm" className="rounded-full shadow-none">
+                <Link href="/shop">Shop now</Link>
+              </Button>
+              <Button asChild size="sm" variant="outline" className="rounded-full">
+                <Link href="/contact">Contact us</Link>
+              </Button>
+            </div>
+          </div>
+
+          <div className="grid flex-1 grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-4">
+            {linkColumns.map((col) => (
+              <FooterLinkColumn key={col.title} title={col.title} links={col.links} />
+            ))}
           </div>
         </div>
 
+        <ul className="mt-12 flex flex-wrap gap-2.5 sm:gap-3">
+          {trustHighlights.map(({ icon: Icon, label }) => (
+            <li
+              key={label}
+              className="inline-flex items-center gap-2 rounded-full border border-border/50 bg-card/60 px-3.5 py-2 text-xs font-medium text-foreground/90 backdrop-blur-sm"
+            >
+              <Icon className="size-3.5 shrink-0 text-cyan-700/90 dark:text-cyan-400/90" aria-hidden />
+              {label}
+            </li>
+          ))}
+        </ul>
+
         <section
-          className="mt-12 rounded-xl border border-border/60 bg-background/60 px-4 py-6 sm:px-6"
+          className="mt-8 overflow-hidden rounded-2xl border border-border/50 bg-card/70 shadow-sm backdrop-blur-sm"
           aria-labelledby="fssai-footer-heading"
         >
-          <h3
-            id="fssai-footer-heading"
-            className="text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-cyan-700/80 dark:text-cyan-400/70"
-          >
-            FSSAI details
-          </h3>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            <abbr title="Food Safety and Standards Authority of India" className="no-underline">
-              FSSAI
-            </abbr>{" "}
-            (Food Safety and Standards Authority of India) regulates food safety in India. Muscle
-            Essentials sells food and supplement products in compliance with applicable FSSAI
-            rules.
-          </p>
-          <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
-            <div>
-              <dt className="font-medium text-foreground">FSSAI licence no.</dt>
-              <dd className="mt-1 text-muted-foreground">
-                {fssaiLicenseNo ? (
-                  <span className="font-mono tabular-nums">{fssaiLicenseNo}</span>
-                ) : (
-                  <>
-                    Available on product labels and invoices. For a copy,{" "}
-                    <a
-                      href="mailto:essentialsmuscle@gmail.com?subject=FSSAI%20licence%20details"
-                      className="text-cyan-700 underline-offset-2 hover:underline dark:text-cyan-400"
-                    >
-                      email us
-                    </a>
-                    .
-                  </>
-                )}
-              </dd>
+          <div className="border-b border-border/40 bg-muted/15 px-5 py-4 sm:px-6">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="inline-flex size-10 items-center justify-center rounded-xl border border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
+                <ShieldCheck className="size-5" aria-hidden />
+              </span>
+              <div>
+                <SectionLabel>Compliance</SectionLabel>
+                <h3
+                  id="fssai-footer-heading"
+                  className="mt-0.5 text-base font-semibold tracking-tight text-foreground"
+                >
+                  FSSAI details
+                </h3>
+              </div>
             </div>
-          </dl>
+          </div>
+          <div className="space-y-4 px-5 py-5 sm:px-6 sm:py-6">
+            <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
+              <abbr title="Food Safety and Standards Authority of India" className="no-underline">
+                FSSAI
+              </abbr>{" "}
+              regulates food safety in India. Muscle Essentials sells supplements in line with
+              applicable FSSAI requirements.
+            </p>
+            <dl className="grid gap-4 text-sm sm:grid-cols-2">
+              <div className="rounded-xl border border-border/50 bg-background/50 px-4 py-3">
+                <dt className="text-xs font-medium text-muted-foreground">Licence number</dt>
+                <dd className="mt-1 font-medium text-foreground">
+                  {fssaiLicenseNo ? (
+                    <span className="font-mono tabular-nums">{fssaiLicenseNo}</span>
+                  ) : (
+                    <span className="text-muted-foreground">
+                      On product labels & invoices —{" "}
+                      <a
+                        href={`mailto:${CONTACT_EMAIL}?subject=FSSAI%20licence%20details`}
+                        className="text-foreground underline-offset-4 hover:underline"
+                      >
+                        request by email
+                      </a>
+                    </span>
+                  )}
+                </dd>
+              </div>
+            </dl>
+          </div>
         </section>
 
-        <p className="mt-12 text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Muscle Essentials. All rights reserved.
-        </p>
-        <hr className="my-10 border-border/50" />
-
-
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-b border-border/50 pb-8 text-center sm:flex-row sm:text-left">
+          <p className="text-sm text-muted-foreground">
+            © {year} Muscle Essentials. All rights reserved.
+          </p>
+          <nav
+            className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm"
+            aria-label="Footer legal"
+          >
+            {legalLinks.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="inline-flex items-center gap-0.5 text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {item.label}
+                <ArrowUpRight className="size-3 opacity-60" aria-hidden />
+              </Link>
+            ))}
+          </nav>
+        </div>
       </div>
+
       <GlowHero />
     </footer>
   )
