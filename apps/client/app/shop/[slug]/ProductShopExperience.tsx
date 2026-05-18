@@ -1,8 +1,7 @@
 "use client"
 
 import * as React from "react"
-import Link from "next/link"
-import { ChevronRight, PackageCheck, ShieldCheck, Truck } from "lucide-react"
+import { PackageCheck, ShieldCheck, Truck } from "lucide-react"
 
 import { ProductGallery } from "@/app/components/Shop/ProductGallery"
 import { ProductPurchasePanel } from "@/app/components/Shop/ProductPurchasePanel"
