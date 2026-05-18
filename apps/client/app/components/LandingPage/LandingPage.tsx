@@ -15,6 +15,8 @@ import { TestimonialsSection } from "./Sections/Testimonials"
 import { BrandCarousel } from "./Carousel/BrandCarousel"
 import { Footer } from "./Footer/Footer"
 import { getProducts, productQualifiesForMerchFlag, type ProductItem } from "@/lib/api"
+import { pageMobileBottom, pagePy } from "@/lib/page-layout"
+import { cn } from "@/lib/utils"
 
 function SectionBlockSkeleton({
   withCtaRow,
@@ -47,7 +49,7 @@ function SectionBlockSkeleton({
 export function LandingMainSkeleton() {
   return (
     <main
-      className="flex w-full flex-col gap-10 pt-4 pb-24 sm:gap-12 sm:pb-16"
+      className={cn("flex w-full flex-col gap-10 sm:gap-12", pagePy, pageMobileBottom)}
       aria-busy="true"
       aria-label="Loading page content"
     >
@@ -175,9 +177,9 @@ const LandingPage = () => {
 
   return (
     <div className="flex min-h-dvh flex-col bg-background">
-      <main className="flex w-full flex-1 flex-col pb-24 sm:pb-16">
+      <main className={cn("flex w-full flex-1 flex-col", pagePy, pageMobileBottom)}>
         <motion.div
-          className="py-6 pb-10 md:py-8 md:pb-14"
+          className="pb-10 md:pb-14"
           initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}

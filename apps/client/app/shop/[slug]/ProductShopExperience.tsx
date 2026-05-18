@@ -12,6 +12,7 @@ import {
   type ProductItem,
   type ProductReviewItem,
 } from "@/lib/api"
+import { pageMainClassName } from "@/lib/page-layout"
 
 import { ProductReviewsSection } from "../../components/Shop/ProductReviewsSection"
 
@@ -65,7 +66,7 @@ export function ProductShopExperience({ product, reviews }: ProductShopExperienc
   )
 
   return (
-    <main className="relative isolate mx-auto min-h-svh w-full max-w-7xl overflow-hidden px-4 py-6 text-foreground sm:px-6 sm:py-8 lg:px-10 lg:py-12">
+    <main className={pageMainClassName({ maxWidth: "7xl", className: "overflow-hidden" })}>
 
       <section className="grid gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)] lg:gap-10">
         <ProductGallery

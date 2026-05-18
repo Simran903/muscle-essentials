@@ -33,6 +33,7 @@ import {
   getAccessToken,
   setAccessToken,
 } from "@/lib/auth-storage"
+import { pageMainCenteredClassName, pageMainClassName } from "@/lib/page-layout"
 import { cn } from "@/lib/utils"
 
 import { AccountAddresses } from "../components/Account/AccountAddresses"
@@ -291,7 +292,7 @@ export default function AccountPage() {
     return (
       <div className="relative min-h-svh bg-background">
         <AccountBackground />
-        <main className="relative isolate mx-auto flex min-h-svh w-full max-w-lg flex-col justify-center px-4 py-16 sm:px-6">
+        <main className={pageMainCenteredClassName()}>
           <div className="rounded-3xl border border-border/50 bg-card/90 p-8 text-center shadow-xl backdrop-blur-md sm:p-10">
             <div className="mx-auto flex size-14 items-center justify-center rounded-2xl border border-border/60 bg-muted/30 ring-4 ring-muted/20">
               <Lock className="size-7 text-muted-foreground" />
@@ -321,7 +322,7 @@ export default function AccountPage() {
     return (
       <div className="relative min-h-svh bg-background">
         <AccountBackground />
-        <main className="relative isolate mx-auto w-full max-w-6xl px-4 pb-28 pt-8 sm:px-6 sm:pb-16 lg:px-10 lg:pt-10">
+        <main className={pageMainClassName()}>
           <Skeleton className="h-4 w-48 rounded-full" />
           <Skeleton className="mt-6 h-52 w-full rounded-3xl sm:h-48" />
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -355,10 +356,10 @@ export default function AccountPage() {
     <div className="relative min-h-svh bg-background">
       <AccountBackground />
 
-      <main className="relative isolate mx-auto w-full max-w-6xl px-4 pb-28 text-foreground sm:px-6 sm:pb-16 lg:px-10">
+      <main className={pageMainClassName()}>
 
         {/* Hero */}
-        <section className="relative mt-6 overflow-hidden rounded-3xl border border-border/50 bg-card/85 shadow-sm ring-1 ring-border/30 backdrop-blur-md sm:mt-8">
+        <section className="relative overflow-hidden rounded-3xl border border-border/50 bg-card/85 shadow-sm ring-1 ring-border/30 backdrop-blur-md">
           <div className="pointer-events-none absolute inset-0 rounded-3xl bg-linear-to-br from-primary/[0.07] via-transparent to-emerald-500/6" />
           <div className="relative flex flex-col gap-6 p-6 sm:flex-row sm:items-start sm:justify-between sm:p-8 lg:p-10">
             <div className="flex min-w-0 flex-1 items-start gap-4 sm:gap-5">

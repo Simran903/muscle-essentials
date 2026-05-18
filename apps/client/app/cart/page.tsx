@@ -26,11 +26,8 @@ import {
   type CartLineItem,
 } from "@/lib/api"
 import { getAccessToken } from "@/lib/auth-storage"
+import { pageMainCenteredClassName, pageMainClassName } from "@/lib/page-layout"
 import { cn } from "@/lib/utils"
-
-/** Clears fixed mobile tab bar in Navbar (`md:hidden`) + iOS home indicator. */
-const MOBILE_TAB_BAR_BOTTOM =
-  "max-md:pb-[max(7rem,calc(4.75rem+env(safe-area-inset-bottom,0px)))]"
 
 function formatInr(value: number | string) {
   return new Intl.NumberFormat("en-IN", {
@@ -193,12 +190,7 @@ function EmptyState({
   children?: React.ReactNode
 }) {
   return (
-    <main
-      className={cn(
-        "relative isolate mx-auto flex min-h-[calc(100svh-5rem)] max-w-lg flex-col items-center justify-center px-4 py-16 text-center sm:py-24",
-        MOBILE_TAB_BAR_BOTTOM,
-      )}
-    >
+    <main className={pageMainCenteredClassName()}>
       <div className="mb-6 flex size-20 items-center justify-center rounded-2xl border border-border/50 bg-muted/30 text-muted-foreground">
         <Icon className="size-9" strokeWidth={1.5} aria-hidden />
       </div>
@@ -308,12 +300,7 @@ export default function CartPage() {
 
   if (mode === "loading") {
     return (
-      <main
-        className={cn(
-          "relative isolate mx-auto min-h-svh w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-10",
-          MOBILE_TAB_BAR_BOTTOM,
-        )}
-      >
+      <main className={pageMainClassName()}>
         <Skeleton className="mb-6 h-5 w-64 rounded-full" />
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="space-y-2">
@@ -372,12 +359,7 @@ export default function CartPage() {
   const hasDiscount = discount > 0
 
   return (
-    <main
-      className={cn(
-        "relative isolate mx-auto min-h-svh w-full max-w-6xl overflow-hidden px-4 py-6 text-foreground sm:px-6 sm:py-8 lg:px-10 lg:py-12",
-        MOBILE_TAB_BAR_BOTTOM,
-      )}
-    >
+    <main className={pageMainClassName({ className: "overflow-hidden" })}>
 
       <header className="mb-10 flex flex-col gap-4 border-b border-border/50 pb-10 sm:flex-row sm:items-end sm:justify-between">
         <div>

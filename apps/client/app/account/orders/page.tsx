@@ -19,6 +19,7 @@ import {
   getAccessToken,
   setAccessToken,
 } from "@/lib/auth-storage"
+import { pageMainCenteredClassName, pageMainClassName } from "@/lib/page-layout"
 
 import { AccountBackground } from "../../components/Account/AccountBackground"
 import { AccountOrderCard } from "../../components/Account/AccountOrderCard"
@@ -92,7 +93,7 @@ export default function AccountOrdersPage() {
     return (
       <div className="relative min-h-svh bg-background">
         <AccountBackground />
-        <main className="relative isolate mx-auto flex min-h-svh w-full max-w-lg flex-col justify-center px-4 py-16 sm:px-6">
+        <main className={pageMainCenteredClassName()}>
           <div className="rounded-3xl border border-border/50 bg-card/90 p-8 text-center shadow-xl backdrop-blur-md sm:p-10">
             <div className="mx-auto flex size-14 items-center justify-center rounded-2xl border border-border/60 bg-muted/30 ring-4 ring-muted/20">
               <Lock className="size-7 text-muted-foreground" />
@@ -121,7 +122,7 @@ export default function AccountOrdersPage() {
     return (
       <div className="relative min-h-svh bg-background">
         <AccountBackground />
-        <main className="relative isolate mx-auto w-full max-w-6xl px-4 pb-28 pt-8 sm:px-6 sm:pb-16 lg:px-10 lg:pt-10">
+        <main className={pageMainClassName()}>
           <Skeleton className="h-4 w-64 rounded-full" />
           <Skeleton className="mt-8 h-10 w-48 rounded-lg" />
           <div className="mt-8 space-y-3">
@@ -137,9 +138,9 @@ export default function AccountOrdersPage() {
   return (
     <div className="relative min-h-svh bg-background">
       <AccountBackground />
-      <main className="relative isolate mx-auto w-full max-w-6xl px-4 pb-28 text-foreground sm:px-6 sm:pb-16 lg:px-10">
+      <main className={pageMainClassName()}>
 
-        <header className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <SectionLabel>Your purchases</SectionLabel>
             <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">

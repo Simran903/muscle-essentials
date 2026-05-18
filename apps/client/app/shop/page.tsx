@@ -12,6 +12,7 @@ import {
   getShopFilters,
   type ProductListResponse,
 } from "@/lib/api"
+import { pageMainClassName } from "@/lib/page-layout"
 import {
   SidebarInset,
   SidebarProvider,
@@ -354,7 +355,7 @@ function ShopPageContent() {
       />
 
       <SidebarInset className="overflow-hidden bg-transparent">
-        <main className="relative isolate mx-auto min-h-svh w-full px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
+        <main className={pageMainClassName({ maxWidth: false })}>
 
           <div className="mb-8 rounded-xl border border-border/60 bg-card/80 p-6 text-card-foreground shadow-none backdrop-blur-sm sm:mb-10 sm:flex sm:items-end sm:justify-between sm:p-8">
             <div className="min-w-0">
