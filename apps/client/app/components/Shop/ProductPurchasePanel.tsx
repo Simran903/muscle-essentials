@@ -29,8 +29,6 @@ export type PurchaseVariant = {
   isActive: boolean
 }
 
-const MAX_QUANTITY_PER_ADD = 5
-
 type ProductPurchasePanelProps = {
   productId: string
   productTitle: string
@@ -76,7 +74,7 @@ export function ProductPurchasePanel({
   const sizeList = React.useMemo(() => sortOptions(sizes), [sizes])
 
   const maxSelectable = React.useMemo(
-    () => (isInStock ? Math.min(MAX_QUANTITY_PER_ADD, Math.max(1, stockQuantity)) : 1),
+    () => (isInStock ? Math.max(1, stockQuantity) : 1),
     [isInStock, stockQuantity],
   )
 
@@ -272,11 +270,6 @@ export function ProductPurchasePanel({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-xs font-medium tracking-wide text-muted-foreground">
               Quantity
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {maxSelectable < MAX_QUANTITY_PER_ADD
-                ? `${maxSelectable} available`
-                : `Up to ${MAX_QUANTITY_PER_ADD} per add`}
             </p>
           </div>
           <div
