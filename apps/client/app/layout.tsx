@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Inter } from "next/font/google";
+import { CookieConsentBar } from "@/app/components/CookieConsentBar";
 import { Navbar } from "@/app/components/LandingPage/Navbar/Navbar";
 import { ThemeFloatingToggle } from "@/app/components/LandingPage/ThemeFloatingToggle";
 import { ThemeProvider } from "@/app/components/theme-provider";
@@ -41,6 +42,7 @@ export default function RootLayout({
           <Navbar />
           {children}
           <ThemeFloatingToggle />
+          <CookieConsentBar />
           <Toaster />
         </ThemeProvider>
       </body>

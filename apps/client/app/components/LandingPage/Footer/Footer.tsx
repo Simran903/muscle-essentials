@@ -61,7 +61,7 @@ const linkColumns: { title: string; links: { href: string; label: string }[] }[]
     links: [
       { href: "/legal/terms", label: "Terms" },
       { href: "/legal/privacy", label: "Privacy" },
-      { href: "/legal/cookies", label: "Cookies" },
+      { href: "/cookies", label: "Cookies" },
       { href: "/legal/refunds", label: "Refunds" },
     ],
   },
