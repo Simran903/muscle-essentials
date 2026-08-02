@@ -94,7 +94,7 @@ export default function AccountOrdersPage() {
       <div className="relative min-h-svh bg-background">
         <AccountBackground />
         <main className={pageMainCenteredClassName()}>
-          <div className="rounded-3xl border border-border/50 bg-card/90 p-8 text-center shadow-xl backdrop-blur-md sm:p-10">
+          <div className="rounded-2xl border border-border/20 bg-card/60 p-8 text-center shadow-sm backdrop-blur-sm sm:p-10">
             <div className="mx-auto flex size-14 items-center justify-center rounded-2xl border border-border/60 bg-muted/30 ring-4 ring-muted/20">
               <Lock className="size-7 text-muted-foreground" />
             </div>
@@ -105,10 +105,10 @@ export default function AccountOrdersPage() {
               Order history is available after you sign in from the navbar.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-              <Button asChild size="lg" className="h-11 rounded-full px-8 shadow-none">
+              <Button asChild size="lg" className="h-11 rounded-xl px-8 shadow-sm">
                 <Link href="/shop">Browse shop</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="h-11 rounded-full px-8">
+              <Button asChild size="lg" variant="outline" className="h-11 rounded-xl px-8">
                 <Link href="/account">Account</Link>
               </Button>
             </div>
@@ -168,7 +168,7 @@ export default function AccountOrdersPage() {
             <p className="mt-2 text-sm text-muted-foreground">
               When you check out, your orders will be listed here.
             </p>
-            <Button asChild className="mt-6 rounded-full px-8">
+            <Button asChild className="mt-6 rounded-xl px-8 shadow-sm">
               <Link href="/shop">Shop supplements</Link>
             </Button>
           </div>

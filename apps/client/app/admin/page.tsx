@@ -80,7 +80,7 @@ export default function AdminHomePage() {
           <Link
             key={t.href}
             href={t.href}
-            className={`${adminCard} transition-colors hover:border-border hover:bg-muted/15`}
+            className={`${adminCard} transition-all hover:border-border hover:bg-muted/20 hover:shadow-md`}
           >
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{t.label}</p>
             <p className="mt-2 text-3xl font-semibold tabular-nums text-foreground">

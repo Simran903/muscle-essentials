@@ -100,10 +100,10 @@ export function ShopSidebar({
 }: ShopSidebarProps) {
   const { setOpenMobile } = useSidebar()
   const switchClass = (enabled: boolean) =>
-    `relative inline-flex h-6 w-10 items-center rounded-md border transition-colors ${
+    `relative inline-flex h-6 w-10 cursor-pointer items-center rounded-full border transition-colors ${
       enabled
-        ? "border-primary/40 bg-primary/15"
-        : "border-border/70 bg-muted/40"
+        ? "border-primary/40 bg-primary/20"
+        : "border-border/60 bg-muted/40"
     }`
   const selectedBrandLabels = React.useMemo(
     () =>
@@ -152,7 +152,7 @@ export function ShopSidebar({
   return (
     <Sidebar variant="inset" collapsible="offcanvas">
       <SidebarHeader>
-        <div className="flex items-center justify-between border-b border-border/50 px-2 pb-3 pt-1">
+        <div className="flex items-center justify-between border-b border-border/30 px-3 pb-3 pt-1">
           <p className="text-sm font-semibold tracking-wide text-sidebar-foreground">Shop Controls</p>
           <Button
             type="button"
@@ -175,12 +175,12 @@ export function ShopSidebar({
         ) : (
           <>
             <SidebarGroup>
-              <SidebarGroupLabel className="mt-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              <SidebarGroupLabel className="mt-4 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
                 Filters
               </SidebarGroupLabel>
-              <SidebarGroupContent className="space-y-3 px-2">
+              <SidebarGroupContent className="space-y-3 px-3">
                 <div className="space-y-1">
-                  <label className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                  <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Brand
                   </label>
                   <Dropdown
@@ -197,7 +197,7 @@ export function ShopSidebar({
                     options={brandOptions}
                   />
                   {selectedBrandSlugs.length ? (
-                    <div className="flex flex-wrap gap-2 pt-4">
+                    <div className="flex flex-wrap gap-1.5 pt-2">
                       {selectedBrandSlugs.map((slug, index) => (
                         <Pill
                           key={slug}
@@ -215,7 +215,7 @@ export function ShopSidebar({
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                  <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Category
                   </label>
                   <Dropdown
@@ -232,7 +232,7 @@ export function ShopSidebar({
                     options={categoryOptions}
                   />
                   {selectedCategorySlugs.length ? (
-                    <div className="flex flex-wrap gap-2 pt-4">
+                    <div className="flex flex-wrap gap-1.5 pt-2">
                       {selectedCategorySlugs.map((slug, index) => (
                         <Pill
                           key={slug}
@@ -250,7 +250,7 @@ export function ShopSidebar({
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                  <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Flavour
                   </label>
                   <Dropdown
@@ -267,7 +267,7 @@ export function ShopSidebar({
                     options={flavourOptions}
                   />
                   {selectedFlavours.length ? (
-                    <div className="flex flex-wrap gap-2 pt-4">
+                    <div className="flex flex-wrap gap-1.5 pt-2">
                       {selectedFlavours.map((value, index) => (
                         <Pill
                           key={value}
@@ -285,7 +285,7 @@ export function ShopSidebar({
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                  <label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Diet type
                   </label>
                   <Dropdown
@@ -301,7 +301,7 @@ export function ShopSidebar({
                     ]}
                   />
                   {dietFilter !== "all" ? (
-                    <div className="flex flex-wrap gap-2 pt-2">
+                    <div className="flex flex-wrap gap-1.5 pt-1">
                       <Pill
                         label={dietFilterLabel}
                         onRemove={() => {
@@ -313,7 +313,7 @@ export function ShopSidebar({
                   ) : null}
                 </div>
 
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center justify-between gap-2 pt-1">
                   <span className="text-sm text-foreground">Featured only</span>
                   <button
                     type="button"
@@ -326,7 +326,7 @@ export function ShopSidebar({
                     className={switchClass(featuredOnly)}
                   >
                     <span
-                      className={`inline-block h-4 w-4 transform rounded-sm bg-background shadow-sm transition-transform ${
+                      className={`inline-block h-4 w-4 transform rounded-full bg-background shadow-sm transition-transform ${
                         featuredOnly ? "translate-x-[1.15rem]" : "translate-x-1"
                       }`}
                     />
@@ -343,7 +343,7 @@ export function ShopSidebar({
                   />
                 ) : null}
 
-                <div className="flex items-center justify-between gap-2 pt-2">
+                <div className="flex items-center justify-between gap-2 pt-1">
                   <span className="text-sm text-foreground">Bestseller only</span>
                   <button
                     type="button"
@@ -356,7 +356,7 @@ export function ShopSidebar({
                     className={switchClass(bestsellerOnly)}
                   >
                     <span
-                      className={`inline-block h-4 w-4 transform rounded-sm bg-background shadow-sm transition-transform ${
+                      className={`inline-block h-4 w-4 transform rounded-full bg-background shadow-sm transition-transform ${
                         bestsellerOnly ? "translate-x-[1.15rem]" : "translate-x-1"
                       }`}
                     />
@@ -373,7 +373,7 @@ export function ShopSidebar({
                   />
                 ) : null}
 
-                <div className="flex items-center justify-between gap-2 pt-2">
+                <div className="flex items-center justify-between gap-2 pt-1">
                   <span className="text-sm text-foreground">Deal of the day only</span>
                   <button
                     type="button"
@@ -386,7 +386,7 @@ export function ShopSidebar({
                     className={switchClass(dealOfTheDayOnly)}
                   >
                     <span
-                      className={`inline-block h-4 w-4 transform rounded-sm bg-background shadow-sm transition-transform ${
+                      className={`inline-block h-4 w-4 transform rounded-full bg-background shadow-sm transition-transform ${
                         dealOfTheDayOnly ? "translate-x-[1.15rem]" : "translate-x-1"
                       }`}
                     />
@@ -403,7 +403,7 @@ export function ShopSidebar({
                   />
                 ) : null}
 
-                <div className="flex items-center justify-between gap-2 pt-2">
+                <div className="flex items-center justify-between gap-2 pt-1">
                   <span className="text-sm text-foreground">Combo only</span>
                   <button
                     type="button"
@@ -416,7 +416,7 @@ export function ShopSidebar({
                     className={switchClass(comboOnly)}
                   >
                     <span
-                      className={`inline-block h-4 w-4 transform rounded-sm bg-background shadow-sm transition-transform ${
+                      className={`inline-block h-4 w-4 transform rounded-full bg-background shadow-sm transition-transform ${
                         comboOnly ? "translate-x-[1.15rem]" : "translate-x-1"
                       }`}
                     />
@@ -436,10 +436,10 @@ export function ShopSidebar({
             </SidebarGroup>
 
             <SidebarGroup>
-              <SidebarGroupLabel className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              <SidebarGroupLabel className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
                 Sort
               </SidebarGroupLabel>
-              <SidebarGroupContent className="space-y-2 px-2">
+              <SidebarGroupContent className="space-y-2 px-3">
                 <Dropdown
                   value={sortBy}
                   onChange={(value) => onSortByChange(value as ShopSortBy)}
@@ -454,7 +454,7 @@ export function ShopSidebar({
                   ]}
                 />
                 {sortBy !== "default" ? (
-                  <div className="flex flex-wrap gap-2 pt-2">
+                  <div className="flex flex-wrap gap-1.5 pt-1">
                     <Pill
                       label={sortLabel}
                       onRemove={() => {
@@ -468,13 +468,13 @@ export function ShopSidebar({
             </SidebarGroup>
 
             <SidebarGroup>
-              <SidebarGroupContent className="px-2">
+              <SidebarGroupContent className="px-3">
                 <Button
                   type="button"
                   variant="default"
                   size="lg"
                   onClick={onResetFilters}
-                  className="w-full rounded-md"
+                  className="w-full rounded-xl"
                 >
                   Clear Filters
                 </Button>

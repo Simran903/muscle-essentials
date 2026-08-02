@@ -293,7 +293,7 @@ export default function AccountPage() {
       <div className="relative min-h-svh bg-background">
         <AccountBackground />
         <main className={pageMainCenteredClassName()}>
-          <div className="rounded-3xl border border-border/50 bg-card/90 p-8 text-center shadow-xl backdrop-blur-md sm:p-10">
+          <div className="rounded-2xl border border-border/20 bg-card/60 p-8 text-center shadow-sm backdrop-blur-sm sm:p-10">
             <div className="mx-auto flex size-14 items-center justify-center rounded-2xl border border-border/60 bg-muted/30 ring-4 ring-muted/20">
               <Lock className="size-7 text-muted-foreground" />
             </div>
@@ -305,10 +305,10 @@ export default function AccountPage() {
               after you log in from the navbar.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-              <Button asChild size="lg" className="h-11 rounded-full px-8 shadow-none">
+              <Button asChild size="lg" className="h-11 rounded-xl px-8 shadow-sm">
                 <Link href="/shop">Browse shop</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="h-11 rounded-full px-8">
+              <Button asChild size="lg" variant="outline" className="h-11 rounded-xl px-8">
                 <Link href="/">Back home</Link>
               </Button>
             </div>
@@ -359,8 +359,8 @@ export default function AccountPage() {
       <main className={pageMainClassName()}>
 
         {/* Hero */}
-        <section className="relative overflow-hidden rounded-3xl border border-border/50 bg-card/85 shadow-sm ring-1 ring-border/30 backdrop-blur-md">
-          <div className="pointer-events-none absolute inset-0 rounded-3xl bg-linear-to-br from-primary/[0.07] via-transparent to-emerald-500/6" />
+        <section className="relative overflow-hidden rounded-2xl border border-border/20 bg-card/60 shadow-sm ring-1 ring-border/20 backdrop-blur-sm">
+          <div className="pointer-events-none absolute inset-0 rounded-2xl bg-linear-to-br from-primary/[0.07] via-transparent to-emerald-500/6" />
           <div className="relative flex flex-col gap-6 p-6 sm:flex-row sm:items-start sm:justify-between sm:p-8 lg:p-10">
             <div className="flex min-w-0 flex-1 items-start gap-4 sm:gap-5">
               <div

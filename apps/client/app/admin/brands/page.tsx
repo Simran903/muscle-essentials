@@ -123,7 +123,7 @@ export default function AdminBrandsPage() {
           />
         </div>
         <div className="sm:col-span-3">
-          <Button type="submit" disabled={creating} className="rounded-md shadow-none">
+          <Button type="submit" disabled={creating} className="rounded-lg shadow-none">
             {creating ? "Creating…" : "Create brand"}
           </Button>
         </div>
@@ -165,7 +165,7 @@ export default function AdminBrandsPage() {
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="h-8 rounded-md text-xs text-destructive"
+                        className="h-8 rounded-lg text-xs text-destructive"
                         onClick={() => void deactivate(b)}
                       >
                         Deactivate

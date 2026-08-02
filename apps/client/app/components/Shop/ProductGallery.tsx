@@ -49,12 +49,12 @@ export function ProductGallery({
 
   return (
     <div className="space-y-4">
-      <div className="overflow-hidden rounded-2xl border border-border/50 bg-card/80 p-2 shadow-none sm:p-3">
+      <div className="overflow-hidden rounded-2xl border border-border/30 bg-card/60 p-2 shadow-sm backdrop-blur-sm sm:p-3">
         <button
           type="button"
           onClick={() => selectedImage && setIsViewerOpen(true)}
           disabled={!selectedImage}
-          className="relative aspect-square w-full overflow-hidden rounded-xl bg-muted/25 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/25 disabled:cursor-default dark:focus-visible:ring-cyan-400/30"
+          className="relative aspect-square w-full overflow-hidden rounded-xl bg-muted/20 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25 disabled:cursor-default"
         >
           {selectedImage ? (
             <Image
@@ -63,7 +63,7 @@ export function ProductGallery({
               alt={selectedImage.altText ?? productTitle}
               fill
               priority
-              className="object-cover"
+              className="object-cover transition-transform duration-500 hover:scale-105"
               sizes="(max-width: 1024px) 100vw, 55vw"
             />
           ) : (
@@ -73,7 +73,7 @@ export function ProductGallery({
           )}
 
           {isDealOfTheDay && (
-            <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-cyan-600 px-2.5 py-1 text-xs font-medium text-white shadow-sm dark:bg-cyan-500 dark:text-cyan-950">
+            <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground shadow-sm">
               <Zap className="size-3.5" />
               Deal of the Day
             </span>
@@ -93,10 +93,10 @@ export function ProductGallery({
                 aria-label={`View ${image.altText ?? productTitle}`}
                 aria-pressed={isSelected}
                 onClick={() => setSelectedImageId(image.id)}
-                className={`relative aspect-square overflow-hidden rounded-xl border bg-card shadow-none transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/25 dark:focus-visible:ring-cyan-400/30 ${
+                className={`relative aspect-square overflow-hidden rounded-xl border bg-card shadow-none transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25 ${
                   isSelected
-                    ? "border-cyan-500/50 ring-1 ring-cyan-500/20 dark:border-cyan-400/55 dark:ring-cyan-400/25"
-                    : "border-border/60 hover:border-cyan-500/30 dark:hover:border-cyan-400/35"
+                    ? "border-primary/50 ring-1 ring-primary/20 shadow-elevated"
+                    : "border-border/40 hover:border-primary/30 hover:shadow-sm"
                 }`}
               >
                 <Image
@@ -117,14 +117,14 @@ export function ProductGallery({
           role="dialog"
           aria-modal="true"
           aria-label={`Full view of ${selectedImage.altText ?? productTitle}`}
-          className="fixed inset-0 z-120 flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-120 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md"
           onClick={() => setIsViewerOpen(false)}
         >
           <button
             type="button"
             aria-label="Close full image view"
             onClick={() => setIsViewerOpen(false)}
-            className="absolute right-4 top-4 z-10 inline-flex size-10 items-center justify-center rounded-full bg-white/12 text-white transition hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+            className="absolute right-4 top-4 z-10 inline-flex size-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
           >
             <X className="size-5" />
           </button>

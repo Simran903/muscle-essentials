@@ -51,7 +51,7 @@ export const FeaturedSection = ({ products, isLoading = false }: FeaturedSection
                     imageSrc={product.images.find((image) => image.isPrimary)?.url ?? product.images[0]?.url ?? "/images/placeholder.jpg"}
                     imageAlt={product.images.find((image) => image.isPrimary)?.altText ?? product.title}
                     title={product.title}
-                    subtitle={product.brand?.name ?? "Muscle Essentials"}
+                    subtitle={product.brand?.name ?? "GEN1"}
                     price={Number(product.price)}
                     priceFrom={
                       product.maxPrice != null &&

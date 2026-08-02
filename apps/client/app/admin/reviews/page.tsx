@@ -55,7 +55,7 @@ export default function AdminReviewsPage() {
               type="button"
               size="sm"
               variant={filter === f ? "default" : "outline"}
-              className="rounded-md"
+              className="rounded-lg"
               onClick={() => setFilter(f)}
             >
               {f ?? "All"}
@@ -121,7 +121,7 @@ export default function AdminReviewsPage() {
                             type="button"
                             size="sm"
                             variant="outline"
-                            className="h-8 rounded-md text-xs"
+                            className="h-8 rounded-lg text-xs"
                             onClick={() => void moderate(r, "APPROVED")}
                           >
                             Approve
@@ -130,7 +130,7 @@ export default function AdminReviewsPage() {
                             type="button"
                             size="sm"
                             variant="ghost"
-                            className="h-8 rounded-md text-xs text-destructive"
+                            className="h-8 rounded-lg text-xs text-destructive"
                             onClick={() => void moderate(r, "REJECTED")}
                           >
                             Reject

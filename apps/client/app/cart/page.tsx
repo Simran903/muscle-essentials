@@ -288,10 +288,10 @@ export default function CartPage() {
         title="Sign in to see your cart"
         description="Your bag is tied to your account. Log in from the navbar, then come back here to review items and checkout."
       >
-        <Button asChild size="lg" className="rounded-full px-8">
-          <Link href="/shop">Browse shop</Link>
-        </Button>
-        <Button asChild size="lg" variant="outline" className="rounded-full px-8">
+            <Button asChild size="lg" className="rounded-xl px-8">
+              <Link href="/shop">Browse shop</Link>
+            </Button>
+        <Button asChild size="lg" variant="outline" className="rounded-xl px-8">
           <Link href="/">Back to home</Link>
         </Button>
       </EmptyState>
@@ -327,10 +327,10 @@ export default function CartPage() {
         title="We couldn’t load your cart"
         description={loadError ?? "Something went wrong. Check your connection and try again."}
       >
-        <Button type="button" size="lg" className="rounded-full px-8" onClick={() => void load()}>
+        <Button type="button" size="lg" className="rounded-xl px-8" onClick={() => void load()}>
           Try again
         </Button>
-        <Button asChild size="lg" variant="outline" className="rounded-full px-8">
+        <Button asChild size="lg" variant="outline" className="rounded-xl px-8">
           <Link href="/shop">Browse shop</Link>
         </Button>
       </EmptyState>
@@ -344,7 +344,7 @@ export default function CartPage() {
         title="Your cart is empty"
         description="Looks like you haven’t added anything yet. Explore the shop for protein, stacks, and recovery essentials."
       >
-        <Button asChild size="lg" className="rounded-full px-8">
+        <Button asChild size="lg" className="rounded-xl px-8">
           <Link href="/shop">Continue shopping</Link>
         </Button>
       </EmptyState>
@@ -363,7 +363,7 @@ export default function CartPage() {
 
       <header className="mb-10 flex flex-col gap-4 border-b border-border/50 pb-10 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-cyan-700/85 dark:text-cyan-400/75">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary/80 dark:text-primary/70">
             Shopping bag
           </p>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
@@ -373,9 +373,9 @@ export default function CartPage() {
             {itemCount} {itemCount === 1 ? "item" : "items"} · Review quantities before checkout.
           </p>
         </div>
-        <Button asChild variant="outline" className="w-fit shrink-0 rounded-full">
-          <Link href="/shop">Continue shopping</Link>
-        </Button>
+          <Button asChild variant="outline" className="w-fit shrink-0 rounded-xl">
+            <Link href="/shop">Continue shopping</Link>
+          </Button>
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_22rem] lg:items-start lg:gap-10">
@@ -392,7 +392,7 @@ export default function CartPage() {
         </ul>
 
         <aside className="lg:sticky lg:top-24">
-          <div className="rounded-2xl border border-border/50 bg-card/80 p-6 shadow-none backdrop-blur-sm">
+          <div className="rounded-2xl border border-border/20 bg-card/50 p-6 shadow-sm backdrop-blur-sm">
             <h2 className="text-lg font-semibold tracking-tight text-foreground">Order summary</h2>
             <div className="mt-6 space-y-3 text-sm">
               <div className="flex justify-between gap-4">
@@ -432,11 +432,11 @@ export default function CartPage() {
 
             <div className="mt-6 space-y-3 border-t border-border/50 pt-6 text-sm text-muted-foreground">
               <div className="flex items-center gap-3">
-                <Truck className="size-5 shrink-0 text-cyan-600/80 dark:text-cyan-400/80" />
+                <Truck className="size-5 shrink-0 text-muted-foreground/70" />
                 Fast delivery across India
               </div>
               <div className="flex items-center gap-3">
-                <Package className="size-5 shrink-0 text-cyan-600/80 dark:text-cyan-400/80" />
+                <Package className="size-5 shrink-0 text-muted-foreground/70" />
                 Genuine products, packed with care
               </div>
             </div>

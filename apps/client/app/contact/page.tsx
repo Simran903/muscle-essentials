@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils"
 import { AccountBackground } from "../components/Account/AccountBackground"
 
 const CONTACT_EMAIL = "essentialsmuscle@gmail.com"
-const EMAIL_SUBJECT = "Muscle Essentials — Question"
+const EMAIL_SUBJECT = "GEN1 — Question"
 const GMAIL_COMPOSE_HREF = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CONTACT_EMAIL)}&su=${encodeURIComponent(EMAIL_SUBJECT)}`
 const CONTACT_PHONE_DISPLAY = "+91 92895 11600"
 const CONTACT_PHONE_TEL = `tel:${CONTACT_PHONE_DISPLAY.replace(/\s/g, "")}`
@@ -39,7 +39,7 @@ const InstagramDmQr = () => {
 
   if (broken) {
     return (
-      <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-border/70 bg-muted/20 px-6 py-12 text-center">
+      <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-border/40 bg-muted/20 px-6 py-12 text-center">
         <MessageCircle className="size-12 text-muted-foreground" aria-hidden />
         <p className="max-w-xs text-sm text-muted-foreground">
           The QR image is not available right now. Tap below to open Instagram and send us a DM.
@@ -64,7 +64,7 @@ const InstagramDmQr = () => {
       >
         <Image
           src={INSTAGRAM_QR_SRC}
-          alt="Scan to open Instagram and send a DM to Muscle Essentials"
+          alt="Scan to open Instagram and send a DM to GEN1"
           width={220}
           height={220}
           className="size-[220px] rounded-xl object-cover"
@@ -112,7 +112,7 @@ const ContactPage = () => {
         <header className="max-w-2xl pb-10">
           <SectionLabel>We are here to help</SectionLabel>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            Contact Muscle Essentials
+            Contact GEN1
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
             Questions about products, your order, or shipping? Reach us by phone, email, or
@@ -134,7 +134,7 @@ const ContactPage = () => {
             </div>
             <div className="space-y-4 p-5 sm:p-6">
               <div className="flex items-start gap-4 rounded-xl border border-border/50 bg-background/60 p-4">
-                <span className="mt-0.5 inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-primary/25 bg-primary/10 text-primary">
+                <span className="mt-0.5 inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/8 text-primary">
                   <Mail className="size-5" aria-hidden />
                 </span>
                 <div className="min-w-0 flex-1">
@@ -167,7 +167,7 @@ const ContactPage = () => {
                 </Button>
               </div>
               <div className="flex items-start gap-4 rounded-xl border border-border/50 bg-background/60 p-4">
-                <span className="mt-0.5 inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
+                <span className="mt-0.5 inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/8 text-emerald-700 dark:text-emerald-300">
                   <Phone className="size-5" aria-hidden />
                 </span>
                 <div className="min-w-0 flex-1">

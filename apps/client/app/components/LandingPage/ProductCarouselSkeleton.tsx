@@ -15,7 +15,6 @@ type ProductCarouselSkeletonProps = {
   className?: string
 }
 
-/** Matches product carousel slide widths (Card rail) while landing API data loads. */
 export function ProductCarouselSkeleton({ className }: ProductCarouselSkeletonProps) {
   return (
     <div aria-busy="true" aria-label="Loading products" className={className}>

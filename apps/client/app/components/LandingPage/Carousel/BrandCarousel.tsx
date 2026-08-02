@@ -3,15 +3,12 @@
 import React from "react"
 import { motion } from "motion/react"
 import Image from "next/image"
-// import { SectionHeading } from "@/app/components/Common/SectionHeading"
 
 import {
   type CarouselApi,
   Carousel,
   CarouselContent,
   CarouselItem,
-  // CarouselNext,
-  // CarouselPrevious,
 } from "@/app/components/ui/carousel"
 
 const popularBrands = [
@@ -58,7 +55,6 @@ export function BrandCarousel() {
       viewport={{ once: true, amount: 0.3 }}
       className="mx-auto w-full max-w-360 px-5 sm:px-8"
     >
-      {/* <SectionHeading title="POPULAR BRANDS" /> */}
       <Carousel
         setApi={setApi}
         opts={{ align: "start", loop: true }}
@@ -72,7 +68,7 @@ export function BrandCarousel() {
               key={brand.name}
               className="basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/6"
             >
-              <div className="flex h-18 items-center justify-center rounded-2xl border border-border/50 bg-card/60 px-3 shadow-none transition-colors hover:border-cyan-500/20 hover:bg-cyan-500/[0.04] dark:hover:border-cyan-400/25">
+              <div className="flex h-18 items-center justify-center rounded-2xl border border-border/30 bg-card/50 px-3 shadow-sm transition-all hover:border-primary/20 hover:bg-primary/[0.03] hover:shadow-glass">
                 <Image
                   src={brand.logoSrc}
                   alt={brand.name}
@@ -84,8 +80,6 @@ export function BrandCarousel() {
             </CarouselItem>
           ))}
         </CarouselContent>
-        {/* <CarouselPrevious />
-        <CarouselNext /> */}
       </Carousel>
     </motion.section>
   )

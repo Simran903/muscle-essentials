@@ -103,7 +103,7 @@ export default function AdminCategoriesPage() {
           </label>
           <input id="c-name" className={adminInput} value={name} onChange={(e) => setName(e.target.value)} required />
         </div>
-        <Button type="submit" disabled={creating} className="rounded-md shadow-none">
+        <Button type="submit" disabled={creating} className="rounded-lg shadow-none">
           {creating ? "Creating…" : "Create"}
         </Button>
       </form>
@@ -144,7 +144,7 @@ export default function AdminCategoriesPage() {
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="h-8 rounded-md text-xs text-destructive"
+                        className="h-8 rounded-lg text-xs text-destructive"
                         onClick={() => void deactivate(c)}
                       >
                         Deactivate

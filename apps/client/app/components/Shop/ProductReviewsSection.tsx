@@ -8,7 +8,6 @@ import type { ProductReviewItem } from "@/lib/api"
 
 import { ProductReviewForm } from "./ProductReviewForm"
 
-/** Shown only in development when the API returns no reviews, so the PDP layout can be previewed. */
 const DEMO_REVIEWS: ProductReviewItem[] = [
   {
     id: "demo-1",
@@ -47,7 +46,6 @@ const DEMO_REVIEWS: ProductReviewItem[] = [
 
 const MONTHS_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] as const
 
-/** UTC-based label so SSR and the browser always match (avoids hydration issues from `toLocaleDateString`). */
 function formatReviewDate(iso: string): string {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return iso
@@ -88,7 +86,6 @@ type ProductReviewsSectionProps = {
   reviews: ProductReviewItem[]
   productHasFlavours: boolean
   productHasSizes: boolean
-  /** Variant id that the PDP picker resolved to, or null while the user is still choosing. */
   selectedVariantId: string | null
   selectedFlavourLabel: string
   selectedSizeLabel: string
@@ -113,9 +110,6 @@ export function ProductReviewsSection({
   const variantResolved =
     flavourResolved && sizeResolved && selectedVariantId !== null
 
-  // When the picker has resolved to a real variant id we narrow to that
-  // variant's reviews. Until then (or when the dev demo is on) we keep the
-  // full list so first paint isn't empty.
   const displayReviews = React.useMemo(() => {
     if (showingDevDemo || !variantResolved) return allReviews
     return allReviews.filter((r) => r.variantId === selectedVariantId)
@@ -130,8 +124,6 @@ export function ProductReviewsSection({
   const selectedBits = [selectedFlavourLabel, selectedSizeLabel].filter(Boolean)
   const variantSummary = selectedBits.length ? selectedBits.join(" · ") : null
 
-  // Render the per-review variant chip only when reviews vary across variants
-  // (avoids visual noise on products with a single variant).
   const showVariantChip = React.useMemo(() => {
     const seen = new Set<string>()
     for (const r of allReviews) {
@@ -143,9 +135,9 @@ export function ProductReviewsSection({
   }, [allReviews])
 
   return (
-    <section className="mt-10 rounded-2xl border border-border/50 bg-card/80 p-6 shadow-none backdrop-blur-sm sm:p-8 lg:p-10">
+    <section className="mt-10 rounded-2xl border border-border/20 bg-card/50 p-6 shadow-sm backdrop-blur-sm sm:p-8 lg:p-10">
       {showingDevDemo ? (
-        <p className="mb-6 rounded-lg border border-dashed border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-950 dark:border-amber-400/35 dark:bg-amber-400/10 dark:text-amber-100">
+        <p className="mb-6 rounded-lg border border-dashed border-amber-500/30 bg-amber-500/8 px-4 py-3 text-sm text-amber-900 dark:border-amber-400/25 dark:bg-amber-400/8 dark:text-amber-200">
           <span className="font-medium">Development preview:</span> sample reviews are shown because this product has
           none in the database. Production visitors only see real approved reviews.
         </p>
@@ -187,7 +179,6 @@ export function ProductReviewsSection({
               variant="outline"
               size="lg"
               onClick={() => setIsWriting(true)}
-              className="rounded-md"
             >
               <PenSquare className="size-4" />
               Write a review
@@ -223,7 +214,7 @@ export function ProductReviewsSection({
             return (
               <li
                 key={review.id}
-                className="border-b border-border/40 pb-6 last:border-0 last:pb-0"
+                className="border-b border-border/30 pb-6 last:border-0 last:pb-0"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="space-y-2">
@@ -247,7 +238,7 @@ export function ProductReviewsSection({
                 <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                   <span>— {reviewerLabel(review)}</span>
                   {showVariantChip && bits.length > 0 ? (
-                    <span className="inline-flex items-center rounded-full border border-border/60 bg-muted/40 px-2 py-0.5 text-[0.7rem] font-medium text-muted-foreground">
+                    <span className="inline-flex items-center rounded-full border border-border/40 bg-muted/30 px-2 py-0.5 text-[0.7rem] font-medium text-muted-foreground">
                       {bits.join(" · ")}
                     </span>
                   ) : null}

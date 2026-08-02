@@ -115,7 +115,7 @@ export default function NewProductPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center gap-3">
-        <Button asChild variant="outline" size="sm" className="rounded-md">
+        <Button asChild variant="outline" size="sm" className="rounded-lg">
           <Link href="/admin/products">← Products</Link>
         </Button>
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">New product</h1>
@@ -254,7 +254,7 @@ export default function NewProductPage() {
                 type="button"
                 variant="outline"
                 size="sm"
-                className="rounded-md"
+                className="rounded-lg"
                 onClick={() => setSizeRows(sizeRows.filter((_, j) => j !== i))}
               >
                 Remove
@@ -265,7 +265,7 @@ export default function NewProductPage() {
             type="button"
             variant="outline"
             size="sm"
-            className="rounded-md"
+            className="rounded-lg"
             onClick={() => setSizeRows([...sizeRows, { label: "", price: "", costPrice: "" }])}
           >
             Add size
@@ -331,10 +331,10 @@ export default function NewProductPage() {
         </div>
 
         <div className="flex gap-3 border-t border-border/50 pt-4">
-          <Button type="submit" disabled={saving} className="rounded-md shadow-none">
+          <Button type="submit" disabled={saving} className="rounded-lg shadow-none">
             {saving ? "Saving…" : "Create product"}
           </Button>
-          <Button asChild type="button" variant="outline" className="rounded-md">
+          <Button asChild type="button" variant="outline" className="rounded-lg">
             <Link href="/admin/products">Cancel</Link>
           </Button>
         </div>

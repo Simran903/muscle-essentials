@@ -17,7 +17,7 @@ export function DietTypeSymbol({ dietType, size = 18, className }: DietTypeSymbo
     return (
       <span
         className={cn(
-          "inline-flex shrink-0 items-center justify-center rounded-[1px] border-[2.5px] border-[#138808] bg-white shadow-sm dark:bg-white",
+          "inline-flex shrink-0 items-center justify-center rounded-sm border-[2.5px] border-emerald-600 bg-white dark:bg-white",
           className,
         )}
         style={boxStyle}
@@ -25,7 +25,7 @@ export function DietTypeSymbol({ dietType, size = 18, className }: DietTypeSymbo
         aria-label="Vegetarian"
       >
         <span
-          className="shrink-0 rounded-full bg-[#138808]"
+          className="shrink-0 rounded-full bg-emerald-600"
           style={{ width: dot, height: dot }}
         />
       </span>
@@ -35,7 +35,7 @@ export function DietTypeSymbol({ dietType, size = 18, className }: DietTypeSymbo
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center justify-center rounded-[1px] border-[2.5px] border-[#b71c1c] bg-white shadow-sm dark:bg-white",
+        "inline-flex shrink-0 items-center justify-center rounded-sm border-[2.5px] border-red-700 bg-white dark:bg-white",
         className,
       )}
       style={boxStyle}
@@ -43,7 +43,7 @@ export function DietTypeSymbol({ dietType, size = 18, className }: DietTypeSymbo
       aria-label="Non-vegetarian"
     >
       <span
-        className="shrink-0 rounded-full bg-[#b71c1c]"
+        className="shrink-0 rounded-full bg-red-700"
         style={{ width: dot, height: dot }}
       />
     </span>

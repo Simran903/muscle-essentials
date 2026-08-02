@@ -15,17 +15,11 @@ const TITLE_MAX = 200
 
 type ProductReviewFormProps = {
   productSlug: string
-  /** True when the product has flavours and the reviewer must scope to one. */
   requiresFlavour?: boolean
-  /** True when the product has sizes and the reviewer must scope to one. */
   requiresSize?: boolean
-  /** Variant id resolved by the PDP picker, or null while the user is still choosing. */
   variantId?: string | null
-  /** Currently selected flavour from the purchase panel (empty until picked). */
   flavourLabel?: string
-  /** Currently selected size from the purchase panel (empty until picked). */
   sizeLabel?: string
-  /** Called after a successful submission so the parent can collapse the form, etc. */
   onSubmitted?: () => void
   onCancel?: () => void
 }
@@ -60,13 +54,12 @@ function StarPicker({
             onMouseEnter={() => setHover(n)}
             onFocus={() => setHover(n)}
             onBlur={() => setHover(null)}
-            className="rounded-md p-1 text-amber-500 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-amber-500/40 dark:text-amber-400"
+            className="rounded-lg p-1 text-amber-500 transition-all outline-none focus-visible:ring-2 focus-visible:ring-amber-500/40 dark:text-amber-400"
           >
             <Star
               className={cn(
-                "size-7 shrink-0 transition-transform",
-                filled ? "fill-current" : "fill-transparent opacity-40",
-                value === n && "scale-105",
+                "size-7 shrink-0 transition-all duration-200",
+                filled ? "fill-current scale-110" : "fill-transparent opacity-40",
               )}
               strokeWidth={filled ? 0 : 1.5}
             />
@@ -104,9 +97,6 @@ export function ProductReviewForm({
   const flavourOk = !requiresFlavour || flavourLabel.length > 0
   const sizeOk = !requiresSize || sizeLabel.length > 0
   const productHasVariants = requiresFlavour || requiresSize
-  // For multi-variant products we require the PDP to have resolved a concrete
-  // variant id before allowing submission; for single-variant products labels
-  // can be empty and the server resolves the lone variant for us.
   const variantOk = flavourOk && sizeOk && (!productHasVariants || variantId != null)
   const variantBits = [flavourLabel, sizeLabel].filter(Boolean)
   const variantSummary = variantBits.join(" · ")
@@ -121,9 +111,6 @@ export function ProductReviewForm({
     return () => window.removeEventListener("auth:force-check", sync)
   }, [])
 
-  // Reset variant-scoped feedback when the user changes the selected variant.
-  // Using the "adjust state during render" pattern from the React docs instead
-  // of an effect avoids an extra render and the no-setState-in-effect warning.
   const currentVariantKey = variantId ?? `${flavourLabel}//${sizeLabel}`
   const [trackedVariant, setTrackedVariant] = React.useState(currentVariantKey)
   if (trackedVariant !== currentVariantKey) {
@@ -136,7 +123,7 @@ export function ProductReviewForm({
 
   if (!authChecked) {
     return (
-      <div className="rounded-xl border border-border/50 bg-card/60 p-5 text-sm text-muted-foreground">
+      <div className="rounded-xl border border-border/30 bg-card/60 p-5 text-sm text-muted-foreground backdrop-blur-sm">
         Loading…
       </div>
     )
@@ -144,7 +131,7 @@ export function ProductReviewForm({
 
   if (!token) {
     return (
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/50 bg-card/60 p-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/30 bg-card/60 p-5 backdrop-blur-sm">
         <p className="text-sm text-muted-foreground">
           Sign in to share your experience with this product.
         </p>
@@ -159,10 +146,10 @@ export function ProductReviewForm({
 
   if (submitted) {
     return (
-      <div className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-5 text-emerald-900 dark:border-emerald-400/30 dark:bg-emerald-400/10 dark:text-emerald-100">
+      <div className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/8 p-5 text-emerald-800 backdrop-blur-sm dark:border-emerald-400/20 dark:bg-emerald-400/8 dark:text-emerald-200">
         <div className="space-y-1">
           <p className="text-sm font-semibold">Thanks for the review!</p>
-          <p className="text-sm opacity-90">
+          <p className="text-sm opacity-80">
             We&apos;ll publish it after our team has approved it.
           </p>
         </div>
@@ -234,12 +221,12 @@ export function ProductReviewForm({
 
   if (duplicate) {
     return (
-      <div className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-amber-500/35 bg-amber-500/10 p-5 text-amber-950 dark:border-amber-400/35 dark:bg-amber-400/10 dark:text-amber-100">
+      <div className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-amber-500/20 bg-amber-500/8 p-5 text-amber-900 backdrop-blur-sm dark:border-amber-400/20 dark:bg-amber-400/8 dark:text-amber-200">
         <div className="space-y-1">
           <p className="text-sm font-semibold">
             You&apos;ve already reviewed {variantSummary ? `${variantSummary}` : "this variant"}
           </p>
-          <p className="text-sm opacity-90">
+          <p className="text-sm opacity-80">
             Each customer can post one review per variant. Switch to a different flavour or size above to review another, or contact support to update an existing review.
           </p>
         </div>
@@ -254,12 +241,12 @@ export function ProductReviewForm({
 
   if (notPurchased) {
     return (
-      <div className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-amber-500/35 bg-amber-500/10 p-5 text-amber-950 dark:border-amber-400/35 dark:bg-amber-400/10 dark:text-amber-100">
+      <div className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-amber-500/20 bg-amber-500/8 p-5 text-amber-900 backdrop-blur-sm dark:border-amber-400/20 dark:bg-amber-400/8 dark:text-amber-200">
         <div className="space-y-1">
           <p className="text-sm font-semibold">
             Purchase {variantSummary ? variantSummary : "this variant"} to leave a review
           </p>
-          <p className="text-sm opacity-90">
+          <p className="text-sm opacity-80">
             Reviews are limited to verified buyers. Once your order for this exact flavour and size is placed, you&apos;ll be able to share your experience.
           </p>
         </div>
@@ -275,19 +262,19 @@ export function ProductReviewForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-5 rounded-xl border border-border/50 bg-card/60 p-5 sm:p-6"
+      className="space-y-5 rounded-xl border border-border/30 bg-card/50 p-5 shadow-sm backdrop-blur-sm sm:p-6"
       noValidate
     >
       {requiresFlavour || requiresSize ? (
         variantOk ? (
-          <div className="rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+          <div className="rounded-lg border border-border/40 bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
             Reviewing{" "}
             <span className="font-medium text-foreground">{variantSummary}</span>
           </div>
         ) : (
           <div
             role="alert"
-            className="rounded-lg border border-amber-500/35 bg-amber-500/10 px-3 py-2 text-sm text-amber-950 dark:border-amber-400/35 dark:bg-amber-400/10 dark:text-amber-100"
+            className="rounded-lg border border-amber-500/20 bg-amber-500/8 px-3 py-2 text-sm text-amber-900 dark:border-amber-400/20 dark:bg-amber-400/8 dark:text-amber-200"
           >
             Choose a {requiresFlavour && !flavourOk ? "flavour" : null}
             {requiresFlavour && !flavourOk && requiresSize && !sizeOk ? " and " : null}
@@ -333,11 +320,10 @@ export function ProductReviewForm({
           onChange={(e) => setBody(e.target.value)}
           disabled={submitting}
           className={cn(
-            "flex w-full resize-y rounded-xl border border-input/80 bg-background px-3 py-2 text-sm leading-6 text-foreground shadow-none transition-[border-color,box-shadow] outline-none",
-            "placeholder:text-muted-foreground",
-            "focus-visible:border-cyan-500/45 focus-visible:ring-2 focus-visible:ring-cyan-500/15",
+            "flex w-full resize-y rounded-xl border border-input/70 bg-background px-3 py-2 text-sm leading-6 text-foreground shadow-sm transition-all outline-none",
+            "placeholder:text-muted-foreground/70",
+            "focus-visible:border-primary/45 focus-visible:ring-2 focus-visible:ring-primary/15",
             "disabled:cursor-not-allowed disabled:opacity-50",
-            "dark:focus-visible:border-cyan-400/50 dark:focus-visible:ring-cyan-400/12",
           )}
         />
         <p
@@ -351,7 +337,7 @@ export function ProductReviewForm({
       </div>
 
       {error ? (
-        <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <p className="rounded-lg border border-destructive/20 bg-destructive/8 px-3 py-2 text-sm text-destructive">
           {error}
         </p>
       ) : null}
@@ -377,7 +363,6 @@ export function ProductReviewForm({
           variant="default"
           size="lg"
           disabled={!canSubmit}
-          className="rounded-md shadow-none"
         >
           {submitting ? "Submitting…" : "Submit review"}
         </Button>

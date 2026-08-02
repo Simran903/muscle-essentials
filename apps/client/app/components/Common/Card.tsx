@@ -19,40 +19,28 @@ type ProductCardProps = {
   title: string
   subtitle?: string
   price: number
-  /** When size tiers use different prices, show “From” before the listing price. */
   priceFrom?: boolean
   originalPrice?: number
   rating?: number
   countryCode?: string
-  /** Server product id — used for Add to cart when set. */
   productId?: string
-  /** Resolved to id on Add when `productId` is omitted (e.g. marketing slugs). */
   productSlug?: string
-  /** From listing data: number of flavour options (0 = none). Used to block quick-add when there is more than one. */
   flavourOptionCount?: number
-  /** From listing data: number of size options (0 = none). */
   sizeOptionCount?: number
-  /** Labels for available flavours. When provided, rendered as pills and used to derive the count. */
   flavourLabels?: string[]
-  /** Labels for available sizes. When provided, rendered as pills and used to derive the count. */
   sizeLabels?: string[]
-  /** When true, Add to cart is disabled. */
   outOfStock?: boolean
-  /** Sent with add-to-cart when product has a single flavour (e.g. from listing data). */
   defaultFlavourLabel?: string | null
-  /** Sent with add-to-cart when product has a single size. */
   defaultSizeLabel?: string | null
   onAddToCart?: () => void
   onBuyNow?: () => void
   onCardClick?: () => void
   className?: string
-  /** Small labels on the image for variant- or product-level merchandising. */
   merchBadges?: {
     isFeatured?: boolean
     isBestseller?: boolean
     isDealoftheDay?: boolean
   }
-  /** Veg (green) / non-veg (red) indicator on the product image. */
   dietType?: ProductDietType
 }
 
@@ -196,15 +184,15 @@ export function Card({
         onCardClick()
       }}
       className={cn(
-        "flex w-full max-w-[20rem] flex-col overflow-hidden rounded-xl border border-border/60 bg-card text-card-foreground shadow-none",
+        "group/card flex w-full max-w-[20rem] flex-col overflow-hidden rounded-2xl border border-border/50 bg-card text-card-foreground shadow-card transition-all duration-300",
         onCardClick
-          ? "cursor-pointer transition-[border-color,background-color] duration-200 hover:border-border/80 hover:bg-muted/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35"
+          ? "cursor-pointer hover:shadow-card-hover hover:border-border/80"
           : "",
         className
       )}
     >
-      <div className="relative">
-        <div className="relative h-64 overflow-hidden rounded-t-xl bg-muted/25">
+      <div className="relative overflow-hidden">
+        <div className="relative aspect-[4/5] overflow-hidden bg-muted/20">
           {!imageLoaded && (
             <Skeleton className="absolute inset-0 z-10 h-full w-full rounded-none" />
           )}
@@ -213,14 +201,17 @@ export function Card({
             src={imageSrc}
             alt={imageAlt}
             width={600}
-            height={600}
-            className="h-full w-full object-cover transition-opacity duration-300"
+            height={750}
+            className={cn(
+              "h-full w-full object-cover transition-all duration-500 group-hover/card:scale-105",
+              imageLoaded ? "opacity-100" : "opacity-0"
+            )}
             onLoad={() => setImageLoaded(true)}
             onError={() => setImageLoaded(true)}
           />
           {dietType ? (
             <span
-              className="pointer-events-none absolute right-2 top-2 z-6 drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"
+              className="pointer-events-none absolute right-2.5 top-2.5 z-10 drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]"
               title={dietType === "VEG" ? "Vegetarian" : "Non-vegetarian"}
             >
               <DietTypeSymbol dietType={dietType} size={20} />
@@ -229,20 +220,20 @@ export function Card({
           {(merchBadges?.isFeatured ||
             merchBadges?.isBestseller ||
             merchBadges?.isDealoftheDay) && (
-            <div className="pointer-events-none absolute left-2 top-2 z-5 flex max-w-[calc(100%-1rem)] flex-wrap gap-1">
-              {merchBadges?.isFeatured ? (
-                <span className="rounded-md border border-primary/35 bg-primary/15 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-foreground shadow-sm dark:bg-primary/20">
-                  Featured
-                </span>
-              ) : null}
+            <div className="pointer-events-none absolute left-2.5 top-2.5 z-10 flex max-w-[calc(100%-1.25rem)] flex-wrap gap-1.5">
               {merchBadges?.isBestseller ? (
-                <span className="rounded-md border border-emerald-500/35 bg-emerald-500/15 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-emerald-800 dark:text-emerald-200">
+                <span className="rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2.5 py-0.5 text-[0.625rem] font-semibold uppercase tracking-wide text-emerald-800 backdrop-blur-sm dark:text-emerald-200">
                   Bestseller
                 </span>
               ) : null}
               {merchBadges?.isDealoftheDay ? (
-                <span className="rounded-md border border-cyan-500/40 bg-cyan-500/15 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-cyan-950 dark:text-cyan-100">
+                <span className="rounded-full border border-primary/30 bg-primary/15 px-2.5 py-0.5 text-[0.625rem] font-semibold uppercase tracking-wide text-foreground backdrop-blur-sm">
                   Deal
+                </span>
+              ) : null}
+              {merchBadges?.isFeatured && !merchBadges?.isBestseller && !merchBadges?.isDealoftheDay ? (
+                <span className="rounded-full border border-amber-500/30 bg-amber-500/15 px-2.5 py-0.5 text-[0.625rem] font-semibold uppercase tracking-wide text-amber-900 backdrop-blur-sm dark:text-amber-200">
+                  Featured
                 </span>
               ) : null}
             </div>
@@ -250,11 +241,11 @@ export function Card({
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col space-y-3 p-4 sm:p-5">
+      <div className="flex flex-1 flex-col space-y-2.5 p-4 sm:p-5">
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1 rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground">
+          <span className="inline-flex items-center gap-1 rounded-lg border border-border/60 bg-muted/30 px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground">
+            <Star className="size-3 fill-amber-500/30 text-amber-500/70" />
             {rating.toFixed(1)}
-            <Star className="size-3 fill-muted-foreground/25 text-muted-foreground/70" />
           </span>
         </div>
 
@@ -262,38 +253,38 @@ export function Card({
           <p className="text-sm text-muted-foreground">{subtitle}</p>
         ) : null}
 
-        <h3 className="line-clamp-2 text-base font-semibold leading-snug tracking-tight sm:text-[1.05rem]">
+        <h3 className="line-clamp-2 text-base font-semibold leading-snug tracking-tight text-foreground sm:text-[1.05rem]">
           {title}
         </h3>
 
         {hasOptionPills ? (
           <ul
             aria-label="Available flavours and sizes"
-            className="flex flex-wrap gap-1.5"
+            className="flex flex-wrap gap-1"
           >
             {visibleFlavours.map((label) => (
               <li
                 key={`fl-${label}`}
-                className="inline-flex items-center rounded-full border border-border/60 bg-muted/40 px-2 py-0.5 text-[0.7rem] font-medium text-muted-foreground"
+                className="inline-flex items-center rounded-full border border-border/50 bg-muted/30 px-2 py-0.5 text-[0.65rem] font-medium text-muted-foreground"
               >
                 {label}
               </li>
             ))}
             {flavourOverflow > 0 ? (
-              <li className="inline-flex items-center rounded-full border border-border/60 bg-muted/40 px-2 py-0.5 text-[0.7rem] font-medium text-muted-foreground">
+              <li className="inline-flex items-center rounded-full border border-border/50 bg-muted/30 px-2 py-0.5 text-[0.65rem] font-medium text-muted-foreground">
                 +{flavourOverflow}
               </li>
             ) : null}
             {visibleSizes.map((label) => (
               <li
                 key={`sz-${label}`}
-                className="inline-flex items-center rounded-full border border-border/70 bg-foreground/5 px-2 py-0.5 text-[0.7rem] font-medium tabular-nums text-foreground/80 dark:bg-foreground/10"
+                className="inline-flex items-center rounded-full border border-border/50 bg-foreground/5 px-2 py-0.5 text-[0.65rem] font-medium tabular-nums text-foreground/70 dark:bg-foreground/10"
               >
                 {label}
               </li>
             ))}
             {sizeOverflow > 0 ? (
-              <li className="inline-flex items-center rounded-full border border-border/70 bg-foreground/5 px-2 py-0.5 text-[0.7rem] font-medium text-foreground/80 dark:bg-foreground/10">
+              <li className="inline-flex items-center rounded-full border border-border/50 bg-foreground/5 px-2 py-0.5 text-[0.65rem] font-medium text-foreground/70 dark:bg-foreground/10">
                 +{sizeOverflow}
               </li>
             ) : null}
@@ -304,9 +295,9 @@ export function Card({
           {priceFrom ? (
             <span className="text-sm font-medium text-muted-foreground">From</span>
           ) : null}
-          <span className="text-xl font-semibold tracking-tight sm:text-2xl">{formatPrice(price)}</span>
+          <span className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">{formatPrice(price)}</span>
           {originalPrice ? (
-            <span className="text-base text-muted-foreground line-through sm:text-lg">
+            <span className="text-base text-muted-foreground/60 line-through sm:text-lg">
               {formatPrice(originalPrice)}
             </span>
           ) : null}
@@ -315,19 +306,9 @@ export function Card({
         <div className="mt-auto space-y-2">
           <Button
             type="button"
-            variant="outline"
-            size="lg"
-            className="w-full cursor-pointer rounded-md border-border/70"
-            onClick={onCardClick}
-            disabled={!onCardClick}
-          >
-            View Product
-          </Button>
-          <Button
-            type="button"
             variant="default"
             size="lg"
-            className="w-full cursor-pointer rounded-md shadow-none"
+            className="w-full cursor-pointer rounded-xl"
             disabled={
               outOfStock || isAdding || (!onAddToCart && !canUseCartApi)
             }
@@ -341,6 +322,16 @@ export function Card({
                 : isAdding
                   ? "Adding…"
                   : "Add to Cart"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            className="w-full cursor-pointer rounded-xl"
+            onClick={onCardClick}
+            disabled={!onCardClick}
+          >
+            View Product
           </Button>
         </div>
       </div>

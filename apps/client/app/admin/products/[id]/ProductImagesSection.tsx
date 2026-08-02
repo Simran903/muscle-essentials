@@ -139,7 +139,7 @@ export function ProductImagesSection({ productId }: { productId: string }) {
           type="button"
           variant="outline"
           size="sm"
-          className="rounded-md"
+          className="rounded-lg"
           disabled={uploading}
           onClick={() => fileRef.current?.click()}
         >
@@ -157,7 +157,7 @@ export function ProductImagesSection({ productId }: { productId: string }) {
               key={img.id}
               className="overflow-hidden rounded-lg border border-border/60 bg-muted/10 p-3"
             >
-              <div className="relative aspect-square w-full overflow-hidden rounded-md bg-muted/30">
+              <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-muted/30">
                 <Image src={img.url} alt={img.altText ?? ""} fill className="object-cover" sizes="200px" />
               </div>
               <div className="mt-2 flex flex-wrap gap-2">
@@ -168,7 +168,7 @@ export function ProductImagesSection({ productId }: { productId: string }) {
                     type="button"
                     variant="outline"
                     size="sm"
-                    className="h-8 rounded-md text-xs"
+                    className="h-8 rounded-lg text-xs"
                     onClick={() => void setPrimary(img.id)}
                   >
                     Set primary
@@ -178,7 +178,7 @@ export function ProductImagesSection({ productId }: { productId: string }) {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="h-8 rounded-md text-xs text-destructive"
+                  className="h-8 rounded-lg text-xs text-destructive"
                   onClick={() => void remove(img.id)}
                 >
                   Remove

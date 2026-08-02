@@ -74,7 +74,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </p>
         <Link
           href="/"
-          className="mt-6 inline-flex rounded-md border border-border/70 bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-muted/40"
+          className="mt-6 inline-flex rounded-lg border border-border/70 bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-muted/40"
         >
           Back to store
         </Link>

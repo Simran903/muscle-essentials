@@ -103,7 +103,7 @@ export default function AdminOrderDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center gap-3">
-        <Button asChild variant="outline" size="sm" className="rounded-md">
+        <Button asChild variant="outline" size="sm" className="rounded-lg">
           <Link href="/admin/orders">← Orders</Link>
         </Button>
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">
@@ -132,7 +132,7 @@ export default function AdminOrderDetailPage() {
           <Dropdown value={paymentStatus} onChange={setPaymentStatus} options={[...paymentStatuses]} />
         </div>
         <div className="sm:col-span-2">
-          <Button type="button" disabled={saving} className="rounded-md shadow-none" onClick={() => void save()}>
+          <Button type="button" disabled={saving} className="rounded-lg shadow-none" onClick={() => void save()}>
             {saving ? "Saving…" : "Save status"}
           </Button>
         </div>

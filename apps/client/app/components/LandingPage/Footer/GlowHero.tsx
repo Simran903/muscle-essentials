@@ -1,5 +1,5 @@
 export function GlowHero() {
-  const headline = "Muscle Essentials"
+  const headline = "GEN1"
   const textClass =
     "block w-full min-w-0 whitespace-nowrap text-center font-[family-name:var(--font-michroma)] font-extrabold leading-none tracking-widest"
 

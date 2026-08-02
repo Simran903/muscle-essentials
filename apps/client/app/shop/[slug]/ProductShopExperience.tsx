@@ -76,30 +76,30 @@ export function ProductShopExperience({ product, reviews }: ProductShopExperienc
         />
 
         <aside className="lg:sticky lg:top-24 lg:self-start">
-          <div className="rounded-xl border border-border/60 bg-card/85 p-5 text-card-foreground shadow-none backdrop-blur-sm sm:p-6 lg:p-8">
+          <div className="rounded-2xl border border-border/20 bg-card/50 p-5 text-card-foreground shadow-sm backdrop-blur-sm sm:p-6 lg:p-8">
             <div className="mb-4 flex flex-wrap gap-2">
               {merch.isFeatured && (
-                <span className="rounded-md border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-foreground dark:border-primary/35 dark:bg-primary/15">
+                <span className="rounded-lg border border-primary/20 bg-primary/8 px-3 py-1 text-xs font-medium text-foreground">
                   Featured
                 </span>
               )}
 
               {merch.isBestseller && (
-                <span className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                <span className="rounded-lg border border-emerald-500/20 bg-emerald-500/8 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
                   Bestseller
                 </span>
               )}
 
-              <span className="inline-flex items-center gap-2 rounded-md border border-border/60 bg-muted/25 px-3 py-1.5 text-xs font-semibold text-foreground">
+              <span className="inline-flex items-center gap-2 rounded-lg border border-border/40 bg-muted/20 px-3 py-1.5 text-xs font-semibold text-foreground shadow-sm">
                 <DietTypeSymbol dietType={product.dietType} size={22} />
                 {product.dietType === "VEG" ? "Vegetarian" : "Non-vegetarian"}
               </span>
 
               <span
-                className={`inline-flex items-center gap-2 rounded-md px-3 py-1 text-xs font-semibold ${
+                className={`inline-flex items-center gap-2 rounded-lg px-3 py-1 text-xs font-semibold shadow-sm ${
                   isInStock
-                    ? "border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
-                    : "border border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-300"
+                    ? "border border-emerald-500/20 bg-emerald-500/8 text-emerald-700 dark:text-emerald-300"
+                    : "border border-red-500/20 bg-red-500/8 text-red-700 dark:text-red-300"
                 }`}
               >
                 <span
@@ -111,7 +111,7 @@ export function ProductShopExperience({ product, reviews }: ProductShopExperienc
 
             <div className="space-y-3">
               <p className="text-sm font-medium text-muted-foreground">
-                {product.brand?.name ?? "Muscle Essentials"}
+                {product.brand?.name ?? "GEN1"}
               </p>
 
               <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-[2.8rem] lg:leading-tight">
@@ -134,19 +134,19 @@ export function ProductShopExperience({ product, reviews }: ProductShopExperienc
               onResolvedSelection={onResolvedSelection}
             />
 
-            <div className="mt-6 grid gap-3 border-t border-border/50 pt-6 text-sm text-muted-foreground">
+            <div className="mt-6 grid gap-3 border-t border-border/30 pt-6 text-sm text-muted-foreground">
               <div className="flex items-center gap-3">
-                <Truck className="size-5 text-muted-foreground" />
+                <Truck className="size-5 text-muted-foreground/70" />
                 Fast delivery across India
               </div>
 
               <div className="flex items-center gap-3">
-                <ShieldCheck className="size-5 text-muted-foreground" />
+                <ShieldCheck className="size-5 text-muted-foreground/70" />
                 Genuine supplements, curated for quality
               </div>
 
               <div className="flex items-center gap-3">
-                <PackageCheck className="size-5 text-muted-foreground" />
+                <PackageCheck className="size-5 text-muted-foreground/70" />
                 Packed and shipped with care
               </div>
             </div>
@@ -155,7 +155,7 @@ export function ProductShopExperience({ product, reviews }: ProductShopExperienc
       </section>
 
       {product.description && (
-        <section className="mt-10 rounded-2xl border border-border/50 bg-card/80 p-6 shadow-none backdrop-blur-sm sm:p-8 lg:p-10">
+        <section className="mt-10 rounded-2xl border border-border/20 bg-card/50 p-6 shadow-sm backdrop-blur-sm sm:p-8 lg:p-10">
           <div className="max-w-3xl">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               Details

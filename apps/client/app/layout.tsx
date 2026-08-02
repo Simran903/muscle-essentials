@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Inter } from "next/font/google";
 import { CookieConsentBar } from "@/app/components/CookieConsentBar";
+import { Footer } from "@/app/components/LandingPage/Footer/Footer";
 import { Navbar } from "@/app/components/LandingPage/Navbar/Navbar";
 import { ThemeFloatingToggle } from "@/app/components/LandingPage/ThemeFloatingToggle";
 import { ThemeProvider } from "@/app/components/theme-provider";
@@ -19,7 +20,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Muscle Essentials · API tester",
+  title: "GEN1 · API tester",
   description: "Next.js UI to exercise the muscle-essentials REST API",
 };
 
@@ -41,6 +42,7 @@ export default function RootLayout({
         <ThemeProvider>
           <Navbar />
           {children}
+          <Footer />
           <ThemeFloatingToggle />
           <CookieConsentBar />
           <Toaster />

@@ -22,7 +22,7 @@ export function CarouselComponent() {
     const autoplay = window.setInterval(() => {
       if (isPaused) return
       api.scrollNext()
-    }, 3000)
+    }, 4000)
 
     return () => window.clearInterval(autoplay)
   }, [api, isPaused])
@@ -42,23 +42,23 @@ export function CarouselComponent() {
   const slides = [
     {
       src: "https://img2.hkrtcdn.com/43582/bnr_4358161_o.jpg",
-      alt: "A",
+      alt: "Premium supplements for every goal",
     },
     {
       src: "https://img4.hkrtcdn.com/44106/bnr_4410503_o.jpg",
-      alt: "B",
+      alt: "Rated best by athletes across India",
     },
     {
       src: "https://img2.hkrtcdn.com/44106/bnr_4410581_o.jpg",
-      alt: "C",
+      alt: "Fuel your performance naturally",
     },
     {
       src: "https://img2.hkrtcdn.com/44055/bnr_4405401_o.jpg",
-      alt: "D",
+      alt: "New arrivals — shop the latest",
     },
     {
       src: "https://img10.hkrtcdn.com/44105/bnr_4410499_o.jpg",
-      alt: "E",
+      alt: "Deals you won't want to miss",
     },
   ]
 
@@ -72,7 +72,7 @@ export function CarouselComponent() {
         {slides.map((slide, idx) => (
           <CarouselItem key={slide.src}>
             <div
-              className="group relative overflow-hidden sm:mx-6 sm:rounded-2xl sm:border sm:border-border/50 sm:bg-card sm:shadow-none"
+              className="group relative overflow-hidden sm:mx-6 sm:rounded-2xl sm:border sm:border-border/30 sm:bg-card sm:shadow-glass"
               onMouseEnter={() => setIsPaused(true)}
               onMouseLeave={() => setIsPaused(false)}
             >
@@ -86,8 +86,8 @@ export function CarouselComponent() {
                 className="h-80 w-full object-cover transition-transform duration-700 group-hover:scale-[1.03] sm:h-112 md:h-165"
               />
 
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-black/45 to-transparent" />
-              <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between gap-3">
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/50 to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3 sm:bottom-6 sm:left-6 sm:right-6">
                 <p className="max-w-[70%] text-sm font-medium text-white/95 sm:text-base">
                   {slide.alt}
                 </p>
@@ -97,8 +97,8 @@ export function CarouselComponent() {
                       key={dotIndex}
                       className={
                         dotIndex === selectedIndex
-                          ? "h-1.5 w-5 rounded-full bg-white/95"
-                          : "h-1.5 w-1.5 rounded-full bg-white/50"
+                          ? "h-1.5 w-5 rounded-full bg-white/95 transition-all duration-300"
+                          : "h-1.5 w-1.5 rounded-full bg-white/50 transition-all duration-300 hover:w-3"
                       }
                     />
                   ))}
@@ -108,8 +108,8 @@ export function CarouselComponent() {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious className="left-4 z-10 border-border/80 bg-background/90 shadow-none backdrop-blur-sm hover:bg-background sm:left-10" />
-      <CarouselNext className="right-4 z-10 border-border/80 bg-background/90 shadow-none backdrop-blur-sm hover:bg-background sm:right-10" />
+      <CarouselPrevious className="left-4 z-10 border-border/60 bg-background/80 shadow-glass backdrop-blur-md hover:bg-background sm:left-10" />
+      <CarouselNext className="right-4 z-10 border-border/60 bg-background/80 shadow-glass backdrop-blur-md hover:bg-background sm:right-10" />
     </Carousel>
   )
 }

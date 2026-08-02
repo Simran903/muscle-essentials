@@ -74,7 +74,7 @@ export function AccountOrderCard({ order }: { order: AccountOrder }) {
   const itemCount = order.items.reduce((n, i) => n + i.quantity, 0)
 
   return (
-    <li className="rounded-xl border border-border/50 bg-card/60 p-4 transition-colors hover:border-border/80 hover:bg-muted/15">
+    <li className="rounded-xl border border-border/30 bg-card/50 p-4 shadow-sm transition-all hover:border-border/60 hover:bg-muted/20 hover:shadow-md">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">

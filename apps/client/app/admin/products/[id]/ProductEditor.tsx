@@ -231,7 +231,7 @@ export function ProductEditor({ productId }: { productId: string }) {
     <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-3">
-          <Button asChild variant="outline" size="sm" className="rounded-md">
+          <Button asChild variant="outline" size="sm" className="rounded-lg">
             <Link href="/admin/products">← Products</Link>
           </Button>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">Edit product</h1>
@@ -240,7 +240,7 @@ export function ProductEditor({ productId }: { productId: string }) {
           type="button"
           variant="outline"
           size="sm"
-          className="rounded-md border-destructive/40 text-destructive hover:bg-destructive/10"
+          className="rounded-lg border-destructive/40 text-destructive hover:bg-destructive/10"
           onClick={() => void handleDeactivate()}
         >
           Deactivate
@@ -390,7 +390,7 @@ export function ProductEditor({ productId }: { productId: string }) {
                 type="button"
                 variant="outline"
                 size="sm"
-                className="rounded-md"
+                className="rounded-lg"
                 onClick={() => setSizeRows(sizeRows.filter((_, j) => j !== i))}
               >
                 Remove
@@ -401,7 +401,7 @@ export function ProductEditor({ productId }: { productId: string }) {
             type="button"
             variant="outline"
             size="sm"
-            className="rounded-md"
+            className="rounded-lg"
             onClick={() => setSizeRows([...sizeRows, { label: "", price: "", costPrice: "" }])}
           >
             Add size
@@ -462,7 +462,7 @@ export function ProductEditor({ productId }: { productId: string }) {
           </label>
         </div>
 
-        <Button type="submit" disabled={saving} className="rounded-md shadow-none">
+        <Button type="submit" disabled={saving} className="rounded-lg shadow-none">
           {saving ? "Saving…" : "Save product"}
         </Button>
       </form>
@@ -479,7 +479,7 @@ export function ProductEditor({ productId }: { productId: string }) {
             type="button"
             variant="secondary"
             size="sm"
-            className="rounded-md"
+            className="rounded-lg"
             disabled={savingSpotlights}
             onClick={() => void handleSaveSpotlights()}
           >

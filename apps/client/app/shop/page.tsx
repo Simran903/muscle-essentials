@@ -175,7 +175,6 @@ function ShopPageContent() {
             .map((flavour) => ({ value: flavour, label: flavour })),
         ])
       } catch {
-        // Filter options are non-critical; avoid interrupting product list rendering.
       }
     }
 
@@ -357,38 +356,38 @@ function ShopPageContent() {
       <SidebarInset className="overflow-hidden bg-transparent">
         <main className={pageMainClassName({ maxWidth: false })}>
 
-          <div className="mb-8 rounded-xl border border-border/60 bg-card/80 p-6 text-card-foreground shadow-none backdrop-blur-sm sm:mb-10 sm:flex sm:items-end sm:justify-between sm:p-8">
+          <div className="mb-8 rounded-2xl border border-border/30 bg-card/60 p-6 text-card-foreground shadow-sm backdrop-blur-sm sm:mb-10 sm:flex sm:items-end sm:justify-between sm:p-8">
             <div className="min-w-0">
               <div className="mb-2 md:hidden">
-                <SidebarTrigger className="bg-background/80 shadow-sm dark:bg-muted/60" />
+                <SidebarTrigger className="bg-background/70 shadow-sm dark:bg-muted/50" />
               </div>
               <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl lg:text-[2.15rem] lg:leading-tight">
                 All Products
               </h1>
               <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-                Explore all of the tested and vetted supplements sold on Muscle Essentials! Use our
+                Explore all of the tested and vetted supplements sold on GEN1! Use our
                 filter or sort by features to find your stack.
               </p>
             </div>
             {!isLoading && data ? (
-              <p className="mt-4 inline-flex shrink-0 rounded-md border border-border/60 bg-muted/20 px-4 py-1.5 text-sm font-medium text-muted-foreground sm:mt-0">
+              <p className="mt-4 inline-flex shrink-0 items-center rounded-full border border-border/40 bg-muted/20 px-4 py-1.5 text-sm font-medium text-muted-foreground shadow-sm sm:mt-0">
                 {productCount} products
               </p>
             ) : null}
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {Array.from({ length: PAGE_SIZE }).map((_, index) => (
                 <div
                   key={index}
-                  className="space-y-3 rounded-xl border border-border/80 bg-card/80 p-4 shadow-none"
+                  className="space-y-3 rounded-2xl border border-border/40 bg-card/60 p-3 shadow-sm"
                 >
-                  <Skeleton className="h-64 w-full rounded-2xl" />
+                  <Skeleton className="aspect-[4/5] w-full rounded-xl" />
                   <Skeleton className="h-4 w-1/3" />
                   <Skeleton className="h-5 w-5/6" />
                   <Skeleton className="h-5 w-2/3" />
-                  <Skeleton className="h-9 w-full rounded-xl" />
+                  <Skeleton className="h-10 w-full rounded-xl" />
                 </div>
               ))}
             </div>
@@ -401,7 +400,7 @@ function ShopPageContent() {
                       imageSrc={item.product.images.find((image) => image.isPrimary)?.url ?? item.product.images[0]?.url ?? "/images/placeholder.jpg"}
                       imageAlt={item.product.images.find((image) => image.isPrimary)?.altText ?? item.product.title}
                       title={item.product.title}
-                      subtitle={item.product.brand?.name ?? "Muscle Essentials"}
+                      subtitle={item.product.brand?.name ?? "GEN1"}
                       price={item.price}
                       priceFrom={false}
                       productId={item.product.id}
@@ -437,7 +436,12 @@ function ShopPageContent() {
               />
             </>
           ) : (
-            <div className="rounded-2xl border border-border/50 bg-card/70 p-10 text-center shadow-none">
+            <div className="rounded-2xl border border-border/30 bg-card/50 p-12 text-center shadow-sm backdrop-blur-sm">
+              <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl border border-border/40 bg-muted/30">
+                <svg className="size-7 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.75v-.75a.75.75 0 01.75-.75h3a.75.75 0 01.75.75v.75m-4.5 0h4.5m-4.5 0a9.75 9.75 0 00-8.25 9.75v.75c0 .621.504 1.125 1.125 1.125h18.75c.621 0 1.125-.504 1.125-1.125v-.75a9.75 9.75 0 00-8.25-9.75" />
+                </svg>
+              </div>
               <p className="text-sm font-medium text-foreground">No products found.</p>
               <p className="mt-1 text-sm text-muted-foreground">
                 Try changing filters or resetting the current selection.

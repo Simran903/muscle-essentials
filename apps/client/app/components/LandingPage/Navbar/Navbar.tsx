@@ -34,19 +34,12 @@ import { cn } from "@/lib/utils"
 
 const HIDE_NAVBAR_CLASS = "image-viewer-open"
 
-const shopSubmenuLinkClass =
-  "block rounded-md px-2 py-1.5 text-xs font-medium text-foreground/90 transition-colors hover:bg-muted/70 hover:text-foreground sm:text-sm"
-
-const shopSubmenuSectionTitleClass =
-  "border-b border-border/50 pb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground"
-
 const navLinkClass =
-  "inline-flex h-9 items-center rounded-md px-3.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35"
+  "inline-flex h-9 items-center rounded-lg px-3.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35"
 
 function useAuthStatus() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false)
   const [isAdmin, setIsAdmin] = React.useState(false)
-  /** Avoid calling /auth/me + /auth/me profile on every poll (was tripping API rate limits). */
   const profileFetchedForToken = React.useRef<string | null>(null)
 
   const checkLoginStatus = React.useCallback(async () => {
@@ -268,25 +261,33 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 hidden border-b border-border/40 bg-background/75 backdrop-blur-xl supports-backdrop-filter:bg-background/65 md:block">
+      <header className="sticky top-0 z-50 hidden border-b border-border/30 bg-background/70 backdrop-blur-2xl supports-backdrop-filter:bg-background/60 md:block">
         <NavigationMenu className="mx-auto flex w-full max-w-360 items-center justify-between px-5 py-3 lg:px-8">
           <Link
             href="/"
-            className="flex items-center text-lg font-medium tracking-tight text-foreground"
+            className="flex items-center text-lg font-medium tracking-tight text-foreground transition-opacity hover:opacity-80"
           >
             <Image
-              src="/logo-new.png"
-              alt="Muscle Essentials"
+              src="/logo-light.png"
+              alt="GEN1"
               width={200}
               height={200}
               priority
-              className="h-11 w-auto object-contain"
+              className="h-14 w-auto object-contain dark:hidden"
+            />
+            <Image
+              src="/logo-dark.png"
+              alt="GEN1"
+              width={200}
+              height={200}
+              priority
+              className="hidden h-14 w-auto object-contain dark:block"
             />
           </Link>
 
           <SearchBar className="mx-4 hidden w-full max-w-md md:block" />
 
-          <NavigationMenuList className="gap-2">
+          <NavigationMenuList className="gap-1.5">
             <NavigationMenuItem>
               <Link href="/" className={navLinkClass}>
                 Home
@@ -302,68 +303,65 @@ export function Navbar() {
                   className={cn(navLinkClass, "inline-flex items-center gap-1")}
                 >
                   Shop
-                  <ChevronDown className="size-3.5 shrink-0 opacity-60" aria-hidden />
+                  <ChevronDown className="size-3.5 shrink-0 opacity-60 transition-transform duration-200 group-hover/shop-nav:rotate-180" aria-hidden />
                 </Link>
                 <div
                   className={cn(
-                    "absolute left-0 top-full z-50 mt-1 -ml-36 w-max max-w-[min(56rem,calc(100vw-1.5rem))] min-w-[min(42rem,calc(100vw-1.5rem))] pt-1",
-                    "pointer-events-none opacity-0 transition-[opacity,transform] duration-150 ease-out",
-                    "invisible translate-y-0.5",
+                    "absolute left-0 top-full z-50 mt-1.5 -ml-36 w-max max-w-[min(56rem,calc(100vw-1.5rem))] min-w-[min(42rem,calc(100vw-1.5rem))] pt-1",
+                    "pointer-events-none opacity-0 transition-[opacity,transform] duration-200 ease-out",
+                    "invisible translate-y-1",
                     "group-hover/shop-nav:pointer-events-auto group-hover/shop-nav:visible group-hover/shop-nav:opacity-100 group-hover/shop-nav:translate-y-0",
                   )}
                 >
-                  <div className="overflow-hidden rounded-xl border border-border/60 bg-card text-card-foreground shadow-xl ring-1 ring-border/25 backdrop-blur-md">
-                    <div className="border-b border-border/50 bg-muted/15 px-3 py-2.5">
+                  <div className="overflow-hidden rounded-2xl border border-border/40 bg-card/95 text-card-foreground shadow-glass-lg ring-1 ring-border/20 backdrop-blur-xl">
+                    <div className="border-b border-border/30 bg-muted/10 px-4 py-2.5">
                       <Link
                         href="/shop"
-                        className={cn(
-                          shopSubmenuLinkClass,
-                          "bg-transparent px-2 py-1.5 text-sm font-semibold text-foreground hover:bg-muted/50",
-                        )}
+                        className="inline-flex items-center rounded-lg px-3 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted/50"
                       >
                         All products
                       </Link>
                     </div>
-                    <div className="grid max-h-[min(58vh,22rem)] grid-cols-3 divide-x divide-border/50 bg-muted/10">
-                      <div className="flex min-h-0 min-w-0 flex-col gap-2 p-3">
-                        <p className={shopSubmenuSectionTitleClass}>Collections</p>
-                        <div className="min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]">
-                          <Link href="/shop?bestseller=1" className={shopSubmenuLinkClass}>
+                    <div className="grid max-h-[min(58vh,22rem)] grid-cols-3 divide-x divide-border/30">
+                      <div className="flex min-h-0 min-w-0 flex-col gap-2 p-4">
+                        <p className="border-b border-border/30 pb-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">Collections</p>
+                        <div className="min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-y-contain">
+                          <Link href="/shop?bestseller=1" className="block rounded-lg px-3 py-1.5 text-xs font-medium text-foreground/80 transition-colors hover:bg-muted/60 hover:text-foreground">
                             Shop bestsellers
                           </Link>
-                          <Link href="/shop?featured=1" className={shopSubmenuLinkClass}>
+                          <Link href="/shop?featured=1" className="block rounded-lg px-3 py-1.5 text-xs font-medium text-foreground/80 transition-colors hover:bg-muted/60 hover:text-foreground">
                             Shop featured
                           </Link>
-                          <Link href="/shop?deal=1" className={shopSubmenuLinkClass}>
+                          <Link href="/shop?deal=1" className="block rounded-lg px-3 py-1.5 text-xs font-medium text-foreground/80 transition-colors hover:bg-muted/60 hover:text-foreground">
                             Shop deal of the day
                           </Link>
-                          <Link href="/shop?combo=1" className={shopSubmenuLinkClass}>
+                          <Link href="/shop?combo=1" className="block rounded-lg px-3 py-1.5 text-xs font-medium text-foreground/80 transition-colors hover:bg-muted/60 hover:text-foreground">
                             Shop stacks
                           </Link>
                         </div>
                       </div>
-                      <div className="flex min-h-0 min-w-0 flex-col gap-2 p-3">
-                        <p className={shopSubmenuSectionTitleClass}>Shop by brand</p>
-                        <div className="min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]">
+                      <div className="flex min-h-0 min-w-0 flex-col gap-2 p-4">
+                        <p className="border-b border-border/30 pb-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">Shop by brand</p>
+                        <div className="min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-y-contain">
                           {shopBrands.map((b) => (
                             <Link
                               key={b.slug}
                               href={`/shop?brand=${encodeURIComponent(b.slug)}`}
-                              className={shopSubmenuLinkClass}
+                              className="block rounded-lg px-3 py-1.5 text-xs font-medium text-foreground/80 transition-colors hover:bg-muted/60 hover:text-foreground"
                             >
                               {b.name}
                             </Link>
                           ))}
                         </div>
                       </div>
-                      <div className="flex min-h-0 min-w-0 flex-col gap-2 p-3">
-                        <p className={shopSubmenuSectionTitleClass}>Shop by category</p>
-                        <div className="min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]">
+                      <div className="flex min-h-0 min-w-0 flex-col gap-2 p-4">
+                        <p className="border-b border-border/30 pb-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">Shop by category</p>
+                        <div className="min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-y-contain">
                           {shopCategories.map((c) => (
                             <Link
                               key={c.slug}
                               href={`/shop?category=${encodeURIComponent(c.slug)}`}
-                              className={shopSubmenuLinkClass}
+                              className="block rounded-lg px-3 py-1.5 text-xs font-medium text-foreground/80 transition-colors hover:bg-muted/60 hover:text-foreground"
                             >
                               {c.name}
                             </Link>
@@ -376,16 +374,21 @@ export function Navbar() {
               </div>
             </NavigationMenuItem>
             <NavigationMenuItem>
+              <Link href="/about" className={navLinkClass}>
+                About
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
               <Link href="/contact" className={navLinkClass}>
                 Contact
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <Button asChild variant="outline" size="icon" className="relative rounded-md border-border/60" aria-label="Cart">
+              <Button asChild variant="outline" size="icon" className="relative rounded-xl border-border/60" aria-label="Cart">
                 <Link href="/cart">
                   <ShoppingCart className="size-4" />
                   {cartItemCount > 0 ? (
-                    <span className="absolute -right-1 -top-1 inline-flex min-w-4 items-center justify-center rounded-sm bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
+                    <span className="absolute -right-1.5 -top-1.5 inline-flex min-w-[1.125rem] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground ring-2 ring-background">
                       {cartItemCount > 99 ? "99+" : cartItemCount}
                     </span>
                   ) : null}
@@ -396,7 +399,7 @@ export function Navbar() {
               <NavigationMenuItem>
                 <Link
                   href="/admin"
-                  className="inline-flex h-9 items-center rounded-md px-3.5 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
+                  className="inline-flex h-9 items-center rounded-lg px-3.5 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
                 >
                   Admin
                 </Link>
@@ -409,7 +412,7 @@ export function Navbar() {
                     asChild
                     variant="outline"
                     size="icon"
-                    className="rounded-md border-border/60"
+                    className="rounded-xl border-border/60"
                     aria-label="Account"
                   >
                     <Link href="/account">
@@ -420,7 +423,7 @@ export function Navbar() {
                 <NavigationMenuItem>
                   <Button
                     type="button"
-                    variant="default"
+                    variant="ghost"
                     size="sm"
                     className="h-9 cursor-pointer"
                     disabled={signingOut}
@@ -433,7 +436,7 @@ export function Navbar() {
               </>
             ) : (
               <NavigationMenuItem>
-                <Button asChild size="lg" variant="default" className="cursor-pointer rounded-md px-5 shadow-none">
+                <Button asChild size="lg" variant="default" className="cursor-pointer rounded-xl px-5 shadow-sm">
                   <button type="button" onClick={openLoginDialog}>
                     Login
                   </button>
@@ -444,30 +447,30 @@ export function Navbar() {
         </NavigationMenu>
       </header>
 
-      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border/40 bg-background/85 backdrop-blur-xl md:hidden">
-        <div className="mx-auto flex w-full max-w-360 items-center justify-between gap-0.5 px-1 py-2.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:justify-around sm:gap-0 sm:px-2">
+      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border/30 bg-background/80 backdrop-blur-2xl md:hidden">
+        <div className="mx-auto flex w-full max-w-360 items-center justify-around gap-0 px-1 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
           <Link
             href="/"
-            className="flex min-w-0 flex-1 flex-col items-center gap-1 px-1 py-1 text-[10px] font-medium text-foreground sm:flex-none sm:px-2 sm:text-[11px]"
+            className="flex min-w-0 flex-1 flex-col items-center gap-1 px-2 py-1 text-[10px] font-medium text-foreground"
           >
             <House className="size-4 shrink-0" />
             <span className="truncate">Home</span>
           </Link>
           <Link
             href="/shop"
-            className="flex min-w-0 flex-1 flex-col items-center gap-1 px-1 py-1 text-[10px] font-medium text-muted-foreground sm:flex-none sm:px-2 sm:text-[11px]"
+            className="flex min-w-0 flex-1 flex-col items-center gap-1 px-2 py-1 text-[10px] font-medium text-muted-foreground"
           >
             <Store className="size-4 shrink-0" />
             <span className="truncate">Shop</span>
           </Link>
           <Link
             href="/cart"
-            className="relative flex min-w-0 flex-1 flex-col items-center gap-1 px-1 py-1 text-[10px] font-medium text-muted-foreground sm:flex-none sm:px-2 sm:text-[11px]"
+            className="relative flex min-w-0 flex-1 flex-col items-center gap-1 px-2 py-1 text-[10px] font-medium text-muted-foreground"
           >
             <ShoppingCart className="size-4 shrink-0" />
             <span className="truncate">Cart</span>
             {cartItemCount > 0 ? (
-              <span className="absolute right-0.5 top-0 inline-flex min-w-4 items-center justify-center rounded-sm bg-primary px-1 text-[9px] font-semibold text-primary-foreground sm:right-1">
+              <span className="absolute -right-0.5 -top-0.5 inline-flex min-w-[1rem] items-center justify-center rounded-full bg-primary px-1 text-[8px] font-bold text-primary-foreground ring-2 ring-background">
                 {cartItemCount > 99 ? "99+" : cartItemCount}
               </span>
             ) : null}
@@ -476,7 +479,7 @@ export function Navbar() {
             <>
               <Link
                 href="/account"
-                className="flex min-w-0 flex-1 flex-col items-center gap-1 px-1 py-1 text-[10px] font-medium text-muted-foreground sm:flex-none sm:px-2 sm:text-[11px]"
+                className="flex min-w-0 flex-1 flex-col items-center gap-1 px-2 py-1 text-[10px] font-medium text-muted-foreground"
               >
                 <User className="size-4 shrink-0" />
                 <span className="truncate">Account</span>
@@ -487,7 +490,7 @@ export function Navbar() {
                 size="sm"
                 disabled={signingOut}
                 onClick={() => void handleSignOut()}
-                className="h-auto min-h-0 min-w-0 flex-1 flex-col gap-1 rounded-lg px-1 py-1 text-[10px] font-medium whitespace-normal text-muted-foreground shadow-none hover:bg-transparent hover:text-foreground sm:h-auto sm:flex-none sm:px-2 sm:text-[11px]"
+                className="h-auto min-h-0 min-w-0 flex-1 flex-col gap-1 rounded-lg px-2 py-1 text-[10px] font-medium whitespace-normal text-muted-foreground shadow-none hover:bg-transparent hover:text-foreground"
               >
                 <LogOut className="size-4 shrink-0" />
                 <span className="truncate">{signingOut ? "…" : "Sign out"}</span>
@@ -497,7 +500,7 @@ export function Navbar() {
             <button
               type="button"
               onClick={openLoginDialog}
-              className="flex min-w-0 flex-1 flex-col items-center gap-1 px-1 py-1 text-[10px] font-medium text-muted-foreground sm:flex-none sm:px-2 sm:text-[11px]"
+              className="flex min-w-0 flex-1 flex-col items-center gap-1 px-2 py-1 text-[10px] font-medium text-muted-foreground"
             >
               <User className="size-4 shrink-0" />
               <span className="truncate">Login</span>
@@ -511,10 +514,10 @@ export function Navbar() {
           <button
             type="button"
             aria-label="Close login dialog"
-            className="absolute inset-0 bg-black/45 backdrop-blur-[1px]"
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             onClick={closeLoginDialog}
           />
-          <div className="relative z-10 w-full max-w-md rounded-xl border border-border/60 bg-card/95 p-7 shadow-xl backdrop-blur-sm">
+          <div className="relative z-10 w-full max-w-md animate-scale-in rounded-2xl border border-border/40 bg-card/95 p-8 shadow-glass-lg backdrop-blur-xl">
             <div className="mb-6">
               <h2 className="text-xl font-semibold tracking-tight text-foreground">Login</h2>
               <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
@@ -524,32 +527,31 @@ export function Navbar() {
 
             <form className="space-y-4" onSubmit={handleLoginSubmit}>
               <div className="space-y-2">
-                
                 <InputField
-                id="login-email"
-                type="email"
-                required
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                placeholder="email"
+                  id="login-email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="Email address"
                 />
               </div>
 
               <div className="space-y-2">
                 <InputField
-                id="login-phone"
-                type="tel"
-                required
-                value={phone}
-                onChange={(event) => setPhone(event.target.value)}
-                placeholder="phone"
+                  id="login-phone"
+                  type="tel"
+                  required
+                  value={phone}
+                  onChange={(event) => setPhone(event.target.value)}
+                  placeholder="Phone number"
                 />
               </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" variant="outline" onClick={closeLoginDialog} disabled={isSubmitting} className="cursor-pointer rounded-md">
+              <div className="flex justify-end gap-3 pt-2">
+                <Button type="button" variant="outline" onClick={closeLoginDialog} disabled={isSubmitting} className="cursor-pointer rounded-xl">
                   Cancel
                 </Button>
-                <Button type="submit" variant="default" className="cursor-pointer rounded-md px-5 shadow-none" disabled={isSubmitting}>
+                <Button type="submit" variant="default" className="cursor-pointer rounded-xl px-5 shadow-sm" disabled={isSubmitting}>
                   {isSubmitting ? "Verifying..." : "Verify"}
                 </Button>
               </div>

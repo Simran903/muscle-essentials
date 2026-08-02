@@ -13,7 +13,6 @@ import { BrandSection } from "./Sections/BrandSection"
 import { FAQSection } from "./Sections/FAQSection"
 import { TestimonialsSection } from "./Sections/Testimonials"
 import { BrandCarousel } from "./Carousel/BrandCarousel"
-import { Footer } from "./Footer/Footer"
 import { getProducts, productQualifiesForMerchFlag, type ProductItem } from "@/lib/api"
 import { pageMobileBottom, pagePy } from "@/lib/page-layout"
 import { cn } from "@/lib/utils"
@@ -261,7 +260,6 @@ const LandingPage = () => {
           <FAQSection />
         </motion.div>
       </main>
-      <Footer />
     </div>
   )
 }

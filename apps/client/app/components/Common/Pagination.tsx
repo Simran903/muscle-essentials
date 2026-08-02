@@ -10,9 +10,7 @@ export type PaginationProps = {
   className?: string
   previousLabel?: string
   nextLabel?: string
-  /** When set, overrides default (`page <= 1`) for disabling Previous */
   isPreviousDisabled?: boolean
-  /** When set, overrides default (`page >= totalPages` or `totalPages < 1`) for disabling Next */
   isNextDisabled?: boolean
 }
 
@@ -31,9 +29,6 @@ export function Pagination({
   const nextDisabled =
     isNextDisabled ?? (page >= totalPages || totalPages < 1)
 
-  const buttonClass =
-    "rounded-md border border-border/60 bg-background px-5 py-2 text-sm font-medium transition-colors hover:border-border hover:bg-muted/40 disabled:cursor-not-allowed disabled:opacity-50"
-
   return (
     <div
       className={cn(
@@ -41,7 +36,7 @@ export function Pagination({
         className
       )}
     >
-      <p className="text-sm text-muted-foreground">
+      <p className="text-sm tabular-nums text-muted-foreground">
         Page {page} of {totalPages}
       </p>
       <div className="flex items-center gap-2">
@@ -49,7 +44,7 @@ export function Pagination({
           type="button"
           onClick={onPrevious}
           disabled={previousDisabled}
-          className={buttonClass}
+          className="inline-flex h-9 items-center rounded-full border border-border/70 bg-background px-4 text-sm font-medium text-foreground shadow-sm transition-all hover:border-border hover:bg-muted/40 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {previousLabel}
         </button>
@@ -57,7 +52,7 @@ export function Pagination({
           type="button"
           onClick={onNext}
           disabled={nextDisabled}
-          className={buttonClass}
+          className="inline-flex h-9 items-center rounded-full border border-border/70 bg-background px-4 text-sm font-medium text-foreground shadow-sm transition-all hover:border-border hover:bg-muted/40 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {nextLabel}
         </button>

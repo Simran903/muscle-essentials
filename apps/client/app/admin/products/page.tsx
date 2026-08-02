@@ -68,7 +68,7 @@ export default function AdminProductsPage() {
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">Products</h1>
           <p className="mt-1 text-sm text-muted-foreground">Create, edit, and deactivate catalog items.</p>
         </div>
-        <Button asChild className="rounded-md shadow-none">
+        <Button asChild className="rounded-lg shadow-none">
           <Link href="/admin/products/new">New product</Link>
         </Button>
       </div>
@@ -129,7 +129,7 @@ export default function AdminProductsPage() {
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="rounded-md"
+                  className="rounded-lg"
                   disabled={page <= 1}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                 >
@@ -142,7 +142,7 @@ export default function AdminProductsPage() {
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="rounded-md"
+                  className="rounded-lg"
                   disabled={page >= data.totalPages}
                   onClick={() => setPage((p) => p + 1)}
                 >

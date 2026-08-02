@@ -12,125 +12,32 @@ import { cn } from "@/lib/utils"
 type BrandTile = {
   id: string
   name: string
+  slug: string
   image: string
-  bgClassName: string
-  borderClassName: string
   className?: string
 }
 
 const brands: BrandTile[] = [
-  {
-    id: "1",
-    name: "MuscleBlaze",
-    image:
-      "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D",
-    bgClassName: "bg-sky-100/70",
-    borderClassName: "border-sky-200",
-  },
-  {
-    id: "2",
-    name: "Optimum Nutrition",
-    image:
-      "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D",
-    bgClassName: "bg-lime-100/70",
-    borderClassName: "border-lime-200",
-  },
-  {
-    id: "3",
-    name: "AS-IT-IS",
-    image:
-      "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D",
-    bgClassName: "bg-yellow-100/70",
-    borderClassName: "border-yellow-200",
-  },
-  {
-    id: "4",
-    name: "Nakpro",
-    image:
-      "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D",
-    bgClassName: "bg-zinc-100/80",
-    borderClassName: "border-zinc-200",
-    className: "md:col-span-2 xl:col-span-3",
-  },
-  {
-    id: "5",
-    name: "GNC",
-    image:
-      "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D",
-    bgClassName: "bg-amber-100/70",
-    borderClassName: "border-amber-200",
-  },
-  {
-    id: "6",
-    name: "Ronnie Coleman",
-    image:
-      "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D",
-    bgClassName: "bg-rose-100/70",
-    borderClassName: "border-rose-200",
-    className: "md:col-span-2 xl:col-span-3",
-  },
-  {
-    id: "7",
-    name: "MuscleTech",
-    image:
-      "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D",
-    bgClassName: "bg-violet-100/70",
-    borderClassName: "border-violet-200",
-  },
-  {
-    id: "8",
-    name: "Dymatize",
-    image:
-      "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D",
-    bgClassName: "bg-cyan-100/70",
-    borderClassName: "border-cyan-200",
-    className: "md:col-span-2 xl:col-span-1",
-  },
-  {
-    id: "9",
-    name: "BPI Sports",
-    image:
-      "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D",
-    bgClassName: "bg-orange-100/70",
-    borderClassName: "border-orange-200",
-    className: "md:col-span-2 xl:col-span-2",
-  },
-  {
-    id: "10",
-    name: "Isopure",
-    image:
-      "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D",
-    bgClassName: "bg-fuchsia-100/70",
-    borderClassName: "border-fuchsia-200",
-  },
-  {
-    id: "11",
-    name: "Rule 1",
-    image:
-      "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D",
-    bgClassName: "bg-indigo-100/70",
-    borderClassName: "border-indigo-200",
-    className: "md:col-span-2 xl:col-span-1",
-  },
-  {
-    id: "12",
-    name: "Universal Nutrition",
-    image:
-      "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D",
-    bgClassName: "bg-cyan-50/90 dark:bg-cyan-950/35",
-    borderClassName: "border-cyan-200/90 dark:border-cyan-800/50",
-    className: "md:col-span-2 xl:col-span-2",
-  },
+  { id: "1", name: "MuscleBlaze", slug: "muscleblaze", image: "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D" },
+  { id: "2", name: "Optimum Nutrition", slug: "optimum-nutrition", image: "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D" },
+  { id: "3", name: "AS-IT-IS", slug: "as-it-is", image: "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D" },
+  { id: "4", name: "Nakpro", slug: "nakpro", image: "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D", className: "md:col-span-2 xl:col-span-3" },
+  { id: "5", name: "GNC", slug: "gnc", image: "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D" },
+  { id: "6", name: "Ronnie Coleman", slug: "ronnie-coleman", image: "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D", className: "md:col-span-2 xl:col-span-3" },
+  { id: "7", name: "MuscleTech", slug: "muscletech", image: "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D" },
+  { id: "8", name: "Dymatize", slug: "dymatize", image: "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D", className: "md:col-span-2 xl:col-span-1" },
+  { id: "9", name: "BPI Sports", slug: "bpi-sports", image: "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D", className: "md:col-span-2 xl:col-span-2" },
+  { id: "10", name: "Isopure", slug: "isopure", image: "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D" },
+  { id: "11", name: "Rule 1", slug: "rule-1", image: "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D", className: "md:col-span-2 xl:col-span-1" },
+  { id: "12", name: "Universal Nutrition", slug: "universal-nutrition", image: "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bG9nb3xlbnwwfHwwfHx8MA%3D%3D", className: "md:col-span-2 xl:col-span-2" },
 ]
 
 function BrandHeader({ tile }: { tile: BrandTile }) {
   const [imageLoaded, setImageLoaded] = React.useState(false)
 
   return (
-    <div
-      className="overflow-hidden rounded-lg border border-border bg-muted/20"
-    >
-      {!imageLoaded && <Skeleton className="h-42 w-full rounded-lg" />}
+    <div className="overflow-hidden rounded-xl border border-border/30 bg-muted/15">
+      {!imageLoaded && <Skeleton className="h-42 w-full rounded-xl" />}
       <Image
         src={tile.image}
         alt={tile.name}
@@ -159,13 +66,13 @@ export const BrandSection = () => {
           {brands.map((brand) => (
             <Link
               key={brand.id}
-              href="#shop"
+              href={`/shop?brand=${brand.slug}`}
               className="contents"
               aria-label={`${brand.name} brand`}
             >
               <BentoGridItem
                 className={cn(
-                  "h-full cursor-pointer border-border bg-card/70 transition-colors hover:border-foreground/12 hover:bg-muted/25",
+                  "h-full cursor-pointer border-border/40 bg-card/60 shadow-sm transition-all duration-300 hover:shadow-card-hover hover:border-foreground/10 hover:bg-muted/20",
                   brand.className
                 )}
                 header={<BrandHeader tile={brand} />}

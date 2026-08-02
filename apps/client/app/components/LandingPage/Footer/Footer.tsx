@@ -2,6 +2,8 @@ import Image from "next/image"
 import Link from "next/link"
 import {
   ArrowUpRight,
+  BadgeCheck,
+  FileText,
   Mail,
   PackageCheck,
   Phone,
@@ -48,10 +50,9 @@ const linkColumns: { title: string; links: { href: string; label: string }[] }[]
   {
     title: "Support",
     links: [
+      { href: "/about", label: "About us" },
       { href: "/contact", label: "Contact" },
       { href: "/#faq", label: "FAQ" },
-      { href: "/shipping", label: "Shipping" },
-      { href: "/returns", label: "Returns" },
       { href: "/#testimonials", label: "Reviews" },
       { href: "/account", label: "My account" },
     ],
@@ -59,10 +60,8 @@ const linkColumns: { title: string; links: { href: string; label: string }[] }[]
   {
     title: "Legal",
     links: [
-      { href: "/legal/terms", label: "Terms" },
-      { href: "/legal/privacy", label: "Privacy" },
       { href: "/cookies", label: "Cookies" },
-      { href: "/legal/refunds", label: "Refunds" },
+      { href: "/legal/policy", label: "Delivery & Returns" },
     ],
   },
 ]
@@ -75,7 +74,7 @@ const trustHighlights = [
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
       {children}
     </p>
   )
@@ -136,8 +135,8 @@ function SocialButton({
       rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
       aria-label={label}
       className={cn(
-        "inline-flex size-10 items-center justify-center rounded-xl border border-border/60 bg-background/70 text-muted-foreground",
-        "transition-all hover:border-border hover:bg-background hover:text-foreground hover:shadow-sm",
+        "inline-flex size-10 items-center justify-center rounded-xl border border-border/40 bg-background/60 text-muted-foreground shadow-sm",
+        "transition-all hover:border-border/60 hover:bg-background hover:text-foreground hover:shadow-glass",
       )}
     >
       {children}
@@ -150,22 +149,29 @@ export const Footer = () => {
   const legalLinks = linkColumns.find((c) => c.title === "Legal")?.links ?? []
 
   return (
-    <footer className="relative overflow-x-clip border-t border-border/50 bg-background text-foreground">
+    <footer className="relative overflow-x-clip border-t border-border/30 bg-background text-foreground">
       <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_-30%,oklch(0.92_0.06_198/0.18),transparent)] dark:bg-[radial-gradient(ellipse_90%_60%_at_50%_-30%,oklch(0.32_0.08_210/0.22),transparent)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_-30%,oklch(0.92_0.06_198/0.12),transparent)] dark:bg-[radial-gradient(ellipse_90%_60%_at_50%_-30%,oklch(0.32_0.08_210/0.15),transparent)]"
         aria-hidden
       />
 
-      <div className="relative z-10 mx-auto w-full max-w-360 px-4 pt-14 sm:px-6 sm:pt-16 lg:px-10 lg:pt-20">
-        <div className="flex flex-col gap-12 lg:flex-row lg:gap-16 xl:gap-20">
+      <div className="relative z-10 mx-auto w-full max-w-360 px-4 pt-16 sm:px-6 lg:px-10 lg:pt-24">
+        <div className="flex flex-col gap-12 lg:flex-row lg:gap-20 xl:gap-28">
           <div className="lg:max-w-sm lg:shrink-0">
             <Link href="/" className="inline-flex transition-opacity hover:opacity-85">
               <Image
-                src="/logo-new.png"
-                alt="Muscle Essentials"
+                src="/logo-light.png"
+                alt="GEN1"
                 width={160}
                 height={48}
-                className="h-11 w-auto object-contain dark:brightness-0 dark:invert"
+                className="h-16 w-auto object-contain dark:hidden"
+              />
+              <Image
+                src="/logo-dark.png"
+                alt="GEN1"
+                width={160}
+                height={48}
+                className="hidden h-16 w-auto object-contain dark:block"
               />
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
@@ -179,7 +185,7 @@ export const Footer = () => {
                   href={`mailto:${CONTACT_EMAIL}`}
                   className="group flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
-                  <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border/50 bg-card/80 text-foreground/80">
+                  <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl border border-border/40 bg-card/70 text-foreground/80 shadow-sm">
                     <Mail className="size-4" aria-hidden />
                   </span>
                   <span className="min-w-0 break-all underline-offset-4 group-hover:underline">
@@ -192,7 +198,7 @@ export const Footer = () => {
                   href={CONTACT_PHONE_TEL}
                   className="group flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
-                  <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border/50 bg-card/80 text-foreground/80">
+                  <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl border border-border/40 bg-card/70 text-foreground/80 shadow-sm">
                     <Phone className="size-4" aria-hidden />
                   </span>
                   <span className="tabular-nums underline-offset-4 group-hover:underline">
@@ -204,7 +210,7 @@ export const Footer = () => {
 
             <div className="mt-6 flex flex-wrap items-center gap-2.5">
               <SocialButton href={INSTAGRAM_URL} label="Instagram">
-                <InstagramIcon className="size-4.5" />
+                <InstagramIcon className="size-4" />
               </SocialButton>
               <SocialButton href={`mailto:${CONTACT_EMAIL}`} label="Email">
                 <Mail className="size-4" />
@@ -212,7 +218,7 @@ export const Footer = () => {
             </div>
 
             <div className="mt-8 flex flex-wrap gap-2">
-              <Button asChild size="sm" className="rounded-full shadow-none">
+              <Button asChild size="sm" className="rounded-full shadow-sm">
                 <Link href="/shop">Shop now</Link>
               </Button>
               <Button asChild size="sm" variant="outline" className="rounded-full">
@@ -232,30 +238,30 @@ export const Footer = () => {
           {trustHighlights.map(({ icon: Icon, label }) => (
             <li
               key={label}
-              className="inline-flex items-center gap-2 rounded-full border border-border/50 bg-card/60 px-3.5 py-2 text-xs font-medium text-foreground/90 backdrop-blur-sm"
+              className="inline-flex items-center gap-2 rounded-full border border-border/40 bg-card/50 px-3.5 py-1.5 text-xs font-medium text-foreground/80 backdrop-blur-sm"
             >
-              <Icon className="size-3.5 shrink-0 text-cyan-700/90 dark:text-cyan-400/90" aria-hidden />
+              <Icon className="size-3.5 shrink-0 text-primary/80" aria-hidden />
               {label}
             </li>
           ))}
         </ul>
 
         <section
-          className="mt-8 overflow-hidden rounded-2xl border border-border/50 bg-card/70 shadow-sm backdrop-blur-sm"
-          aria-labelledby="fssai-footer-heading"
+          className="mt-8 overflow-hidden rounded-2xl border border-border/30 bg-card/60 shadow-sm backdrop-blur-sm"
+          aria-labelledby="compliance-footer-heading"
         >
-          <div className="border-b border-border/40 bg-muted/15 px-5 py-4 sm:px-6">
+          <div className="border-b border-border/30 bg-muted/10 px-5 py-4 sm:px-6">
             <div className="flex flex-wrap items-center gap-3">
-              <span className="inline-flex size-10 items-center justify-center rounded-xl border border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
+              <span className="inline-flex size-10 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
                 <ShieldCheck className="size-5" aria-hidden />
               </span>
               <div>
                 <SectionLabel>Compliance</SectionLabel>
                 <h3
-                  id="fssai-footer-heading"
+                  id="compliance-footer-heading"
                   className="mt-0.5 text-base font-semibold tracking-tight text-foreground"
                 >
-                  FSSAI details
+                  Business Compliance
                 </h3>
               </div>
             </div>
@@ -265,35 +271,47 @@ export const Footer = () => {
               <abbr title="Food Safety and Standards Authority of India" className="no-underline">
                 FSSAI
               </abbr>{" "}
-              regulates food safety in India. Muscle Essentials sells supplements in line with
-              applicable FSSAI requirements.
+              regulates food safety in India. GEN1 sells supplements in line with
+              applicable FSSAI requirements. GEN 1 Nutrition is a GST-registered business.
             </p>
             <dl className="grid gap-4 text-sm sm:grid-cols-2">
-              <div className="rounded-xl border border-border/50 bg-background/50 px-4 py-3">
-                <dt className="text-xs font-medium text-muted-foreground">Licence number</dt>
-                <dd className="mt-1 font-medium text-foreground">
-                  {fssaiLicenseNo ? (
-                    <span className="font-mono tabular-nums">{fssaiLicenseNo}</span>
-                  ) : (
-                    <span className="text-muted-foreground">
-                      On product labels & invoices —{" "}
-                      <a
-                        href={`mailto:${CONTACT_EMAIL}?subject=FSSAI%20licence%20details`}
-                        className="text-foreground underline-offset-4 hover:underline"
-                      >
-                        request by email
-                      </a>
-                    </span>
-                  )}
-                </dd>
+              <div className="flex items-start gap-3 rounded-xl border border-border/40 bg-background/40 px-4 py-3">
+                <FileText className="mt-0.5 size-4 shrink-0 text-muted-foreground/70" aria-hidden />
+                <div>
+                  <dt className="text-xs font-medium text-muted-foreground">FSSAI Licence Number</dt>
+                  <dd className="mt-0.5 font-medium text-foreground">
+                    {fssaiLicenseNo ? (
+                      <span className="font-mono tabular-nums">{fssaiLicenseNo}</span>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">
+                        On product labels & invoices —{" "}
+                        <a
+                          href={`mailto:${CONTACT_EMAIL}?subject=FSSAI%20licence%20details`}
+                          className="text-foreground underline-offset-4 hover:underline"
+                        >
+                          request by email
+                        </a>
+                      </span>
+                    )}
+                  </dd>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 rounded-xl border border-border/40 bg-background/40 px-4 py-3">
+                <BadgeCheck className="mt-0.5 size-4 shrink-0 text-muted-foreground/70" aria-hidden />
+                <div>
+                  <dt className="text-xs font-medium text-muted-foreground">GSTIN</dt>
+                  <dd className="mt-0.5 font-mono tabular-nums font-medium text-foreground">
+                    XXXXXXXXXXXXXXX
+                  </dd>
+                </div>
               </div>
             </dl>
           </div>
         </section>
 
-        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-b border-border/50 pb-8 text-center sm:flex-row sm:text-left">
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-b border-border/30 pb-8 text-center sm:flex-row sm:text-left">
           <p className="text-sm text-muted-foreground">
-            © {year} Muscle Essentials. All rights reserved.
+            © {year} GEN1. All rights reserved.
           </p>
           <nav
             className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm"

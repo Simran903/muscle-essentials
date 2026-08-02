@@ -48,8 +48,8 @@ export const FAQSection = () => {
         title="Questions & answers"
         description="Straight answers about shopping, delivery, and using supplements responsibly."
       />
-      <div className="mt-6 px-1 py-2 sm:px-2 sm:py-3">
-        <Accordion type="single" collapsible className="w-full px-2 sm:px-3">
+      <div className="mt-6 rounded-2xl border border-border/30 bg-card/50 p-5 shadow-sm sm:p-6">
+        <Accordion type="single" collapsible className="w-full">
           {faqs.map((item) => (
             <AccordionItem key={item.id} value={item.id}>
               <AccordionTrigger className="text-left text-base font-medium text-foreground sm:text-lg">
@@ -59,7 +59,7 @@ export const FAQSection = () => {
                 <p className="text-muted-foreground leading-relaxed">
                   {item.answer}
                 </p>
-              </AccordionContent> 
+              </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>

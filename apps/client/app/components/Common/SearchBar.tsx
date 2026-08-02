@@ -2,6 +2,7 @@
 
 import { Search } from "lucide-react"
 import { InputField } from "./InputField"
+import { cn } from "@/lib/utils"
 
 type SearchBarProps = {
   id?: string
@@ -17,17 +18,17 @@ export function SearchBar({
   className = "",
 }: SearchBarProps) {
   return (
-    <div className={className}>
+    <div className={cn("", className)}>
       <label htmlFor={id} className="sr-only">
         {label}
       </label>
       <div className="group relative">
-        <Search className="pointer-events-none absolute left-4 top-1/2 z-10 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-cyan-600 dark:group-focus-within:text-cyan-400" />
+        <Search className="pointer-events-none absolute left-3.5 top-1/2 z-10 size-4 -translate-y-1/2 text-muted-foreground/60 transition-colors group-focus-within:text-primary" />
         <InputField
-        id={id}
-        type="search"
-        placeholder={placeholder}
-        className="h-10 w-full rounded-full border border-border/60 bg-muted/15 pl-11 pr-4 text-sm text-foreground shadow-none transition-[border-color,background-color,box-shadow] placeholder:text-muted-foreground hover:border-border hover:bg-muted/25 focus-visible:border-cyan-500/40 focus-visible:ring-2 focus-visible:ring-cyan-500/15 dark:focus-visible:border-cyan-400/45 dark:focus-visible:ring-cyan-400/15"
+          id={id}
+          type="search"
+          placeholder={placeholder}
+          className="h-10 w-full rounded-full border border-border/60 bg-muted/20 pl-10 pr-4 text-sm text-foreground shadow-none transition-all placeholder:text-muted-foreground/50 hover:border-border/80 hover:bg-muted/30 focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-primary/12 focus-visible:bg-background"
         />
       </div>
     </div>

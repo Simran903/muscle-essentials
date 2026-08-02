@@ -65,20 +65,27 @@ const HomePage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
             >
-              <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                Muscle Essentials
+              <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                GEN1
               </h1>
-              <p className="mt-2 text-sm text-muted-foreground sm:text-base">Loading your experience</p>
+              <p className="mt-3 text-sm text-muted-foreground sm:text-base">Loading your experience</p>
             </motion.div>
-            <div className="flex items-center gap-1.5" aria-hidden>
-              {[0, 1, 2].map((dot) => (
-                <motion.span
-                  key={dot}
-                  className="h-1 w-1 rounded-full bg-cyan-500/50 dark:bg-cyan-400/55"
-                  animate={{ opacity: [0.35, 1, 0.35] }}
-                  transition={{ duration: 1.1, repeat: Infinity, delay: dot * 0.15 }}
-                />
-              ))}
+            <div className="flex items-center gap-2" aria-hidden>
+              <motion.span
+                className="size-2 rounded-full bg-primary/50"
+                animate={{ opacity: [0.35, 1, 0.35], scale: [1, 1.2, 1] }}
+                transition={{ duration: 1.1, repeat: Infinity, delay: 0 }}
+              />
+              <motion.span
+                className="size-2 rounded-full bg-primary/50"
+                animate={{ opacity: [0.35, 1, 0.35], scale: [1, 1.2, 1] }}
+                transition={{ duration: 1.1, repeat: Infinity, delay: 0.2 }}
+              />
+              <motion.span
+                className="size-2 rounded-full bg-primary/50"
+                animate={{ opacity: [0.35, 1, 0.35], scale: [1, 1.2, 1] }}
+                transition={{ duration: 1.1, repeat: Infinity, delay: 0.4 }}
+              />
             </div>
           </div>
         </motion.section>

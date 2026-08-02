@@ -133,7 +133,7 @@ function AddressCard({
 }) {
   const Icon = typeIcon(address.type)
   return (
-    <article className="relative flex flex-col gap-3 rounded-xl border border-border/50 bg-card/70 p-5 shadow-none">
+    <article className="relative flex flex-col gap-3 rounded-xl border border-border/30 bg-card/60 p-5 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2">
           <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-border/50 bg-background/60 text-muted-foreground">
@@ -282,7 +282,7 @@ function AddressFormDialog({
           if (!submitting) onClose()
         }}
       />
-      <div className="relative z-10 max-h-[92svh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-border/60 bg-card/95 p-6 shadow-xl backdrop-blur-sm sm:p-7">
+      <div className="relative z-10 max-h-[92svh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-border/20 bg-card/60 p-6 shadow-sm backdrop-blur-sm sm:p-7">
         <div className="mb-5 flex items-start justify-between gap-3">
           <div>
             <h2 className="text-xl font-semibold tracking-tight text-foreground">
@@ -322,7 +322,7 @@ function AddressFormDialog({
                 disabled={submitting}
                 className={cn(
                   "h-9 w-full rounded-xl border border-input/80 bg-background px-3 text-sm text-foreground outline-none transition-[border-color,box-shadow]",
-                  "focus-visible:border-cyan-500/45 focus-visible:ring-2 focus-visible:ring-cyan-500/15",
+                  "focus-visible:border-primary/45 focus-visible:ring-2 focus-visible:ring-primary/15",
                   "disabled:cursor-not-allowed disabled:opacity-50",
                 )}
               >
@@ -546,7 +546,7 @@ function ConfirmDialog({
           if (!busy) onCancel()
         }}
       />
-      <div className="relative z-10 w-full max-w-md rounded-2xl border border-border/60 bg-card/95 p-6 shadow-xl backdrop-blur-sm">
+      <div className="relative z-10 w-full max-w-md rounded-2xl border border-border/20 bg-card/60 p-6 shadow-sm backdrop-blur-sm">
         <h2 className="text-lg font-semibold tracking-tight text-foreground">
           {title}
         </h2>

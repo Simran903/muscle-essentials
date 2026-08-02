@@ -32,7 +32,7 @@ export const DealoftheDaySection = ({ products, isLoading = false }: DealoftheDa
         <div className="flex flex-wrap items-end justify-between gap-5">
           <SectionHeading
             title="Deal of the day"
-            description="Grab today’s top picks at special prices before the offer ends."
+            description="Grab today's top picks at special prices before the offer ends."
           />
           <Button asChild variant="outline" className="rounded-full px-6 shadow-none">
             <Link href="/shop?deal=1">View more</Link>
@@ -53,7 +53,7 @@ export const DealoftheDaySection = ({ products, isLoading = false }: DealoftheDa
                     imageSrc={product.images.find((image) => image.isPrimary)?.url ?? product.images[0]?.url ?? "/images/placeholder.jpg"}
                     imageAlt={product.images.find((image) => image.isPrimary)?.altText ?? product.title}
                     title={product.title}
-                    subtitle={product.brand?.name ?? "Muscle Essentials"}
+                    subtitle={product.brand?.name ?? "GEN1"}
                     price={Number(product.price)}
                     priceFrom={
                       product.maxPrice != null &&

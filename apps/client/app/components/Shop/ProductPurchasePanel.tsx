@@ -37,7 +37,6 @@ type ProductPurchasePanelProps = {
   variants: PurchaseVariant[]
   isInStock: boolean
   stockQuantity: number
-  /** Called when the selection has been resolved to a concrete variant id. */
   onResolvedSelection?: (selection: {
     variantId: string | null
     flavourLabel: string
@@ -208,18 +207,18 @@ export function ProductPurchasePanel({
 
   const optionButtonClass = (active: boolean) =>
     cn(
-      "h-10 min-w-[2.75rem] rounded-md border px-3 text-sm font-medium transition-colors cursor-pointer",
+      "h-10 min-w-[2.75rem] rounded-xl border px-4 text-sm font-medium transition-all duration-200 cursor-pointer",
       active
-        ? "border-primary/35 bg-primary/8 text-foreground"
-        : "border-border/70 bg-background text-foreground hover:border-border dark:bg-muted/20",
+        ? "border-primary/40 bg-primary/8 text-foreground shadow-sm"
+        : "border-border/50 bg-background text-foreground hover:border-border hover:shadow-sm dark:bg-muted/20",
     )
 
   return (
     <div className="mt-6 space-y-6">
 
       {flavourList.length > 0 ? (
-        <div className="space-y-2">
-          <p className="text-xs font-medium tracking-wide text-muted-foreground">
+        <div className="space-y-2.5">
+          <p className="text-xs font-semibold tracking-wide text-muted-foreground">
             Flavour
           </p>
           <div className="flex flex-wrap gap-2">
@@ -239,8 +238,8 @@ export function ProductPurchasePanel({
       ) : null}
 
       {sizeList.length > 0 ? (
-        <div className="space-y-2">
-          <p className="text-xs font-medium tracking-wide text-muted-foreground">
+        <div className="space-y-2.5">
+          <p className="text-xs font-semibold tracking-wide text-muted-foreground">
             Size
           </p>
           <div className="flex flex-wrap gap-2">
@@ -266,15 +265,15 @@ export function ProductPurchasePanel({
       ) : null}
 
       {isInStock ? (
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-xs font-medium tracking-wide text-muted-foreground">
+            <p className="text-xs font-semibold tracking-wide text-muted-foreground">
               Quantity
             </p>
           </div>
           <div
             className={cn(
-              "flex h-12 max-w-44 items-center justify-between gap-1 rounded-lg border border-border/70 bg-background px-1 dark:bg-muted/20",
+              "flex h-12 max-w-44 items-center justify-between gap-1 rounded-xl border border-border/50 bg-background px-1 shadow-sm dark:bg-muted/20",
               !canPurchase && "opacity-50",
             )}
           >
@@ -282,7 +281,7 @@ export function ProductPurchasePanel({
               type="button"
               variant="ghost"
               size="icon"
-              className="size-10 shrink-0 rounded-md"
+              className="size-10 shrink-0 rounded-lg"
               disabled={!canPurchase || resolvedQuantity <= 1}
               onClick={() => bumpQuantity(-1)}
               aria-label="Decrease quantity"
@@ -296,7 +295,7 @@ export function ProductPurchasePanel({
               type="button"
               variant="ghost"
               size="icon"
-              className="size-10 shrink-0 rounded-md"
+              className="size-10 shrink-0 rounded-lg"
               disabled={!canPurchase || resolvedQuantity >= maxSelectable}
               onClick={() => bumpQuantity(1)}
               aria-label="Increase quantity"
@@ -308,10 +307,10 @@ export function ProductPurchasePanel({
       ) : null}
 
       {displayUnitPrice != null ? (
-        <div className="rounded-xl border border-border/60 bg-muted/20 p-4 dark:bg-muted/15">
+        <div className="rounded-xl border border-border/40 bg-muted/20 p-4 shadow-sm dark:bg-muted/15">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <p className="text-xs font-medium tracking-wide text-muted-foreground">
+              <p className="text-xs font-semibold tracking-wide text-muted-foreground">
                 Price
               </p>
               <p className="mt-1 text-3xl font-semibold tracking-tight text-foreground">
@@ -325,7 +324,7 @@ export function ProductPurchasePanel({
                 )}
               </p>
             </div>
-            <span className="rounded-md border border-border/60 bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground">
+            <span className="rounded-lg border border-border/50 bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
               Inclusive of taxes
             </span>
           </div>
@@ -336,7 +335,7 @@ export function ProductPurchasePanel({
         <Button
           type="button"
           size="lg"
-          className="h-12 rounded-lg text-base shadow-none"
+          className="h-12 rounded-xl text-base shadow-sm"
           disabled={!canPurchase || isCartBusy}
           onClick={() => void handleAddToCart()}
         >
@@ -348,7 +347,7 @@ export function ProductPurchasePanel({
           type="button"
           variant="outline"
           size="lg"
-          className="h-12 rounded-lg text-base border-border/70"
+          className="h-12 rounded-xl text-base"
           disabled={!canPurchase || isCartBusy}
           onClick={() => void handleBuyNow()}
         >
