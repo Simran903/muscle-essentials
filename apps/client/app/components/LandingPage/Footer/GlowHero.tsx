@@ -14,7 +14,7 @@ export function GlowHero() {
       >
         <span
           aria-hidden
-          className={`pointer-events-none absolute inset-0 flex items-center justify-center ${textClass} text-cyan-400 opacity-45 blur-md dark:text-cyan-300 dark:opacity-20 dark:blur-sm`}
+          className={`pointer-events-none absolute inset-0 flex items-center justify-center ${textClass} text-primary opacity-70 blur-lg dark:text-primary dark:opacity-35 dark:blur-lg`}
         >
           {headline}
         </span>

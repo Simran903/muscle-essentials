@@ -209,7 +209,7 @@ export function ProductPurchasePanel({
     cn(
       "h-10 min-w-[2.75rem] rounded-xl border px-4 text-sm font-medium transition-all duration-200 cursor-pointer",
       active
-        ? "border-primary/40 bg-primary/8 text-foreground shadow-sm"
+        ? "border-primary bg-primary text-primary-foreground shadow-md ring-2 ring-primary/30"
         : "border-border/50 bg-background text-foreground hover:border-border hover:shadow-sm dark:bg-muted/20",
     )
 

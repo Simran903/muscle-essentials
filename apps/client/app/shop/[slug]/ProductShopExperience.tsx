@@ -85,7 +85,7 @@ export function ProductShopExperience({ product, reviews }: ProductShopExperienc
               )}
 
               {merch.isBestseller && (
-                <span className="rounded-lg border border-emerald-500/20 bg-emerald-500/8 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                <span className="rounded-lg border border-primary/20 bg-primary/8 px-3 py-1 text-xs font-semibold text-primary">
                   Bestseller
                 </span>
               )}

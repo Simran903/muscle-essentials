@@ -151,7 +151,7 @@ export const Footer = () => {
   return (
     <footer className="relative overflow-x-clip border-t border-border/30 bg-background text-foreground">
       <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_-30%,oklch(0.92_0.06_198/0.12),transparent)] dark:bg-[radial-gradient(ellipse_90%_60%_at_50%_-30%,oklch(0.32_0.08_210/0.15),transparent)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_-30%,rgba(156,212,0,0.10),transparent)] dark:bg-[radial-gradient(ellipse_90%_60%_at_50%_-30%,rgba(156,212,0,0.10),transparent)]"
         aria-hidden
       />
 
@@ -252,7 +252,7 @@ export const Footer = () => {
         >
           <div className="border-b border-border/30 bg-muted/10 px-5 py-4 sm:px-6">
             <div className="flex flex-wrap items-center gap-3">
-              <span className="inline-flex size-10 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
+              <span className="inline-flex size-10 items-center justify-center rounded-xl border border-primary/20 bg-primary/8 text-primary dark:text-primary">
                 <ShieldCheck className="size-5" aria-hidden />
               </span>
               <div>

@@ -149,7 +149,7 @@ function AddressCard({
           </div>
         </div>
         {address.isDefault ? (
-          <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
+          <span className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
             <Star className="size-3 fill-current" /> Default
           </span>
         ) : null}

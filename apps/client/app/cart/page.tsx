@@ -402,7 +402,7 @@ export default function CartPage() {
                 </span>
               </div>
               {hasDiscount ? (
-                <div className="flex justify-between gap-4 text-emerald-600 dark:text-emerald-400">
+                <div className="flex justify-between gap-4 text-primary">
                   <span>Discount</span>
                   <span className="font-medium tabular-nums">−{formatInr(cart.discountAmount)}</span>
                 </div>

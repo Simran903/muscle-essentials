@@ -35,7 +35,7 @@ const AccountBackground = () => (
   <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden>
     <div className="absolute -left-48 top-[-10%] size-120 rounded-full bg-primary/10 blur-3xl dark:bg-primary/6" />
     <div className="absolute right-[-20%] top-[28%] size-104 rounded-full bg-primary/8 blur-3xl dark:bg-primary/6" />
-    <div className="absolute bottom-[-15%] left-[20%] size-88 rounded-full bg-emerald-500/8 blur-3xl" />
+    <div className="absolute bottom-[-15%] left-[20%] size-88 rounded-full bg-primary/8 blur-3xl" />
   </div>
 )
 
@@ -307,9 +307,9 @@ export default function DeliveryReturnsPage() {
                     </div>
                   </div>
                 </div>
-                <div className="rounded-xl border border-emerald-500/15 bg-emerald-500/5 p-4 shadow-sm">
+                <div className="rounded-xl border border-primary/15 bg-primary/5 p-4 shadow-sm">
                   <div className="flex items-start gap-3">
-                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary" />
                     <div>
                       <p className="text-xs font-semibold text-foreground">Dispatch Confirmation</p>
                       <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
@@ -417,7 +417,7 @@ export default function DeliveryReturnsPage() {
             <div className="mb-6 grid gap-5 sm:grid-cols-2">
               {/* Eligible */}
               <div>
-                <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+                <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-primary">
                   <CheckCircle2 className="size-4" />
                   Eligible Returns
                 </p>
@@ -431,9 +431,9 @@ export default function DeliveryReturnsPage() {
                   ].map((text, i) => (
                     <div
                       key={i}
-                      className="flex items-start gap-3 rounded-xl border border-emerald-500/15 bg-emerald-500/5 px-4 py-3 text-sm leading-6 text-muted-foreground shadow-sm"
+                      className="flex items-start gap-3 rounded-xl border border-primary/15 bg-primary/5 px-4 py-3 text-sm leading-6 text-muted-foreground shadow-sm"
                     >
-                      <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                      <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary" />
                       {text}
                     </div>
                   ))}
@@ -442,7 +442,7 @@ export default function DeliveryReturnsPage() {
 
               {/* Non-Eligible */}
               <div>
-                <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+                <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-red-600 dark:text-red-400">
                   <XCircle className="size-4" />
                   Non-Returnable Items
                 </p>
@@ -458,7 +458,7 @@ export default function DeliveryReturnsPage() {
                       key={i}
                       className="flex items-start gap-3 rounded-xl border border-border/20 bg-card/40 px-4 py-3 text-sm leading-6 text-muted-foreground shadow-sm"
                     >
-                      <XCircle className="mt-0.5 size-4 shrink-0 text-muted-foreground/60" />
+                      <XCircle className="mt-0.5 size-4 shrink-0 text-red-600 dark:text-red-400" />
                       {text}
                     </div>
                   ))}
@@ -472,23 +472,23 @@ export default function DeliveryReturnsPage() {
               <AccordionSection title="Conditions for a valid return">
                 <ul className="space-y-2">
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary" />
                     Request must be raised within the specified return period (24–48 hours of delivery).
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary" />
                     Product must be unused, unopened, in original sealed packaging (unless damaged/defective).
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary" />
                     Include all original packaging, labels, accessories, and documentation.
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary" />
                     Proof of purchase must be provided for verification.
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary" />
                     Products returned without prior approval may not be accepted.
                   </li>
                 </ul>
@@ -613,9 +613,9 @@ export default function DeliveryReturnsPage() {
             </div>
 
             <div className="grid gap-5 sm:grid-cols-2">
-              <GlassCard className="border-emerald-500/15">
+              <GlassCard className="border-primary/15">
                 <div className="flex items-start gap-3">
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/8 text-emerald-600 dark:text-emerald-400">
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/8 text-primary">
                     <CheckCircle2 className="size-5" />
                   </span>
                   <div>

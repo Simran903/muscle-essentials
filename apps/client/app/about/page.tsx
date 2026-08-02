@@ -192,7 +192,7 @@ const AboutPage = () => {
         <FadeUp delay={0.05}>
           <GlassCard className="mt-16 sm:mt-20">
             <div className="mx-auto max-w-3xl text-center">
-              <span className="mx-auto flex size-11 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-700 shadow-sm dark:text-emerald-300">
+              <span className="mx-auto flex size-11 items-center justify-center rounded-xl border border-primary/20 bg-primary/8 text-primary shadow-sm dark:text-primary">
                 <HeartHandshake className="size-5" aria-hidden />
               </span>
               <h2 className="mt-4 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">

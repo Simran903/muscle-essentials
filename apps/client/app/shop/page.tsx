@@ -29,6 +29,13 @@ import {
 
 const PAGE_SIZE = 12
 const isQueryFlagEnabled = (value: string | null) => value === "1" || value === "true"
+const parseSlugs = (raw: string | null, allowed: Set<string>) => {
+  if (!raw?.trim()) return []
+  return raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter((s) => allowed.has(s))
+}
 type ShopVariantItem = {
   key: string
   product: ProductListResponse["items"][number]
@@ -77,48 +84,42 @@ function ShopPageContent() {
   const [dealOfTheDayOnlyUser, setDealOfTheDayOnlyUser] = React.useState<boolean | undefined>(undefined)
   const [comboOnlyUser, setComboOnlyUser] = React.useState<boolean | undefined>(undefined)
   const [dietFilter, setDietFilter] = React.useState<ShopDietFilter>("all")
-  const [queryFlags, setQueryFlags] = React.useState({
-    featured: false,
-    bestseller: false,
-    deal: false,
-    combo: false,
-  })
+  const queryFlags = {
+    featured: isQueryFlagEnabled(searchParams.get("featured")),
+    bestseller: isQueryFlagEnabled(searchParams.get("bestseller")),
+    deal: isQueryFlagEnabled(searchParams.get("deal")),
+    combo: isQueryFlagEnabled(searchParams.get("combo")),
+  }
   const [sortBy, setSortBy] = React.useState<ShopSortBy>("default")
 
-  React.useEffect(() => {
-    setQueryFlags({
-      featured: isQueryFlagEnabled(searchParams.get("featured")),
-      bestseller: isQueryFlagEnabled(searchParams.get("bestseller")),
-      deal: isQueryFlagEnabled(searchParams.get("deal")),
-      combo: isQueryFlagEnabled(searchParams.get("combo")),
-    })
-  }, [searchParams])
+  const allowedBrands = React.useMemo(
+    () => new Set(brandOptions.filter((o) => o.value !== BRAND_PICKER_DEFAULT).map((o) => o.value)),
+    [brandOptions],
+  )
+  const allowedCats = React.useMemo(
+    () => new Set(categoryOptions.filter((o) => o.value !== CATEGORY_PICKER_DEFAULT).map((o) => o.value)),
+    [categoryOptions],
+  )
 
-  React.useEffect(() => {
-    const brandsReady = brandOptions.some((o) => o.value !== BRAND_PICKER_DEFAULT)
-    const catsReady = categoryOptions.some((o) => o.value !== CATEGORY_PICKER_DEFAULT)
-    if (!brandsReady && !catsReady) return
+  const currentBrandSlugs = parseSlugs(
+    searchParams.get("brand") ?? searchParams.get("brands"),
+    allowedBrands,
+  )
+  const currentCatSlugs = parseSlugs(
+    searchParams.get("category") ?? searchParams.get("categories"),
+    allowedCats,
+  )
+  const [lastBrandKey, setLastBrandKey] = React.useState<string | null>(null)
+  const [lastCatKey, setLastCatKey] = React.useState<string | null>(null)
 
-    const allowedBrands = new Set(
-      brandOptions.filter((o) => o.value !== BRAND_PICKER_DEFAULT).map((o) => o.value),
-    )
-    const allowedCats = new Set(
-      categoryOptions.filter((o) => o.value !== CATEGORY_PICKER_DEFAULT).map((o) => o.value),
-    )
-
-    const parseSlugs = (raw: string | null, allowed: Set<string>) => {
-      if (!raw?.trim()) return []
-      return raw
-        .split(",")
-        .map((s) => s.trim())
-        .filter((s) => allowed.has(s))
-    }
-
-    setSelectedBrandSlugs(parseSlugs(searchParams.get("brand") ?? searchParams.get("brands"), allowedBrands))
-    setSelectedCategorySlugs(
-      parseSlugs(searchParams.get("category") ?? searchParams.get("categories"), allowedCats),
-    )
-  }, [searchParams, brandOptions, categoryOptions])
+  if (currentBrandSlugs.join(",") !== lastBrandKey) {
+    setLastBrandKey(currentBrandSlugs.join(","))
+    setSelectedBrandSlugs(currentBrandSlugs)
+  }
+  if (currentCatSlugs.join(",") !== lastCatKey) {
+    setLastCatKey(currentCatSlugs.join(","))
+    setSelectedCategorySlugs(currentCatSlugs)
+  }
 
   const featuredOnlyFromQuery = queryFlags.featured
   const bestsellerOnlyFromQuery = queryFlags.bestseller
@@ -383,7 +384,7 @@ function ShopPageContent() {
                   key={index}
                   className="space-y-3 rounded-2xl border border-border/40 bg-card/60 p-3 shadow-sm"
                 >
-                  <Skeleton className="aspect-[4/5] w-full rounded-xl" />
+                  <Skeleton className="aspect-4/5 w-full rounded-xl" />
                   <Skeleton className="h-4 w-1/3" />
                   <Skeleton className="h-5 w-5/6" />
                   <Skeleton className="h-5 w-2/3" />

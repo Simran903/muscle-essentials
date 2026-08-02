@@ -146,7 +146,7 @@ export function ProductReviewForm({
 
   if (submitted) {
     return (
-      <div className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/8 p-5 text-emerald-800 backdrop-blur-sm dark:border-emerald-400/20 dark:bg-emerald-400/8 dark:text-emerald-200">
+      <div className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-primary/20 bg-primary/8 p-5 text-primary backdrop-blur-sm dark:border-primary/20 dark:bg-primary/8 dark:text-primary">
         <div className="space-y-1">
           <p className="text-sm font-semibold">Thanks for the review!</p>
           <p className="text-sm opacity-80">

@@ -96,12 +96,11 @@ function SummaryTile({
   label: string
   value: string | number
   hint?: string
-  accent?: "default" | "primary" | "emerald"
+  accent?: "default" | "primary"
 }) {
   const iconWrap = {
     default: "border-border/60 bg-muted/30 text-muted-foreground",
     primary: "border-primary/25 bg-primary/10 text-primary",
-    emerald: "border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
   }[accent]
 
   return (
@@ -360,7 +359,7 @@ export default function AccountPage() {
 
         {/* Hero */}
         <section className="relative overflow-hidden rounded-2xl border border-border/20 bg-card/60 shadow-sm ring-1 ring-border/20 backdrop-blur-sm">
-          <div className="pointer-events-none absolute inset-0 rounded-2xl bg-linear-to-br from-primary/[0.07] via-transparent to-emerald-500/6" />
+          <div className="pointer-events-none absolute inset-0 rounded-2xl bg-linear-to-br from-primary/[0.07] via-transparent to-primary/6" />
           <div className="relative flex flex-col gap-6 p-6 sm:flex-row sm:items-start sm:justify-between sm:p-8 lg:p-10">
             <div className="flex min-w-0 flex-1 items-start gap-4 sm:gap-5">
               <div
@@ -450,7 +449,7 @@ export default function AccountPage() {
                   ? `Default · ${defaultAddr.city}`
                   : "Set a default for checkout."
             }
-            accent="emerald"
+            accent="primary"
           />
         </section>
 

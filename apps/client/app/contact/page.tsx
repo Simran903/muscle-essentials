@@ -167,7 +167,7 @@ const ContactPage = () => {
                 </Button>
               </div>
               <div className="flex items-start gap-4 rounded-xl border border-border/50 bg-background/60 p-4">
-                <span className="mt-0.5 inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/8 text-emerald-700 dark:text-emerald-300">
+                <span className="mt-0.5 inline-flex size-11 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/8 text-primary">
                   <Phone className="size-5" aria-hidden />
                 </span>
                 <div className="min-w-0 flex-1">

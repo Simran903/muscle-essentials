@@ -222,7 +222,7 @@ export function Card({
             merchBadges?.isDealoftheDay) && (
             <div className="pointer-events-none absolute left-2.5 top-2.5 z-10 flex max-w-[calc(100%-1.25rem)] flex-wrap gap-1.5">
               {merchBadges?.isBestseller ? (
-                <span className="rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2.5 py-0.5 text-[0.625rem] font-semibold uppercase tracking-wide text-emerald-800 backdrop-blur-sm dark:text-emerald-200">
+                <span className="rounded-full border border-primary/30 bg-primary/15 px-2.5 py-0.5 text-[0.625rem] font-semibold uppercase tracking-wide text-primary backdrop-blur-sm">
                   Bestseller
                 </span>
               ) : null}
