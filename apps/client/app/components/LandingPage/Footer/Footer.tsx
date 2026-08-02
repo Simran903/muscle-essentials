@@ -301,7 +301,7 @@ export const Footer = () => {
                 <div>
                   <dt className="text-xs font-medium text-muted-foreground">GSTIN</dt>
                   <dd className="mt-0.5 font-mono tabular-nums font-medium text-foreground">
-                    XXXXXXXXXXXXXXX
+                    07BFJPD8913E1ZK
                   </dd>
                 </div>
               </div>
