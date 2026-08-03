@@ -1,6 +1,7 @@
 import axios, { isAxiosError } from "axios"
 
 export const API_ORIGIN = process.env.NEXT_PUBLIC_API_ORIGIN;
+console.log("API_ORIGIN =", API_ORIGIN);
 
 const api = axios.create({
   baseURL: API_ORIGIN,
