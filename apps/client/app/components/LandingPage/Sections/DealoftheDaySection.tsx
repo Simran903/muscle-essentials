@@ -53,7 +53,7 @@ export const DealoftheDaySection = ({ products, isLoading = false }: DealoftheDa
                     imageSrc={product.images.find((image) => image.isPrimary)?.url ?? product.images[0]?.url ?? "/images/placeholder.jpg"}
                     imageAlt={product.images.find((image) => image.isPrimary)?.altText ?? product.title}
                     title={product.title}
-                    subtitle={product.brand?.name ?? "GEN1"}
+                    subtitle={product.brand?.name ?? "GEN1 NUTRITION"}
                     price={Number(product.price)}
                     priceFrom={
                       product.maxPrice != null &&

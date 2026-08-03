@@ -366,7 +366,7 @@ function ShopPageContent() {
                 All Products
               </h1>
               <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-                Explore all of the tested and vetted supplements sold on GEN1! Use our
+                Explore all of the tested and vetted supplements sold on GEN1 NUTRITION! Use our
                 filter or sort by features to find your stack.
               </p>
             </div>
@@ -401,7 +401,7 @@ function ShopPageContent() {
                       imageSrc={item.product.images.find((image) => image.isPrimary)?.url ?? item.product.images[0]?.url ?? "/images/placeholder.jpg"}
                       imageAlt={item.product.images.find((image) => image.isPrimary)?.altText ?? item.product.title}
                       title={item.product.title}
-                      subtitle={item.product.brand?.name ?? "GEN1"}
+                      subtitle={item.product.brand?.name ?? "GEN1 NUTRITION"}
                       price={item.price}
                       priceFrom={false}
                       productId={item.product.id}

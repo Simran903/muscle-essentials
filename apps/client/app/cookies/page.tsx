@@ -7,9 +7,9 @@ import { AccountBackground } from "@/app/components/Account/AccountBackground"
 import { pageMainClassName } from "@/lib/page-layout"
 
 export const metadata: Metadata = {
-  title: "Cookie Policy · GEN1",
+  title: "Cookie Policy · GEN1 NUTRITION",
   description:
-    "How GEN1 uses cookies and similar technologies on our website.",
+    "How GEN1 NUTRITION uses cookies and similar technologies on our website.",
 }
 
 const CONTACT_EMAIL = "support@genonenutrition.in"
@@ -139,7 +139,7 @@ export default function CookiesPage() {
             Cookie Policy
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
-            This policy explains how GEN1 uses cookies and similar technologies when you
+            This policy explains how GEN1 NUTRITION uses cookies and similar technologies when you
             browse our shop, sign in to your account, or use this website.
           </p>
           <p className="mt-2 text-xs text-muted-foreground">Last updated: May 2026</p>

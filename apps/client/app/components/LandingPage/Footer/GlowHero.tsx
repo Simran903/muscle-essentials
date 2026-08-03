@@ -1,5 +1,5 @@
 export function GlowHero() {
-  const headline = "GEN1"
+  const headline = "GEN1 NUTRITION"
   const textClass =
     "block w-full min-w-0 whitespace-nowrap text-center font-[family-name:var(--font-michroma)] font-extrabold leading-none tracking-widest"
 
@@ -9,7 +9,7 @@ export function GlowHero() {
       style={{ marginLeft: "calc(50% - 50vw)", marginRight: "calc(50% - 50vw)" }}
     >
       <div
-        className="relative w-full overflow-visible px-0 pt-4 pb-2"
+        className="relative w-full overflow-visible px-0 pt-4 pb-0"
         style={{ fontSize: "clamp(1rem, calc(100cqw / 10.5), 14rem)" }}
       >
         <span

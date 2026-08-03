@@ -22,8 +22,7 @@ const gstNo = process.env.NEXT_PUBLIC_GST_NO?.trim()
 const CONTACT_EMAIL = "support@genonenutrition.in"
 const CONTACT_PHONE = "+91 92895 11600"
 const CONTACT_PHONE_TEL = "tel:+919289511600"
-const INSTAGRAM_URL =
-  "https://www.instagram.com/_muscle_essentials_?igsh=MTRkbXozOGMzZmplcQ%3D%3D&utm_source=qr"
+const INSTAGRAM_URL = "https://www.instagram.com/gen1_nutrition"
 
 const linkColumns: { title: string; links: { href: string; label: string }[] }[] = [
   {
@@ -150,7 +149,7 @@ export const Footer = () => {
   const legalLinks = linkColumns.find((c) => c.title === "Legal")?.links ?? []
 
   return (
-    <footer className="relative overflow-x-clip border-t border-border/30 bg-background text-foreground">
+    <footer className="relative overflow-hidden border-t border-border/30 bg-background text-foreground">
       <div
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_-30%,rgba(156,212,0,0.10),transparent)] dark:bg-[radial-gradient(ellipse_90%_60%_at_50%_-30%,rgba(156,212,0,0.10),transparent)]"
         aria-hidden
@@ -162,14 +161,14 @@ export const Footer = () => {
             <Link href="/" className="inline-flex transition-opacity hover:opacity-85">
               <Image
                 src="/logo-light.png"
-                alt="GEN1"
+                alt="GEN1 NUTRITION"
                 width={160}
                 height={48}
                 className="h-16 w-auto object-contain dark:hidden"
               />
               <Image
                 src="/logo-dark.png"
-                alt="GEN1"
+                alt="GEN1 NUTRITION"
                 width={160}
                 height={48}
                 className="hidden h-16 w-auto object-contain dark:block"
@@ -312,7 +311,7 @@ export const Footer = () => {
 
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-b border-border/30 pb-8 text-center sm:flex-row sm:text-left">
           <p className="text-sm text-muted-foreground">
-            © {year} GEN1. All rights reserved.
+            © {year} GEN1 NUTRITION. All rights reserved.
           </p>
           <nav
             className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm"

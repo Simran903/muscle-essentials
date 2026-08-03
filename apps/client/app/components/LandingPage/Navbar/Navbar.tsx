@@ -269,7 +269,7 @@ export function Navbar() {
           >
             <Image
               src="/logo-light.png"
-              alt="GEN1"
+              alt="GEN1 NUTRITION"
               width={200}
               height={200}
               priority
@@ -277,7 +277,7 @@ export function Navbar() {
             />
             <Image
               src="/logo-dark.png"
-              alt="GEN1"
+              alt="GEN1 NUTRITION"
               width={200}
               height={200}
               priority
@@ -388,7 +388,7 @@ export function Navbar() {
                 <Link href="/cart">
                   <ShoppingCart className="size-4" />
                   {cartItemCount > 0 ? (
-                    <span className="absolute -right-1.5 -top-1.5 inline-flex min-w-[1.125rem] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground ring-2 ring-background">
+                    <span className="absolute -right-1.5 -top-1.5 inline-flex min-w-4.5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground ring-2 ring-background">
                       {cartItemCount > 99 ? "99+" : cartItemCount}
                     </span>
                   ) : null}
@@ -470,7 +470,7 @@ export function Navbar() {
             <ShoppingCart className="size-4 shrink-0" />
             <span className="truncate">Cart</span>
             {cartItemCount > 0 ? (
-              <span className="absolute -right-0.5 -top-0.5 inline-flex min-w-[1rem] items-center justify-center rounded-full bg-primary px-1 text-[8px] font-bold text-primary-foreground ring-2 ring-background">
+              <span className="absolute -right-0.5 -top-0.5 inline-flex min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[8px] font-bold text-primary-foreground ring-2 ring-background">
                 {cartItemCount > 99 ? "99+" : cartItemCount}
               </span>
             ) : null}

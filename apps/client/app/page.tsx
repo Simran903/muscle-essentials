@@ -66,7 +66,7 @@ const HomePage = () => {
               transition={{ duration: 0.5, ease: "easeOut" }}
             >
               <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                GEN1
+                GEN1 NUTRITION
               </h1>
               <p className="mt-3 text-sm text-muted-foreground sm:text-base">Loading your experience</p>
             </motion.div>

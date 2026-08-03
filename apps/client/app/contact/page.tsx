@@ -19,12 +19,12 @@ import { cn } from "@/lib/utils"
 import { AccountBackground } from "../components/Account/AccountBackground"
 
 const CONTACT_EMAIL = "connect@genonenutrition.in"
-const EMAIL_SUBJECT = "GEN1 — Question"
+const EMAIL_SUBJECT = "GEN1 NUTRITION — Question"
 const GMAIL_COMPOSE_HREF = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CONTACT_EMAIL)}&su=${encodeURIComponent(EMAIL_SUBJECT)}`
 const CONTACT_PHONE_DISPLAY = "+91 92895 11600"
 const CONTACT_PHONE_TEL = `tel:${CONTACT_PHONE_DISPLAY.replace(/\s/g, "")}`
-const INSTAGRAM_PROFILE_URL = "https://www.instagram.com/_muscle_essentials_?igsh=MTRkbXozOGMzZmplcQ%3D%3D&utm_source=qr"
-const INSTAGRAM_QR_SRC = "/instagram.png"
+const INSTAGRAM_PROFILE_URL = "https://www.instagram.com/gen1_nutrition"
+const INSTAGRAM_QR_SRC = "/qr.jpeg"
 
 const SectionLabel = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -67,7 +67,7 @@ const InstagramDmQr = () => {
           alt="Scan to open Instagram and send a DM to GEN1"
           width={220}
           height={220}
-          className="size-[220px] rounded-xl object-cover"
+          className="size-55 rounded-xl object-cover"
           onError={() => setBroken(true)}
         />
       </div>
@@ -77,7 +77,7 @@ const InstagramDmQr = () => {
       <Button asChild variant="outline" size="sm" className="mt-4 rounded-full">
         <a href={INSTAGRAM_PROFILE_URL} target="_blank" rel="noopener noreferrer">
           <ExternalLink className="size-3.5" />
-          @essentialsmuscle
+          @genonenutrition
         </a>
       </Button>
     </div>
@@ -112,7 +112,7 @@ const ContactPage = () => {
         <header className="max-w-2xl pb-10">
           <SectionLabel>We are here to help</SectionLabel>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            Contact GEN1
+            Contact GEN1 NUTRITION
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
             Questions about products, your order, or shipping? Reach us by phone, email, or

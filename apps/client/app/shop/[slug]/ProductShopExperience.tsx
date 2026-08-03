@@ -111,7 +111,7 @@ export function ProductShopExperience({ product, reviews }: ProductShopExperienc
 
             <div className="space-y-3">
               <p className="text-sm font-medium text-muted-foreground">
-                {product.brand?.name ?? "GEN1"}
+                {product.brand?.name ?? "GEN1 NUTRITION"}
               </p>
 
               <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-[2.8rem] lg:leading-tight">

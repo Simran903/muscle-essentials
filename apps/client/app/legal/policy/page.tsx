@@ -112,7 +112,7 @@ function AccordionSection({ title, children, defaultOpen = false }: { title: str
 function Timeline({ steps }: { steps: { icon: typeof Truck; title: string; description: string }[] }) {
   return (
     <div className="relative">
-      <div className="absolute left-[1.125rem] top-3 bottom-3 w-px bg-border/40" aria-hidden />
+      <div className="absolute left-4.5 top-3 bottom-3 w-px bg-border/40" aria-hidden />
       <div className="space-y-0">
         {steps.map((step, i) => {
           const Icon = step.icon
@@ -154,7 +154,7 @@ function IconList({ items }: { items: { icon: typeof Truck; text: string }[] }) 
 function TableCard({ headers, rows }: { headers: string[]; rows: string[][] }) {
   return (
     <div className="overflow-x-auto rounded-xl border border-border/20 shadow-sm">
-      <table className="w-full min-w-[480px] text-left text-sm">
+      <table className="w-full min-w-120 text-left text-sm">
         <thead>
           <tr className="border-b border-border/20 bg-muted/20">
             {headers.map((h, i) => (
