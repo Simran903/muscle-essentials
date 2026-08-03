@@ -298,7 +298,7 @@ export async function adminGetCategories(
 
 const createCategoryBody = z.object({
   name: z.string().min(1),
-  slug: z.string().min(1),
+  slug: z.string().min(1).optional(),
   isActive: z.boolean().optional(),
 });
 
