@@ -35,6 +35,13 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var p=window.performance;if(!p||typeof p.measure!=="function"||p.__patchedMeasure)return;var orig=p.measure.bind(p);p.__patchedMeasure=true;p.measure=function(){try{return orig.apply(p,arguments);}catch(e){var m=(e&&e.message)||"";var n=(e&&e.name)||"";if(m.indexOf("negative time stamp")!==-1||n==="InvalidAccessError"||n==="SyntaxError"){return;}throw e;}};}catch(_){}})();`,
+          }}
+        />
+      </head>
       <body
         className="min-h-full flex flex-col bg-background text-foreground [text-wrap:pretty]"
         suppressHydrationWarning

@@ -29,11 +29,11 @@ const linkColumns: { title: string; links: { href: string; label: string }[] }[]
     title: "Explore",
     links: [
       { href: "/", label: "Home" },
-      { href: "/shop", label: "Shop all" },
-      { href: "/#deal-of-the-day", label: "Deals" },
-      { href: "/#bestsellers", label: "Bestsellers" },
-      { href: "/#featured", label: "Featured" },
-      { href: "/#categories", label: "Categories" },
+      { href: "/shop", label: "Shop" },
+      { href: "/shop?deal=1", label: "Deals" },
+      { href: "/shop?bestseller=1", label: "Bestsellers" },
+      { href: "/shop?featured=1", label: "Featured" },
+      { href: "/shop", label: "Categories" },
     ],
   },
   {
