@@ -724,7 +724,7 @@ export default function DeliveryReturnsPage() {
                     </span>
                     <div>
                       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Email</p>
-                      <p className="mt-0.5 text-sm font-medium text-foreground">essentialsmuscle@gmail.com</p>
+                      <p className="mt-0.5 text-sm font-medium text-foreground">support@genonenutrition.in</p>
                       <p className="mt-1 text-xs text-muted-foreground">
                         We typically reply within one business day.
                       </p>
@@ -757,7 +757,7 @@ export default function DeliveryReturnsPage() {
                 </p>
                 <div className="mt-auto pt-4">
                   <Button asChild size="lg" className="w-full rounded-xl shadow-sm">
-                    <a href="mailto:essentialsmuscle@gmail.com?subject=Delivery/Returns%20Question">
+                    <a href="mailto:support@genonenutrition.in?subject=Delivery/Returns%20Question">
                       <Mail className="size-4" />
                       Contact Support
                     </a>

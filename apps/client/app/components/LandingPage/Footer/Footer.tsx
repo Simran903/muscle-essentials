@@ -17,8 +17,9 @@ import { cn } from "@/lib/utils"
 import { GlowHero } from "./GlowHero"
 
 const fssaiLicenseNo = process.env.NEXT_PUBLIC_FSSAI_LICENSE_NO?.trim()
+const gstNo = process.env.NEXT_PUBLIC_GST_NO?.trim()
 
-const CONTACT_EMAIL = "essentialsmuscle@gmail.com"
+const CONTACT_EMAIL = "support@genonenutrition.in"
 const CONTACT_PHONE = "+91 92895 11600"
 const CONTACT_PHONE_TEL = "tel:+919289511600"
 const INSTAGRAM_URL =
@@ -301,7 +302,7 @@ export const Footer = () => {
                 <div>
                   <dt className="text-xs font-medium text-muted-foreground">GSTIN</dt>
                   <dd className="mt-0.5 font-mono tabular-nums font-medium text-foreground">
-                    07BFJPD8913E1ZK
+                    {gstNo ?? "N/A"}
                   </dd>
                 </div>
               </div>

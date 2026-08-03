@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils"
 
 import { AccountBackground } from "../components/Account/AccountBackground"
 
-const CONTACT_EMAIL = "essentialsmuscle@gmail.com"
+const CONTACT_EMAIL = "connect@genonenutrition.in"
 const EMAIL_SUBJECT = "GEN1 — Question"
 const GMAIL_COMPOSE_HREF = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CONTACT_EMAIL)}&su=${encodeURIComponent(EMAIL_SUBJECT)}`
 const CONTACT_PHONE_DISPLAY = "+91 92895 11600"

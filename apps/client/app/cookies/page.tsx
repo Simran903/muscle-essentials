@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     "How GEN1 uses cookies and similar technologies on our website.",
 }
 
-const CONTACT_EMAIL = "essentialsmuscle@gmail.com"
+const CONTACT_EMAIL = "support@genonenutrition.in"
 
 const cookieRows = [
   {
