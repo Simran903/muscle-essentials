@@ -1,10 +1,8 @@
 "use client"
 
 import * as React from "react"
-import Link from "next/link"
 import { motion } from "motion/react"
 import {
-  ArrowRight,
   BadgeCheck,
   Headphones,
   HeartHandshake,
@@ -14,10 +12,9 @@ import {
   Sparkles,
   Tag,
   Target,
-  Zap,
 } from "lucide-react"
-
-import { Button } from "@/app/components/ui/button"
+import { Breadcrumbs } from "@/app/components/Common/Breadcrumbs"
+import { CtaSection } from "@/app/components/Common/CtaSection"
 import { pageMainClassName } from "@/lib/page-layout"
 import { cn } from "@/lib/utils"
 
@@ -92,6 +89,7 @@ const AboutPage = () => {
     <div className="relative min-h-svh bg-background">
       <AccountBackground />
       <main className={pageMainClassName({ maxWidth: "7xl" })}>
+        <Breadcrumbs />
         <FadeUp>
           <header className="max-w-3xl pb-10 sm:pb-14">
             <SectionLabel>About us</SectionLabel>
@@ -100,8 +98,8 @@ const AboutPage = () => {
             </h1>
             <p className="mt-4 text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
               Welcome to GEN 1 Nutrition, your trusted destination for quality sports nutrition and
-              fitness supplements. We believe that achieving your health and fitness goals shouldn't
-              require overspending. That's why we're committed to helping every customer find the
+              fitness supplements. We believe that achieving your health and fitness goals shouldn&apos;t
+              require overspending. That&apos;s why we&apos;re committed to helping every customer find the
               best genuine supplements that match both their goals and their budget.
             </p>
           </header>
@@ -117,7 +115,7 @@ const AboutPage = () => {
                 Supplements for every goal
               </h2>
               <p className="mt-3 text-sm leading-7 text-muted-foreground sm:text-base">
-                Whether you're a beginner starting your fitness journey, an athlete aiming to
+                Whether you&apos;re a beginner starting your fitness journey, an athlete aiming to
                 improve performance, or someone focused on overall health and wellness, we carefully
                 curate products from trusted brands to ensure you get genuine, effective, and
                 value-for-money supplements.
@@ -199,7 +197,7 @@ const AboutPage = () => {
                 More than just a store
               </h2>
               <p className="mt-4 text-sm leading-7 text-muted-foreground sm:text-base">
-                We are more than just an online supplement store — we're your fitness partner. Every
+                We are more than just an online supplement store — we&apos;re your fitness partner. Every
                 product we offer is selected with quality, authenticity, and customer value in mind,
                 ensuring you get the best results without exceeding your budget.
               </p>
@@ -210,34 +208,7 @@ const AboutPage = () => {
           </GlassCard>
         </FadeUp>
 
-        <FadeUp delay={0.05}>
-          <section className="mt-16 sm:mt-20">
-            <div className="relative overflow-hidden rounded-3xl border border-primary/15 bg-linear-to-br from-primary/8 via-primary/5 to-transparent p-8 text-center shadow-sm sm:p-12 lg:p-16">
-              <div className="pointer-events-none absolute inset-0 rounded-3xl bg-[radial-gradient(ellipse_at_top_right,var(--primary)_0%,transparent_70%)] opacity-[0.07]" />
-              <div className="relative">
-                <Zap className="mx-auto size-8 text-primary" aria-hidden />
-                <h2 className="mt-4 text-2xl font-bold tracking-tight text-foreground sm:text-3xl lg:text-4xl">
-                  BUY GEN1. BE GEN1.
-                </h2>
-                <p className="mx-auto mt-3 max-w-lg text-sm leading-7 text-muted-foreground">
-                  Join thousands of customers who trust GEN 1 Nutrition for genuine supplements at
-                  honest prices. Your fitness goals start here.
-                </p>
-                <div className="mt-6 flex flex-wrap justify-center gap-3">
-                  <Button asChild size="lg" className="rounded-xl shadow-sm">
-                    <Link href="/shop">
-                      Browse supplements
-                      <ArrowRight className="size-4" />
-                    </Link>
-                  </Button>
-                  <Button asChild size="lg" variant="outline" className="rounded-xl">
-                    <Link href="/contact">Contact us</Link>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </section>
-        </FadeUp>
+        <CtaSection />
       </main>
     </div>
   )

@@ -3,6 +3,7 @@
 import React, { Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
+import { Breadcrumbs } from "@/app/components/Common/Breadcrumbs"
 import { Card } from "@/app/components/Common/Card"
 import { Pagination } from "@/app/components/Common/Pagination"
 import { Skeleton } from "@/app/components/ui/skeleton"
@@ -356,6 +357,8 @@ function ShopPageContent() {
 
       <SidebarInset className="overflow-hidden bg-transparent">
         <main className={pageMainClassName({ maxWidth: false })}>
+
+          <Breadcrumbs />
 
           <div className="mb-8 rounded-2xl border border-border/30 bg-card/60 p-6 text-card-foreground shadow-sm backdrop-blur-sm sm:mb-10 sm:flex sm:items-end sm:justify-between sm:p-8">
             <div className="min-w-0">

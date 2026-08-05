@@ -4,6 +4,7 @@ import { Cookie, ShieldCheck } from "lucide-react"
 
 import { COOKIE_CONSENT_LEGACY_NAME, COOKIE_CONSENT_NAME } from "@/lib/cookie-consent"
 import { AccountBackground } from "@/app/components/Account/AccountBackground"
+import { Breadcrumbs } from "@/app/components/Common/Breadcrumbs"
 import { pageMainClassName } from "@/lib/page-layout"
 
 export const metadata: Metadata = {
@@ -133,6 +134,7 @@ export default function CookiesPage() {
     <div className="relative min-h-svh bg-background">
       <AccountBackground />
       <main className={pageMainClassName({ maxWidth: "7xl" })}>
+        <Breadcrumbs />
         <header className="max-w-2xl pb-10">
           <SectionLabel>Legal</SectionLabel>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">

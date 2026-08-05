@@ -6,6 +6,7 @@ import { PackageCheck, ShieldCheck, Truck } from "lucide-react"
 import { ProductGallery } from "@/app/components/Shop/ProductGallery"
 import { ProductPurchasePanel } from "@/app/components/Shop/ProductPurchasePanel"
 import { DietTypeSymbol } from "@/app/components/Common/DietTypeSymbol"
+import { Breadcrumbs } from "@/app/components/Common/Breadcrumbs"
 import {
   effectiveVariantFlags,
   resolveVariantId,
@@ -67,6 +68,8 @@ export function ProductShopExperience({ product, reviews }: ProductShopExperienc
 
   return (
     <main className={pageMainClassName({ maxWidth: "7xl", className: "overflow-hidden" })}>
+
+      <Breadcrumbs currentLabel={product.title} />
 
       <section className="grid gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)] lg:gap-10">
         <ProductGallery

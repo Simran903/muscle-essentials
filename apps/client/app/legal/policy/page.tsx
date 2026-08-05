@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import Link from "next/link"
 import { motion } from "motion/react"
 import {
   Truck,
@@ -17,17 +16,17 @@ import {
   ChevronDown,
   Phone,
   Mail,
-  ArrowRight,
   PackageCheck,
   Search,
   Camera,
   MessageSquare,
-  Zap,
   HeartHandshake,
   Timer,
   CreditCard,
 } from "lucide-react"
 import { Button } from "@/app/components/ui/button"
+import { Breadcrumbs } from "@/app/components/Common/Breadcrumbs"
+import { CtaSection } from "@/app/components/Common/CtaSection"
 import { pageMainClassName } from "@/lib/page-layout"
 import { cn } from "@/lib/utils"
 
@@ -240,6 +239,8 @@ export default function DeliveryReturnsPage() {
       </div>
 
       <main className={pageMainClassName({ maxWidth: "7xl" })}>
+        <Breadcrumbs />
+
         {/* Hero */}
         <FadeUp>
           <header className="max-w-3xl pb-10 sm:pb-14">
@@ -769,34 +770,9 @@ export default function DeliveryReturnsPage() {
         </FadeUp>
 
         {/* Footer CTA */}
-        <FadeUp delay={0.05}>
-          <section className="mt-16 sm:mt-20">
-            <div className="relative overflow-hidden rounded-3xl border border-primary/15 bg-linear-to-br from-primary/8 via-primary/5 to-transparent p-8 text-center shadow-sm sm:p-12 lg:p-16">
-              <div className="pointer-events-none absolute inset-0 rounded-3xl bg-[radial-gradient(ellipse_at_top_right,var(--primary)_0%,transparent_70%)] opacity-[0.07]" />
-              <div className="relative">
-                <Zap className="mx-auto size-8 text-primary" />
-                <h2 className="mt-4 text-2xl font-bold tracking-tight text-foreground sm:text-3xl lg:text-4xl">
-                  BUY GEN1. BE GEN1.
-                </h2>
-                <p className="mx-auto mt-3 max-w-lg text-sm leading-7 text-muted-foreground">
-                  Thank you for trusting GEN 1 Nutrition as your preferred sports nutrition partner.
-                  We appreciate your business and look forward to serving you better.
-                </p>
-                <div className="mt-6 flex flex-wrap justify-center gap-3">
-                  <Button asChild size="lg" className="rounded-xl shadow-sm">
-                    <Link href="/shop">
-                      Browse supplements
-                      <ArrowRight className="size-4" />
-                    </Link>
-                  </Button>
-                  <Button asChild size="lg" variant="outline" className="rounded-xl">
-                    <Link href="/contact">Contact us</Link>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </section>
-        </FadeUp>
+        <CtaSection
+          description="Thank you for trusting GEN 1 Nutrition as your preferred sports nutrition partner. We appreciate your business and look forward to serving you better."
+        />
       </main>
     </div>
   )

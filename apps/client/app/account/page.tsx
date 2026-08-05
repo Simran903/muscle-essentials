@@ -18,6 +18,7 @@ import { toast } from "sonner"
 
 import { Button } from "@/app/components/ui/button"
 import { Skeleton } from "@/app/components/ui/skeleton"
+import { Breadcrumbs } from "@/app/components/Common/Breadcrumbs"
 import {
   fetchAuthUser,
   getAccountAddresses,
@@ -292,6 +293,7 @@ export default function AccountPage() {
       <div className="relative min-h-svh bg-background">
         <AccountBackground />
         <main className={pageMainCenteredClassName()}>
+          <Breadcrumbs className="self-start" />
           <div className="rounded-2xl border border-border/20 bg-card/60 p-8 text-center shadow-sm backdrop-blur-sm sm:p-10">
             <div className="mx-auto flex size-14 items-center justify-center rounded-2xl border border-border/60 bg-muted/30 ring-4 ring-muted/20">
               <Lock className="size-7 text-muted-foreground" />
@@ -322,6 +324,7 @@ export default function AccountPage() {
       <div className="relative min-h-svh bg-background">
         <AccountBackground />
         <main className={pageMainClassName()}>
+          <Breadcrumbs />
           <Skeleton className="h-4 w-48 rounded-full" />
           <Skeleton className="mt-6 h-52 w-full rounded-3xl sm:h-48" />
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -356,6 +359,8 @@ export default function AccountPage() {
       <AccountBackground />
 
       <main className={pageMainClassName()}>
+
+        <Breadcrumbs />
 
         {/* Hero */}
         <section className="relative overflow-hidden rounded-2xl border border-border/20 bg-card/60 shadow-sm ring-1 ring-border/20 backdrop-blur-sm">

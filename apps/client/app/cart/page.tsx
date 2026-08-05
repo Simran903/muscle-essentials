@@ -18,6 +18,7 @@ import { toast } from "sonner"
 
 import { Button } from "@/app/components/ui/button"
 import { Skeleton } from "@/app/components/ui/skeleton"
+import { Breadcrumbs } from "@/app/components/Common/Breadcrumbs"
 import {
   fetchCart,
   removeCartLine,
@@ -191,6 +192,7 @@ function EmptyState({
 }) {
   return (
     <main className={pageMainCenteredClassName()}>
+      <Breadcrumbs className="self-start" />
       <div className="mb-6 flex size-20 items-center justify-center rounded-2xl border border-border/50 bg-muted/30 text-muted-foreground">
         <Icon className="size-9" strokeWidth={1.5} aria-hidden />
       </div>
@@ -301,6 +303,7 @@ export default function CartPage() {
   if (mode === "loading") {
     return (
       <main className={pageMainClassName()}>
+        <Breadcrumbs />
         <Skeleton className="mb-6 h-5 w-64 rounded-full" />
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="space-y-2">
@@ -360,6 +363,8 @@ export default function CartPage() {
 
   return (
     <main className={pageMainClassName({ className: "overflow-hidden" })}>
+
+      <Breadcrumbs />
 
       <header className="mb-10 flex flex-col gap-4 border-b border-border/50 pb-10 sm:flex-row sm:items-end sm:justify-between">
         <div>

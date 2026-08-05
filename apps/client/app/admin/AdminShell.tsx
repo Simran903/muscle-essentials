@@ -13,6 +13,7 @@ import {
   IconUsers,
 } from "@tabler/icons-react"
 
+import { Breadcrumbs } from "@/app/components/Common/Breadcrumbs"
 import { fetchAuthUser } from "@/lib/api"
 import { getAccessToken } from "@/lib/auth-storage"
 import { cn } from "@/lib/utils"
@@ -122,7 +123,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           })}
         </div>
       </aside>
-      <div className="min-w-0 flex-1">{children}</div>
+      <div className="min-w-0 flex-1">
+        <Breadcrumbs />
+        {children}
+      </div>
     </div>
   )
 }

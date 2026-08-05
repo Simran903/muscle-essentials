@@ -7,6 +7,7 @@ import { Lock, Package } from "lucide-react"
 
 import { Button } from "@/app/components/ui/button"
 import { Skeleton } from "@/app/components/ui/skeleton"
+import { Breadcrumbs } from "@/app/components/Common/Breadcrumbs"
 import {
   fetchAuthUser,
   getAccountOrders,
@@ -94,6 +95,7 @@ export default function AccountOrdersPage() {
       <div className="relative min-h-svh bg-background">
         <AccountBackground />
         <main className={pageMainCenteredClassName()}>
+          <Breadcrumbs className="self-start" />
           <div className="rounded-2xl border border-border/20 bg-card/60 p-8 text-center shadow-sm backdrop-blur-sm sm:p-10">
             <div className="mx-auto flex size-14 items-center justify-center rounded-2xl border border-border/60 bg-muted/30 ring-4 ring-muted/20">
               <Lock className="size-7 text-muted-foreground" />
@@ -123,6 +125,7 @@ export default function AccountOrdersPage() {
       <div className="relative min-h-svh bg-background">
         <AccountBackground />
         <main className={pageMainClassName()}>
+          <Breadcrumbs />
           <Skeleton className="h-4 w-64 rounded-full" />
           <Skeleton className="mt-8 h-10 w-48 rounded-lg" />
           <div className="mt-8 space-y-3">
@@ -139,6 +142,8 @@ export default function AccountOrdersPage() {
     <div className="relative min-h-svh bg-background">
       <AccountBackground />
       <main className={pageMainClassName()}>
+
+        <Breadcrumbs />
 
         <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>

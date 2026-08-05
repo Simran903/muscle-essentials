@@ -13,6 +13,8 @@ import {
 import { toast } from "sonner"
 
 import { Button } from "@/app/components/ui/button"
+import { Breadcrumbs } from "@/app/components/Common/Breadcrumbs"
+import { CtaSection } from "@/app/components/Common/CtaSection"
 import { pageMainClassName } from "@/lib/page-layout"
 import { cn } from "@/lib/utils"
 
@@ -107,7 +109,9 @@ const ContactPage = () => {
   return (
     <div className="relative min-h-svh bg-background">
       <AccountBackground />
-      <main className={pageMainClassName()}>
+      <main className={pageMainClassName({ maxWidth: "7xl" })}>
+
+        <Breadcrumbs />
 
         <header className="max-w-2xl pb-10">
           <SectionLabel>We are here to help</SectionLabel>
@@ -216,12 +220,7 @@ const ContactPage = () => {
           </section>
         </div>
 
-        <p className="mt-12 text-center text-sm text-muted-foreground">
-          Prefer the shop?{" "}
-          <Link href="/shop" className="font-medium text-foreground underline-offset-4 hover:underline">
-            Browse the catalog
-          </Link>
-        </p>
+        <CtaSection />
       </main>
     </div>
   )
