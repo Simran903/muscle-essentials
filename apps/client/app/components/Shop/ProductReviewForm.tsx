@@ -292,7 +292,6 @@ export function ProductReviewForm({
       <div className="space-y-2">
         <label htmlFor="review-title" className="text-sm font-semibold text-foreground">
           Headline
-          <span className="ml-1 font-normal text-muted-foreground">(optional)</span>
         </label>
         <InputField
           id="review-title"
@@ -308,7 +307,6 @@ export function ProductReviewForm({
       <div className="space-y-2">
         <label htmlFor="review-body" className="text-sm font-semibold text-foreground">
           What stood out?
-          <span className="ml-1 font-normal text-muted-foreground">(optional)</span>
         </label>
         <textarea
           id="review-body"
