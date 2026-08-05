@@ -318,7 +318,7 @@ export function ProductEditor({ productId }: { productId: string }) {
           </label>
           <textarea
             id="shortDesc"
-            className={`${adminInput} min-h-[80px] py-2`}
+            className={`${adminInput} min-h-20 py-2`}
             value={shortDesc}
             onChange={(e) => setShortDesc(e.target.value)}
             rows={3}
@@ -330,7 +330,7 @@ export function ProductEditor({ productId }: { productId: string }) {
           </label>
           <textarea
             id="description"
-            className={`${adminInput} min-h-[120px] py-2`}
+            className={`${adminInput} min-h-30 py-2`}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={5}
@@ -343,7 +343,7 @@ export function ProductEditor({ productId }: { productId: string }) {
           </label>
           <textarea
             id="flavours"
-            className={`${adminInput} min-h-[72px] py-2`}
+            className={`${adminInput} min-h-18 py-2`}
             value={flavoursRaw}
             onChange={(e) => setFlavoursRaw(e.target.value)}
           />
@@ -357,7 +357,7 @@ export function ProductEditor({ productId }: { productId: string }) {
           {sizeRows.map((row, i) => (
             <div key={i} className="flex flex-wrap gap-2">
               <input
-                className={`${adminInput} max-w-[140px]`}
+                className={`${adminInput} max-w-35`}
                 placeholder="Label"
                 value={row.label}
                 onChange={(e) => {
@@ -367,8 +367,8 @@ export function ProductEditor({ productId }: { productId: string }) {
                 }}
               />
               <input
-                className={`${adminInput} max-w-[120px]`}
-                placeholder="Price"
+                className={`${adminInput} max-w-30`}
+                placeholder="SPrice"
                 value={row.price}
                 onChange={(e) => {
                   const next = [...sizeRows]
@@ -377,8 +377,8 @@ export function ProductEditor({ productId }: { productId: string }) {
                 }}
               />
               <input
-                className={`${adminInput} max-w-[120px]`}
-                placeholder="Cost"
+                className={`${adminInput} max-w-30`}
+                placeholder="CPrice"
                 value={row.costPrice}
                 onChange={(e) => {
                   const next = [...sizeRows]
@@ -487,7 +487,7 @@ export function ProductEditor({ productId }: { productId: string }) {
           </Button>
         </div>
         <div className="overflow-x-auto rounded-lg border border-border/50">
-          <table className="w-full min-w-[520px] text-left text-sm">
+          <table className="w-full min-w-130 text-left text-sm">
             <thead>
               <tr className="border-b border-border/60 bg-muted/25">
                 <th className="px-3 py-2 font-semibold">Flavour</th>
