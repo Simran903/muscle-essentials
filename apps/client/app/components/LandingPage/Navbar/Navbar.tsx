@@ -1,7 +1,20 @@
 "use client"
 
 import * as React from "react"
-import { House, LogOut, ChevronDown, ShoppingCart, Store, User } from "lucide-react"
+import {
+  BadgePercent,
+  ChevronDown,
+  Headphones,
+  House,
+  Info,
+  LayoutGrid,
+  LogOut,
+  Menu,
+  ShoppingCart,
+  Store,
+  Tags,
+  User,
+} from "lucide-react"
 import { Magic } from "magic-sdk"
 import Image from "next/image"
 import Link from "next/link"
@@ -25,6 +38,15 @@ import {
 } from "@/lib/api"
 import { Button } from "@/app/components/ui/button"
 import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/app/components/ui/sheet"
+import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
@@ -36,6 +58,124 @@ const HIDE_NAVBAR_CLASS = "image-viewer-open"
 
 const navLinkClass =
   "inline-flex h-9 items-center rounded-lg px-3.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35"
+
+function MobileMenuLink({
+  href,
+  label,
+  icon: Icon,
+}: {
+  href: string
+  label: string
+  icon?: typeof Store
+}) {
+  return (
+    <SheetClose asChild>
+      <Link
+        href={href}
+        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
+      >
+        {Icon ? <Icon className="size-4 shrink-0" /> : null}
+        {label}
+      </Link>
+    </SheetClose>
+  )
+}
+
+function MobileMenuGroup({
+  label,
+  icon: Icon,
+  children,
+}: {
+  label: string
+  icon: typeof Store
+  children: React.ReactNode
+}) {
+  const [open, setOpen] = React.useState(false)
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
+      >
+        <span className="flex items-center gap-3">
+          <Icon className="size-4 shrink-0" />
+          {label}
+        </span>
+        <ChevronDown
+          className={cn(
+            "size-4 shrink-0 text-muted-foreground transition-transform duration-200",
+            open && "rotate-180",
+          )}
+        />
+      </button>
+      {open ? (
+        <div className="mt-0.5 ml-9 flex flex-col border-l border-border/40 pl-3">
+          {children}
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+function MobileMenuSubLink({ href, label }: { href: string; label: string }) {
+  return (
+    <SheetClose asChild>
+      <Link
+        href={href}
+        className="rounded-lg px-2 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+      >
+        {label}
+      </Link>
+    </SheetClose>
+  )
+}
+
+function MobileMenuSectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="px-3 pb-1 pt-4 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
+      {children}
+    </p>
+  )
+}
+
+function BottomNavLink({
+  href,
+  label,
+  icon: Icon,
+  badge,
+}: {
+  href: string
+  label: string
+  icon: typeof Store
+  badge?: number
+}) {
+  return (
+    <Link
+      href={href}
+      aria-label={label}
+      className="relative flex min-w-0 flex-1 flex-col items-center gap-1 px-1.5 py-1.5 text-[10px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+    >
+      <span className="relative">
+        <Icon className="size-4 shrink-0" />
+        {badge && badge > 0 ? (
+          <span className="absolute -right-1.5 -top-1.5 inline-flex min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[8px] font-bold text-primary-foreground ring-2 ring-background">
+            {badge > 99 ? "99+" : badge}
+          </span>
+        ) : null}
+      </span>
+      <span className="truncate">{label}</span>
+    </Link>
+  )
+}
+
+const bottomNavItems: { href: string; label: string; icon: typeof Store }[] = [
+  { href: "/", label: "Home", icon: House },
+  { href: "/shop", label: "Shop", icon: Store },
+  { href: "/cart", label: "Cart", icon: ShoppingCart },
+  { href: "/account", label: "Account", icon: User },
+]
 
 function useAuthStatus() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false)
@@ -141,6 +281,12 @@ export function Navbar() {
         setShopBrands([])
         setShopCategories([])
       })
+  }, [])
+
+  React.useEffect(() => {
+    const onOpenLogin = () => setIsLoginDialogOpen(true)
+    window.addEventListener("auth:open-login", onOpenLogin)
+    return () => window.removeEventListener("auth:open-login", onOpenLogin)
   }, [])
 
   const handleSignOut = React.useCallback(async () => {
@@ -447,65 +593,131 @@ export function Navbar() {
         </NavigationMenu>
       </header>
 
-      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border/30 bg-background/80 backdrop-blur-2xl md:hidden">
-        <div className="mx-auto flex w-full max-w-360 items-center justify-around gap-0 px-1 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+      <header className="sticky top-0 z-50 border-b border-border/30 bg-background/70 backdrop-blur-2xl supports-backdrop-filter:bg-background/60 md:hidden">
+        <div className="mx-auto flex w-full max-w-360 items-center justify-between gap-3 px-4 py-2.5 sm:px-6">
           <Link
             href="/"
-            className="flex min-w-0 flex-1 flex-col items-center gap-1 px-2 py-1 text-[10px] font-medium text-foreground"
+            className="flex items-center transition-opacity hover:opacity-80"
+            aria-label="GEN1 NUTRITION home"
           >
-            <House className="size-4 shrink-0" />
-            <span className="truncate">Home</span>
+            <Image
+              src="/logo-light.png"
+              alt="GEN1 NUTRITION"
+              width={160}
+              height={48}
+              priority
+              className="h-10 w-auto object-contain dark:hidden"
+            />
+            <Image
+              src="/logo-dark.png"
+              alt="GEN1 NUTRITION"
+              width={160}
+              height={48}
+              priority
+              className="hidden h-10 w-auto object-contain dark:block"
+            />
           </Link>
-          <Link
-            href="/shop"
-            className="flex min-w-0 flex-1 flex-col items-center gap-1 px-2 py-1 text-[10px] font-medium text-muted-foreground"
-          >
-            <Store className="size-4 shrink-0" />
-            <span className="truncate">Shop</span>
-          </Link>
-          <Link
-            href="/cart"
-            className="relative flex min-w-0 flex-1 flex-col items-center gap-1 px-2 py-1 text-[10px] font-medium text-muted-foreground"
-          >
-            <ShoppingCart className="size-4 shrink-0" />
-            <span className="truncate">Cart</span>
-            {cartItemCount > 0 ? (
-              <span className="absolute -right-0.5 -top-0.5 inline-flex min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[8px] font-bold text-primary-foreground ring-2 ring-background">
-                {cartItemCount > 99 ? "99+" : cartItemCount}
-              </span>
-            ) : null}
-          </Link>
-          {isLoggedIn ? (
-            <>
-              <Link
-                href="/account"
-                className="flex min-w-0 flex-1 flex-col items-center gap-1 px-2 py-1 text-[10px] font-medium text-muted-foreground"
-              >
-                <User className="size-4 shrink-0" />
-                <span className="truncate">Account</span>
-              </Link>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                disabled={signingOut}
-                onClick={() => void handleSignOut()}
-                className="h-auto min-h-0 min-w-0 flex-1 flex-col gap-1 rounded-lg px-2 py-1 text-[10px] font-medium whitespace-normal text-muted-foreground shadow-none hover:bg-transparent hover:text-foreground"
-              >
-                <LogOut className="size-4 shrink-0" />
-                <span className="truncate">{signingOut ? "…" : "Sign out"}</span>
-              </Button>
-            </>
-          ) : (
-            <button
-              type="button"
-              onClick={openLoginDialog}
-              className="flex min-w-0 flex-1 flex-col items-center gap-1 px-2 py-1 text-[10px] font-medium text-muted-foreground"
+
+          <div className="flex items-center gap-1.5">
+            <Button
+              asChild
+              variant="ghost"
+              size="icon-sm"
+              className="relative rounded-xl"
+              aria-label="Cart"
             >
-              <User className="size-4 shrink-0" />
-              <span className="truncate">Login</span>
-            </button>
-          )}
+              <Link href="/cart">
+                <ShoppingCart className="size-5" />
+                {cartItemCount > 0 ? (
+                  <span className="absolute -right-0.5 -top-0.5 inline-flex min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[8px] font-bold text-primary-foreground ring-2 ring-background">
+                    {cartItemCount > 99 ? "99+" : cartItemCount}
+                  </span>
+                ) : null}
+              </Link>
+            </Button>
+
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  className="rounded-xl"
+                  aria-label="Open menu"
+                >
+                  <Menu className="size-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[85%] max-w-sm">
+                <SheetHeader className="border-b border-border/30">
+                  <SheetTitle>Menu</SheetTitle>
+                  <SheetDescription className="sr-only">
+                    Mobile navigation menu for GEN1 NUTRITION
+                  </SheetDescription>
+                </SheetHeader>
+
+                <div className="flex-1 overflow-y-auto overscroll-contain px-2 pb-4">
+                  <MobileMenuSectionLabel>Shop</MobileMenuSectionLabel>
+                  <div className="flex flex-col gap-1">
+                    <MobileMenuLink href="/shop" label="Shop All" icon={Store} />
+                    <MobileMenuGroup label="Brands" icon={Tags}>
+                      {shopBrands.length > 0 ? (
+                        shopBrands.map((b) => (
+                          <MobileMenuSubLink
+                            key={b.slug}
+                            href={`/shop?brand=${encodeURIComponent(b.slug)}`}
+                            label={b.name}
+                          />
+                        ))
+                      ) : (
+                        <MobileMenuSubLink href="/shop" label="Browse all products" />
+                      )}
+                    </MobileMenuGroup>
+                    <MobileMenuGroup label="Collections" icon={LayoutGrid}>
+                      <MobileMenuSubLink href="/shop?bestseller=1" label="Bestsellers" />
+                      <MobileMenuSubLink href="/shop?featured=1" label="Featured" />
+                      <MobileMenuSubLink href="/shop?combo=1" label="Stacks" />
+                    </MobileMenuGroup>
+                    <MobileMenuLink href="/shop?deal=1" label="Deals" icon={BadgePercent} />
+                  </div>
+
+                  <MobileMenuSectionLabel>Support</MobileMenuSectionLabel>
+                  <div className="flex flex-col gap-1">
+                    <MobileMenuLink href="/about" label="About" icon={Info} />
+                    <MobileMenuLink href="/contact" label="Contact" icon={Headphones} />
+                  </div>
+
+                  {isLoggedIn ? (
+                    <SheetClose asChild>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        disabled={signingOut}
+                        onClick={() => void handleSignOut()}
+                        className="mt-4 w-full justify-start rounded-xl text-red-600 hover:bg-red-500/10 hover:text-red-600 dark:text-red-400 dark:hover:text-red-400"
+                      >
+                        <LogOut className="size-4" />
+                        {signingOut ? "Signing out…" : "Logout"}
+                      </Button>
+                    </SheetClose>
+                  ) : null}
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+        </div>
+      </header>
+
+      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border/30 bg-background/80 backdrop-blur-2xl md:hidden">
+        <div className="mx-auto flex w-full max-w-360 items-stretch justify-around gap-0 px-1 py-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+          {bottomNavItems.map((item) => (
+            <BottomNavLink
+              key={item.href}
+              href={item.href}
+              label={item.label}
+              icon={item.icon}
+              badge={item.label === "Cart" ? cartItemCount : undefined}
+            />
+          ))}
         </div>
       </nav>
 

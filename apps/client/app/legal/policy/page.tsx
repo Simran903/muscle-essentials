@@ -210,33 +210,40 @@ export default function DeliveryReturnsPage() {
       <AccountBackground />
 
       {/* Sticky section nav */}
-      <div
+      <nav
         ref={navRef}
-        className="py-4 sticky top-16 z-30 border-b border-border/10 bg-background/80 backdrop-blur-xl"
+        aria-label="Policy sections"
+        className="sticky top-16 z-30 border-b border-border/10 bg-background/80 backdrop-blur-xl"
       >
-        <div className="mx-auto flex max-w-7xl items-center gap-1 overflow-x-auto px-4 py-2 sm:px-6 sm:py-0 lg:px-10">
-          {navSections.map((s) => {
-            const Icon = s.icon
-            return (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => scrollTo(s.id)}
-                className={cn(
-                  "flex shrink-0 items-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium transition-all duration-200 whitespace-nowrap sm:px-4 sm:py-3 sm:text-sm",
-                  activeNav === s.id
-                    ? "bg-primary/10 text-primary shadow-sm"
-                    : "text-muted-foreground hover:bg-muted/40 hover:text-foreground",
-                )}
-              >
-                <Icon className="size-3.5 sm:size-4" />
-                <span className="hidden sm:inline">{s.label}</span>
-                <span className="sm:hidden">{s.label}</span>
-              </button>
-            )
-          })}
+        <div className="relative mx-auto max-w-7xl">
+          <div className="no-scrollbar flex items-center gap-1 overflow-x-auto px-4 py-3 sm:px-6 lg:px-10 lg:py-4">
+            {navSections.map((s) => {
+              const Icon = s.icon
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => scrollTo(s.id)}
+                  aria-current={activeNav === s.id ? "true" : undefined}
+                  className={cn(
+                    "flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-xs font-medium whitespace-nowrap transition-all duration-200 sm:px-4 sm:py-2.5 sm:text-sm",
+                    activeNav === s.id
+                      ? "bg-primary/10 text-primary shadow-sm"
+                      : "text-muted-foreground hover:bg-muted/40 hover:text-foreground",
+                  )}
+                >
+                  <Icon className="size-3.5 shrink-0 sm:size-4" />
+                  {s.label}
+                </button>
+              )
+            })}
+          </div>
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 right-0 block w-8 bg-gradient-to-l from-background to-transparent xl:hidden"
+          />
         </div>
-      </div>
+      </nav>
 
       <main className={pageMainClassName({ maxWidth: "7xl" })}>
         <Breadcrumbs />

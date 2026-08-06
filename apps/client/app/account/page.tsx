@@ -302,15 +302,19 @@ export default function AccountPage() {
               Sign in to continue
             </h1>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Your account area shows orders, saved addresses, and quick links
-              after you log in from the navbar.
+              Your account area shows orders, saved addresses, and quick links after you log in.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-              <Button asChild size="lg" className="h-11 rounded-xl px-8 shadow-sm">
-                <Link href="/shop">Browse shop</Link>
+              <Button
+                type="button"
+                size="lg"
+                className="h-11 rounded-xl px-8 shadow-sm"
+                onClick={() => window.dispatchEvent(new Event("auth:open-login"))}
+              >
+                Log in
               </Button>
               <Button asChild size="lg" variant="outline" className="h-11 rounded-xl px-8">
-                <Link href="/">Back home</Link>
+                <Link href="/shop">Browse shop</Link>
               </Button>
             </div>
           </div>

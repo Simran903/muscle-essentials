@@ -49,7 +49,9 @@ export default function RootLayout({
         <ThemeProvider>
           <Navbar />
           {children}
-          <Footer />
+          <div className="pb-16 md:pb-0">
+            <Footer />
+          </div>
           <ThemeFloatingToggle />
           <CookieConsentBar />
           <Toaster />
